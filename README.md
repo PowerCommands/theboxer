@@ -1,2 +1,2 @@
-# theboxer
+# The Boxer
 A boxing game
