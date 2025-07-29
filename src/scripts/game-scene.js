@@ -15,6 +15,14 @@ export class GameScene extends Phaser.Scene {
       const frame = i.toString().padStart(3, '0');
       idleFrames.push({ key: `idle_${frame}` });
     }
+    // walk animation frames
+    const forwardFrames = [];
+    const backwardFrames = [];
+    for (let i = 0; i < 10; i++) {
+      const frame = i.toString().padStart(3, '0');
+      forwardFrames.push({ key: `forward_${frame}` });
+      backwardFrames.push({ key: `backward_${frame}` });
+    }
     this.anims.create({
       key: 'boxer1_idle',
       frames: idleFrames,
@@ -26,6 +34,18 @@ export class GameScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers('boxer1', { start: 1, end: 3 }),
       frameRate: 8,
       repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer1_forward',
+      frames: forwardFrames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer1_backward',
+      frames: backwardFrames,
+      frameRate: 10,
+      repeat: -1
     });
 
     // define animations for boxer2
@@ -40,6 +60,18 @@ export class GameScene extends Phaser.Scene {
       frames: this.anims.generateFrameNumbers('boxer2', { start: 1, end: 3 }),
       frameRate: 8,
       repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer2_forward',
+      frames: forwardFrames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer2_backward',
+      frames: backwardFrames,
+      frameRate: 10,
+      repeat: -1
     });
 
     // create sprites using the new idle frames
@@ -84,10 +116,19 @@ export class GameScene extends Phaser.Scene {
     const move = (speed * delta) / 1000;
 
     // === PLAYER 1 MOVEMENT ===
-    if (this.cursors.left.isDown) {
-      this.player1.x -= move;
-    } else if (this.cursors.right.isDown) {
-      this.player1.x += move;
+    const p1Anim = this.player1.anims.currentAnim
+      ? this.player1.anims.currentAnim.key
+      : '';
+    if (p1Anim !== 'boxer1_punch') {
+      if (this.cursors.left.isDown) {
+        this.player1.x -= move;
+        this.player1.anims.play('boxer1_backward', true);
+      } else if (this.cursors.right.isDown) {
+        this.player1.x += move;
+        this.player1.anims.play('boxer1_forward', true);
+      } else {
+        this.player1.anims.play('boxer1_idle', true);
+      }
     }
     if (this.cursors.up.isDown) {
       this.player1.y -= move;
@@ -96,10 +137,19 @@ export class GameScene extends Phaser.Scene {
     }
 
     // === PLAYER 2 MOVEMENT ===
-    if (this.WASD.left.isDown) {
-      this.player2.x -= move;
-    } else if (this.WASD.right.isDown) {
-      this.player2.x += move;
+    const p2Anim = this.player2.anims.currentAnim
+      ? this.player2.anims.currentAnim.key
+      : '';
+    if (p2Anim !== 'boxer2_punch') {
+      if (this.WASD.left.isDown) {
+        this.player2.x -= move;
+        this.player2.anims.play('boxer2_forward', true);
+      } else if (this.WASD.right.isDown) {
+        this.player2.x += move;
+        this.player2.anims.play('boxer2_backward', true);
+      } else {
+        this.player2.anims.play('boxer2_idle', true);
+      }
     }
     if (this.WASD.up.isDown) {
       this.player2.y -= move;
