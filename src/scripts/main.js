@@ -9,6 +9,11 @@ class BootScene extends Phaser.Scene {
   preload() {
     console.log('BootScene: preload started');
     this.load.image('ring', 'assets/ring.png');
+    // Load idle animation frames for the boxers
+    for (let i = 0; i < 10; i++) {
+      const frame = i.toString().padStart(3, '0');
+      this.load.image(`idle_${frame}`, `assets/1-Idle/__Boxer2_Idle_${frame}.png`);
+    }
     this.load.spritesheet('boxer1', 'assets/boxer1.png', {
       frameWidth: 64,
       frameHeight: 64
