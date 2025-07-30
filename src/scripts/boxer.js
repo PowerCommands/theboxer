@@ -44,11 +44,11 @@ export class Boxer {
       return;
     }
     if (actions.hurt1) {
-      this.sprite.anims.play(`${this.prefix}_hurt1`, true);
+      this.playOnce(`${this.prefix}_hurt1`);
     } else if (actions.hurt2) {
-      this.sprite.anims.play(`${this.prefix}_hurt2`, true);
+      this.playOnce(`${this.prefix}_hurt2`);
     } else if (actions.dizzy) {
-      this.sprite.anims.play(`${this.prefix}_dizzy`, true);
+      this.playOnce(`${this.prefix}_dizzy`);
     } else if (actions.idle) {
       this.sprite.anims.play(`${this.prefix}_idle`, true);
     }
