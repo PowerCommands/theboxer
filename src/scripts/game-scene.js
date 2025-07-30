@@ -112,7 +112,7 @@ export class GameScene extends Phaser.Scene {
       key: 'boxer1_ko',
       frames: koFrames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
 
     // define animations for boxer2
@@ -186,7 +186,7 @@ export class GameScene extends Phaser.Scene {
       key: 'boxer2_ko',
       frames: koFrames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
 
     // create sprites using the new idle frames
