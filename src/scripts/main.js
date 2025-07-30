@@ -12,9 +12,22 @@ class BootScene extends Phaser.Scene {
     // Load idle animation frames for the boxers
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
-      this.load.image(`idle_${frame}`, `assets/1-Idle/__Boxer2_Idle_${frame}.png`);
-      this.load.image(`forward_${frame}`, `assets/2-Walk/1-Forward/__Boxer2_Forward_${frame}.png`);
-      this.load.image(`backward_${frame}`, `assets/2-Walk/2-Backward/__Boxer2_Backward_${frame}.png`);
+      this.load.image(
+        `idle_${frame}`,
+        `assets/1-Idle/__Boxer2_Idle_${frame}.png`
+      );
+      this.load.image(
+        `forward_${frame}`,
+        `assets/2-Walk/1-Forward/__Boxer2_Forward_${frame}.png`
+      );
+      this.load.image(
+        `backward_${frame}`,
+        `assets/2-Walk/2-Backward/__Boxer2_Backward_${frame}.png`
+      );
+      this.load.image(
+        `block_${frame}`,
+        `assets/4-Block/__Boxer2_Block_${frame}.png`
+      );
     }
     this.load.spritesheet('boxer1', 'assets/boxer1.png', {
       frameWidth: 64,
