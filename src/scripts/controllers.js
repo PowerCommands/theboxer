@@ -20,6 +20,11 @@ export class KeyboardController {
       uppercut: Phaser.Input.Keyboard.JustDown(this.keys.uppercut),
       turnLeft: shift && Phaser.Input.Keyboard.JustDown(leftKey),
       turnRight: shift && Phaser.Input.Keyboard.JustDown(rightKey),
+      hurt1: Phaser.Input.Keyboard.JustDown(this.keys.hurt1),
+      hurt2: Phaser.Input.Keyboard.JustDown(this.keys.hurt2),
+      dizzy: Phaser.Input.Keyboard.JustDown(this.keys.dizzy),
+      idle: Phaser.Input.Keyboard.JustDown(this.keys.idle),
+      ko: Phaser.Input.Keyboard.JustDown(this.keys.ko),
     };
   }
 }
@@ -45,6 +50,11 @@ export class RandomAIController {
         uppercut: Math.random() < 0.02,
         turnLeft: false,
         turnRight: false,
+        hurt1: false,
+        hurt2: false,
+        dizzy: false,
+        idle: false,
+        ko: false,
       };
       this.current = actions;
     }

@@ -1,5 +1,5 @@
 import { Boxer } from './boxer.js';
-import { KeyboardController, RandomAIController } from './controllers.js';
+import { KeyboardController } from './controllers.js';
 
 export class GameScene extends Phaser.Scene {
   constructor() {
@@ -198,8 +198,27 @@ export class GameScene extends Phaser.Scene {
       jabLeft: Phaser.Input.Keyboard.KeyCodes.DELETE,
       uppercut: Phaser.Input.Keyboard.KeyCodes.NUMPAD_ZERO,
       block: Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE,
+      hurt1: Phaser.Input.Keyboard.KeyCodes.ONE,
+      hurt2: Phaser.Input.Keyboard.KeyCodes.TWO,
+      dizzy: Phaser.Input.Keyboard.KeyCodes.THREE,
+      idle: Phaser.Input.Keyboard.KeyCodes.SEVEN,
+      ko: Phaser.Input.Keyboard.KeyCodes.NUMPAD_EIGHT,
     });
-    const controller2 = new RandomAIController();
+    const controller2 = new KeyboardController(this, {
+      left: Phaser.Input.Keyboard.KeyCodes.A,
+      right: Phaser.Input.Keyboard.KeyCodes.D,
+      up: Phaser.Input.Keyboard.KeyCodes.W,
+      down: Phaser.Input.Keyboard.KeyCodes.S,
+      jabRight: Phaser.Input.Keyboard.KeyCodes.E,
+      jabLeft: Phaser.Input.Keyboard.KeyCodes.Q,
+      uppercut: Phaser.Input.Keyboard.KeyCodes.F,
+      block: Phaser.Input.Keyboard.KeyCodes.X,
+      hurt1: Phaser.Input.Keyboard.KeyCodes.FOUR,
+      hurt2: Phaser.Input.Keyboard.KeyCodes.FIVE,
+      dizzy: Phaser.Input.Keyboard.KeyCodes.SIX,
+      idle: Phaser.Input.Keyboard.KeyCodes.EIGHT,
+      ko: Phaser.Input.Keyboard.KeyCodes.G,
+    });
 
     this.player1 = new Boxer(this, 200, 400, 'boxer1', controller1);
     this.player2 = new Boxer(this, 600, 400, 'boxer2', controller2);

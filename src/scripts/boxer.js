@@ -16,6 +16,13 @@ export class Boxer {
   update(delta) {
     const move = (this.speed * delta) / 1000;
     const actions = this.controller.getActions();
+    const current = this.sprite.anims.currentAnim?.key || '';
+    const hurtingStates = [
+      `${this.prefix}_hurt1`,
+      `${this.prefix}_hurt2`,
+      `${this.prefix}_dizzy`,
+      `${this.prefix}_ko`,
+    ];
 
     if (actions.turnLeft) {
       this.facingRight = false;
@@ -23,6 +30,30 @@ export class Boxer {
     } else if (actions.turnRight) {
       this.facingRight = true;
       this.sprite.setFlipX(true);
+    }
+
+    if (actions.ko) {
+      this.sprite.play(`${this.prefix}_ko`);
+      return;
+    }
+    if (actions.hurt1) {
+      this.sprite.anims.play(`${this.prefix}_hurt1`, true);
+      return;
+    }
+    if (actions.hurt2) {
+      this.sprite.anims.play(`${this.prefix}_hurt2`, true);
+      return;
+    }
+    if (actions.dizzy) {
+      this.sprite.anims.play(`${this.prefix}_dizzy`, true);
+      return;
+    }
+    if (actions.idle) {
+      this.sprite.anims.play(`${this.prefix}_idle`, true);
+      return;
+    }
+    if (hurtingStates.includes(current)) {
+      return;
     }
 
     if (actions.block) {
