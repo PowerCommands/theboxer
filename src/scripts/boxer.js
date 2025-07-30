@@ -11,6 +11,8 @@ export class Boxer {
     this.facingRight = prefix === 'boxer1';
     this.sprite.setFlipX(this.facingRight);
     if (prefix === 'boxer2') this.sprite.setTint(0xbb7744);
+    this.health = 1;
+    this.hasHit = false;
   }
 
   update(delta) {
@@ -118,9 +120,47 @@ export class Boxer {
   playOnce(key) {
     if (this.sprite.anims.currentAnim?.key !== key) {
       this.sprite.play(key);
+      if (
+        key === `${this.prefix}_jabRight` ||
+        key === `${this.prefix}_jabLeft` ||
+        key === `${this.prefix}_uppercut`
+      ) {
+        this.hasHit = false;
+      }
       this.sprite.once('animationcomplete', () => {
         this.sprite.play(`${this.prefix}_idle`);
       });
+    }
+  }
+
+  isAttacking() {
+    const key = this.sprite.anims.currentAnim?.key;
+    return (
+      key === `${this.prefix}_jabRight` ||
+      key === `${this.prefix}_jabLeft` ||
+      key === `${this.prefix}_uppercut`
+    );
+  }
+
+  isBlocking() {
+    const key = this.sprite.anims.currentAnim?.key;
+    return key === `${this.prefix}_block`;
+  }
+
+  takeDamage(amount) {
+    this.health = Phaser.Math.Clamp(this.health - amount, 0, 1);
+
+    if (this.health === 0) {
+      this.sprite.play(`${this.prefix}_ko`);
+      return;
+    }
+
+    if (this.health < 0.3) {
+      this.playOnce(`${this.prefix}_dizzy`);
+    } else if (this.health < 0.4) {
+      this.playOnce(`${this.prefix}_hurt2`);
+    } else if (this.health < 0.6) {
+      this.playOnce(`${this.prefix}_hurt1`);
     }
   }
 }
