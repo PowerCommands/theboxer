@@ -29,6 +29,22 @@ class BootScene extends Phaser.Scene {
         `assets/4-Block/__Boxer2_Block_${frame}.png`
       );
     }
+    // Load punch animation frames (8 each)
+    for (let i = 0; i < 8; i++) {
+      const frame = i.toString().padStart(3, '0');
+      this.load.image(
+        `jabRight_${frame}`,
+        `assets/3-Punch/1-JabRight/__Boxer2_Punch1_${frame}.png`
+      );
+      this.load.image(
+        `jabLeft_${frame}`,
+        `assets/3-Punch/2-JabLeft/__Boxer2_Punch2_${frame}.png`
+      );
+      this.load.image(
+        `uppercut_${frame}`,
+        `assets/3-Punch/3-Uppercut/__Boxer2_Punch3_${frame}.png`
+      );
+    }
     this.load.spritesheet('boxer1', 'assets/boxer1.png', {
       frameWidth: 64,
       frameHeight: 64
