@@ -25,6 +25,7 @@ export class GameScene extends Phaser.Scene {
     const hurt1Frames = [];
     const hurt2Frames = [];
     const dizzyFrames = [];
+    const koFrames = [];
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
       forwardFrames.push({ key: `forward_${frame}` });
@@ -39,6 +40,7 @@ export class GameScene extends Phaser.Scene {
       hurt1Frames.push({ key: `hurt1_${frame}` });
       hurt2Frames.push({ key: `hurt2_${frame}` });
       dizzyFrames.push({ key: `dizzy_${frame}` });
+      koFrames.push({ key: `ko_${frame}` });
     }
     this.anims.create({
       key: 'boxer1_idle',
@@ -103,6 +105,12 @@ export class GameScene extends Phaser.Scene {
     this.anims.create({
       key: 'boxer1_dizzy',
       frames: dizzyFrames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer1_ko',
+      frames: koFrames,
       frameRate: 10,
       repeat: -1
     });
@@ -171,6 +179,12 @@ export class GameScene extends Phaser.Scene {
     this.anims.create({
       key: 'boxer2_dizzy',
       frames: dizzyFrames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer2_ko',
+      frames: koFrames,
       frameRate: 10,
       repeat: -1
     });
@@ -263,6 +277,12 @@ export class GameScene extends Phaser.Scene {
     this.input.keyboard.on('keydown-EIGHT', () => {
       this.player2.play('boxer2_idle');
     });
+    this.input.keyboard.on('keydown-NUMPAD_EIGHT', () => {
+      this.player1.play('boxer1_ko');
+    });
+    this.input.keyboard.on('keydown-G', () => {
+      this.player2.play('boxer2_ko');
+    });
 
     console.log('GameScene: create complete');
   }
@@ -284,7 +304,8 @@ export class GameScene extends Phaser.Scene {
     const p1Hurting = [
       'boxer1_hurt1',
       'boxer1_hurt2',
-      'boxer1_dizzy'
+      'boxer1_dizzy',
+      'boxer1_ko'
     ].includes(p1Anim);
     if (!p1Punching && !p1Hurting) {
       if (this.blockKey1.isDown) {
@@ -318,7 +339,8 @@ export class GameScene extends Phaser.Scene {
     const p2Hurting = [
       'boxer2_hurt1',
       'boxer2_hurt2',
-      'boxer2_dizzy'
+      'boxer2_dizzy',
+      'boxer2_ko'
     ].includes(p2Anim);
     if (!p2Punching && !p2Hurting) {
       if (this.blockKey2.isDown) {
