@@ -16,7 +16,6 @@ export class Boxer {
   update(delta) {
     const move = (this.speed * delta) / 1000;
     const actions = this.controller.getActions();
-    const current = this.sprite.anims.currentAnim?.key || '';
     const injuredStates = [
       `${this.prefix}_hurt1`,
       `${this.prefix}_hurt2`,
@@ -52,6 +51,8 @@ export class Boxer {
     } else if (actions.idle) {
       this.sprite.anims.play(`${this.prefix}_idle`, true);
     }
+
+    const current = this.sprite.anims.currentAnim?.key || '';
 
     if (lockedStates.includes(current)) {
       return;
