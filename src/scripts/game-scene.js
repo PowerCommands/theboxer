@@ -22,6 +22,9 @@ export class GameScene extends Phaser.Scene {
     const jabRightFrames = [];
     const jabLeftFrames = [];
     const uppercutFrames = [];
+    const hurt1Frames = [];
+    const hurt2Frames = [];
+    const dizzyFrames = [];
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
       forwardFrames.push({ key: `forward_${frame}` });
@@ -33,6 +36,9 @@ export class GameScene extends Phaser.Scene {
       jabRightFrames.push({ key: `jabRight_${frame}` });
       jabLeftFrames.push({ key: `jabLeft_${frame}` });
       uppercutFrames.push({ key: `uppercut_${frame}` });
+      hurt1Frames.push({ key: `hurt1_${frame}` });
+      hurt2Frames.push({ key: `hurt2_${frame}` });
+      dizzyFrames.push({ key: `dizzy_${frame}` });
     }
     this.anims.create({
       key: 'boxer1_idle',
@@ -79,6 +85,24 @@ export class GameScene extends Phaser.Scene {
     this.anims.create({
       key: 'boxer1_block',
       frames: blockFrames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer1_hurt1',
+      frames: hurt1Frames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer1_hurt2',
+      frames: hurt2Frames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer1_dizzy',
+      frames: dizzyFrames,
       frameRate: 10,
       repeat: -1
     });
@@ -129,6 +153,24 @@ export class GameScene extends Phaser.Scene {
     this.anims.create({
       key: 'boxer2_block',
       frames: blockFrames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer2_hurt1',
+      frames: hurt1Frames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer2_hurt2',
+      frames: hurt2Frames,
+      frameRate: 10,
+      repeat: -1
+    });
+    this.anims.create({
+      key: 'boxer2_dizzy',
+      frames: dizzyFrames,
       frameRate: 10,
       repeat: -1
     });
@@ -196,6 +238,32 @@ export class GameScene extends Phaser.Scene {
       });
     });
 
+    // hurt animation controls
+    this.input.keyboard.on('keydown-ONE', () => {
+      this.player1.play('boxer1_hurt1');
+    });
+    this.input.keyboard.on('keydown-TWO', () => {
+      this.player1.play('boxer1_hurt2');
+    });
+    this.input.keyboard.on('keydown-THREE', () => {
+      this.player1.play('boxer1_dizzy');
+    });
+    this.input.keyboard.on('keydown-FOUR', () => {
+      this.player2.play('boxer2_hurt1');
+    });
+    this.input.keyboard.on('keydown-FIVE', () => {
+      this.player2.play('boxer2_hurt2');
+    });
+    this.input.keyboard.on('keydown-SIX', () => {
+      this.player2.play('boxer2_dizzy');
+    });
+    this.input.keyboard.on('keydown-SEVEN', () => {
+      this.player1.play('boxer1_idle');
+    });
+    this.input.keyboard.on('keydown-EIGHT', () => {
+      this.player2.play('boxer2_idle');
+    });
+
     console.log('GameScene: create complete');
   }
 
@@ -213,7 +281,12 @@ export class GameScene extends Phaser.Scene {
       'boxer1_jabLeft',
       'boxer1_uppercut'
     ].includes(p1Anim);
-    if (!p1Punching) {
+    const p1Hurting = [
+      'boxer1_hurt1',
+      'boxer1_hurt2',
+      'boxer1_dizzy'
+    ].includes(p1Anim);
+    if (!p1Punching && !p1Hurting) {
       if (this.blockKey1.isDown) {
         this.player1.anims.play('boxer1_block', true);
       } else if (this.cursors.left.isDown) {
@@ -242,7 +315,12 @@ export class GameScene extends Phaser.Scene {
       'boxer2_jabLeft',
       'boxer2_uppercut'
     ].includes(p2Anim);
-    if (!p2Punching) {
+    const p2Hurting = [
+      'boxer2_hurt1',
+      'boxer2_hurt2',
+      'boxer2_dizzy'
+    ].includes(p2Anim);
+    if (!p2Punching && !p2Hurting) {
       if (this.blockKey2.isDown) {
         this.player2.anims.play('boxer2_block', true);
       } else if (this.WASD.left.isDown) {

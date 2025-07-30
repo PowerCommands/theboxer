@@ -45,6 +45,22 @@ class BootScene extends Phaser.Scene {
         `assets/3-Punch/3-Uppercut/__Boxer2_Punch3_${frame}.png`
       );
     }
+    // Load hurt animations (8 frames each)
+    for (let i = 0; i < 8; i++) {
+      const frame = i.toString().padStart(3, '0');
+      this.load.image(
+        `hurt1_${frame}`,
+        `assets/5-Hurt/1-Hurt/__Boxer2_Hurt1_${frame}.png`
+      );
+      this.load.image(
+        `hurt2_${frame}`,
+        `assets/5-Hurt/2-HurtAlt/__Boxer2_Hurt2_${frame}.png`
+      );
+      this.load.image(
+        `dizzy_${frame}`,
+        `assets/5-Hurt/3-Dizzy/__Boxer2_Dizzy_${frame}.png`
+      );
+    }
     this.load.spritesheet('boxer1', 'assets/boxer1.png', {
       frameWidth: 64,
       frameHeight: 64
