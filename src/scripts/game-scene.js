@@ -233,11 +233,38 @@ export class GameScene extends Phaser.Scene {
     this.player1 = new Boxer(this, 200, 400, 'boxer1', controller1);
     this.player2 = new Boxer(this, 600, 400, 'boxer2', controller2);
 
+    this.ui = this.scene.get('OverlayUI');
+
     console.log('GameScene: create complete');
   }
 
   update(time, delta) {
     this.player1.update(delta);
     this.player2.update(delta);
+
+    this.handleHit(this.player1, this.player2, 'p2');
+    this.handleHit(this.player2, this.player1, 'p1');
+  }
+
+  handleHit(attacker, defender, defenderKey) {
+    if (!attacker.isAttacking() || attacker.hasHit) return;
+    if (defender.isBlocking()) return;
+
+    if (
+      (attacker.facingRight && defender.sprite.x < attacker.sprite.x) ||
+      (!attacker.facingRight && defender.sprite.x > attacker.sprite.x)
+    ) {
+      return;
+    }
+
+    const aBounds = attacker.sprite.getBounds();
+    const dBounds = defender.sprite.getBounds();
+    if (Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds)) {
+      attacker.hasHit = true;
+      defender.takeDamage(0.1);
+      if (this.ui) {
+        this.ui.setBarValue(this.ui.bars[defenderKey].health, defender.health);
+      }
+    }
   }
 }
