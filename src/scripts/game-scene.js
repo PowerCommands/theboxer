@@ -15,15 +15,24 @@ export class GameScene extends Phaser.Scene {
       const frame = i.toString().padStart(3, '0');
       idleFrames.push({ key: `idle_${frame}` });
     }
-    // walk animation frames
+    // walk and block animation frames
     const forwardFrames = [];
     const backwardFrames = [];
     const blockFrames = [];
+    const jabRightFrames = [];
+    const jabLeftFrames = [];
+    const uppercutFrames = [];
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
       forwardFrames.push({ key: `forward_${frame}` });
       backwardFrames.push({ key: `backward_${frame}` });
       blockFrames.push({ key: `block_${frame}` });
+    }
+    for (let i = 0; i < 8; i++) {
+      const frame = i.toString().padStart(3, '0');
+      jabRightFrames.push({ key: `jabRight_${frame}` });
+      jabLeftFrames.push({ key: `jabLeft_${frame}` });
+      uppercutFrames.push({ key: `uppercut_${frame}` });
     }
     this.anims.create({
       key: 'boxer1_idle',
@@ -35,6 +44,24 @@ export class GameScene extends Phaser.Scene {
       key: 'boxer1_punch',
       frames: this.anims.generateFrameNumbers('boxer1', { start: 1, end: 3 }),
       frameRate: 8,
+      repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer1_jabRight',
+      frames: jabRightFrames,
+      frameRate: 10,
+      repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer1_jabLeft',
+      frames: jabLeftFrames,
+      frameRate: 10,
+      repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer1_uppercut',
+      frames: uppercutFrames,
+      frameRate: 10,
       repeat: 0
     });
     this.anims.create({
@@ -70,6 +97,24 @@ export class GameScene extends Phaser.Scene {
       repeat: 0
     });
     this.anims.create({
+      key: 'boxer2_jabRight',
+      frames: jabRightFrames,
+      frameRate: 10,
+      repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer2_jabLeft',
+      frames: jabLeftFrames,
+      frameRate: 10,
+      repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer2_uppercut',
+      frames: uppercutFrames,
+      frameRate: 10,
+      repeat: 0
+    });
+    this.anims.create({
       key: 'boxer2_forward',
       frames: forwardFrames,
       frameRate: 10,
@@ -102,28 +147,50 @@ export class GameScene extends Phaser.Scene {
       up: Phaser.Input.Keyboard.KeyCodes.W,
       down: Phaser.Input.Keyboard.KeyCodes.S,
       left: Phaser.Input.Keyboard.KeyCodes.A,
-      right: Phaser.Input.Keyboard.KeyCodes.D,
-      punch2: Phaser.Input.Keyboard.KeyCodes.SHIFT
+      right: Phaser.Input.Keyboard.KeyCodes.D
     });
     // block keys
     this.blockKey1 = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.X
+      Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE
     );
     this.blockKey2 = this.input.keyboard.addKey(
-      Phaser.Input.Keyboard.KeyCodes.FIVE
+      Phaser.Input.Keyboard.KeyCodes.X
     );
 
-    // punch events
-    this.input.keyboard.on('keydown-SPACE', () => {
-      console.log('SPACE pressed: boxer1 punches');
-      this.player1.play('boxer1_punch');
+    // punch events for each boxer
+    this.input.keyboard.on('keydown-PAGEDOWN', () => {
+      this.player1.play('boxer1_jabRight');
       this.player1.once('animationcomplete', () => {
         this.player1.play('boxer1_idle');
       });
     });
-    this.input.keyboard.on('keydown-SHIFT', () => {
-      console.log('SHIFT pressed: boxer2 punches');
-      this.player2.play('boxer2_punch');
+    this.input.keyboard.on('keydown-DELETE', () => {
+      this.player1.play('boxer1_jabLeft');
+      this.player1.once('animationcomplete', () => {
+        this.player1.play('boxer1_idle');
+      });
+    });
+    this.input.keyboard.on('keydown-NUMPAD_ZERO', () => {
+      this.player1.play('boxer1_uppercut');
+      this.player1.once('animationcomplete', () => {
+        this.player1.play('boxer1_idle');
+      });
+    });
+
+    this.input.keyboard.on('keydown-E', () => {
+      this.player2.play('boxer2_jabRight');
+      this.player2.once('animationcomplete', () => {
+        this.player2.play('boxer2_idle');
+      });
+    });
+    this.input.keyboard.on('keydown-Q', () => {
+      this.player2.play('boxer2_jabLeft');
+      this.player2.once('animationcomplete', () => {
+        this.player2.play('boxer2_idle');
+      });
+    });
+    this.input.keyboard.on('keydown-F', () => {
+      this.player2.play('boxer2_uppercut');
       this.player2.once('animationcomplete', () => {
         this.player2.play('boxer2_idle');
       });
@@ -140,7 +207,13 @@ export class GameScene extends Phaser.Scene {
     const p1Anim = this.player1.anims.currentAnim
       ? this.player1.anims.currentAnim.key
       : '';
-    if (p1Anim !== 'boxer1_punch') {
+    const p1Punching = [
+      'boxer1_punch',
+      'boxer1_jabRight',
+      'boxer1_jabLeft',
+      'boxer1_uppercut'
+    ].includes(p1Anim);
+    if (!p1Punching) {
       if (this.blockKey1.isDown) {
         this.player1.anims.play('boxer1_block', true);
       } else if (this.cursors.left.isDown) {
@@ -163,7 +236,13 @@ export class GameScene extends Phaser.Scene {
     const p2Anim = this.player2.anims.currentAnim
       ? this.player2.anims.currentAnim.key
       : '';
-    if (p2Anim !== 'boxer2_punch') {
+    const p2Punching = [
+      'boxer2_punch',
+      'boxer2_jabRight',
+      'boxer2_jabLeft',
+      'boxer2_uppercut'
+    ].includes(p2Anim);
+    if (!p2Punching) {
       if (this.blockKey2.isDown) {
         this.player2.anims.play('boxer2_block', true);
       } else if (this.WASD.left.isDown) {
