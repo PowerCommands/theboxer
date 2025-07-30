@@ -22,6 +22,7 @@ export class Boxer {
       `${this.prefix}_hurt2`,
       `${this.prefix}_dizzy`,
       `${this.prefix}_ko`,
+      `${this.prefix}_win`,
     ];
 
     if (actions.turnLeft) {
@@ -46,6 +47,10 @@ export class Boxer {
     }
     if (actions.dizzy) {
       this.sprite.anims.play(`${this.prefix}_dizzy`, true);
+      return;
+    }
+    if (actions.win) {
+      this.sprite.anims.play(`${this.prefix}_win`, true);
       return;
     }
     if (actions.idle) {

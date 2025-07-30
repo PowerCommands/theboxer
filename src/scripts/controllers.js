@@ -25,6 +25,7 @@ export class KeyboardController {
       dizzy: Phaser.Input.Keyboard.JustDown(this.keys.dizzy),
       idle: Phaser.Input.Keyboard.JustDown(this.keys.idle),
       ko: Phaser.Input.Keyboard.JustDown(this.keys.ko),
+      win: Phaser.Input.Keyboard.JustDown(this.keys.win),
     };
   }
 }
