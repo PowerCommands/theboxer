@@ -5,3 +5,26 @@ Each boxer is controlled by a controller object. The current setup uses a
 keyboard controller for both boxers so you can play locally with two sets of
 keys. Because the behaviour is abstracted through controllers it is trivial to
 swap a boxer to a programmatic or AI driven controller in the future.
+
+## Keyboard Controls
+
+The table below lists the keys used to control each boxer.
+
+| Action | Player 1 | Player 2 |
+|-------|---------|---------|
+| Move left | Left Arrow | `A` |
+| Move right | Right Arrow | `D` |
+| Move up | Up Arrow | `W` |
+| Move down | Down Arrow | `S` |
+| Turn left | `Shift` + Left Arrow | `Shift` + `A` |
+| Turn right | `Shift` + Right Arrow | `Shift` + `D` |
+| Block | Numpad 5 | `X` |
+| Jab right | Page Down | `E` |
+| Jab left | Delete | `Q` |
+| Uppercut | Numpad 0 | `F` |
+| Hurt 1 | `1` | `4` |
+| Hurt 2 | `2` | `5` |
+| Dizzy | `3` | `6` |
+| Idle | `7` | `8` |
+| KO | Numpad 8 | `G` |
+| Win | `0` | `+` |

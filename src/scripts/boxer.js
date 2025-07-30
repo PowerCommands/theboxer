@@ -17,10 +17,12 @@ export class Boxer {
     const move = (this.speed * delta) / 1000;
     const actions = this.controller.getActions();
     const current = this.sprite.anims.currentAnim?.key || '';
-    const hurtingStates = [
+    const injuredStates = [
       `${this.prefix}_hurt1`,
       `${this.prefix}_hurt2`,
       `${this.prefix}_dizzy`,
+    ];
+    const lockedStates = [
       `${this.prefix}_ko`,
       `${this.prefix}_win`,
     ];
@@ -37,48 +39,52 @@ export class Boxer {
       this.sprite.play(`${this.prefix}_ko`);
       return;
     }
-    if (actions.hurt1) {
-      this.sprite.anims.play(`${this.prefix}_hurt1`, true);
-      return;
-    }
-    if (actions.hurt2) {
-      this.sprite.anims.play(`${this.prefix}_hurt2`, true);
-      return;
-    }
-    if (actions.dizzy) {
-      this.sprite.anims.play(`${this.prefix}_dizzy`, true);
-      return;
-    }
     if (actions.win) {
       this.sprite.anims.play(`${this.prefix}_win`, true);
       return;
     }
-    if (actions.idle) {
+    if (actions.hurt1) {
+      this.sprite.anims.play(`${this.prefix}_hurt1`, true);
+    } else if (actions.hurt2) {
+      this.sprite.anims.play(`${this.prefix}_hurt2`, true);
+    } else if (actions.dizzy) {
+      this.sprite.anims.play(`${this.prefix}_dizzy`, true);
+    } else if (actions.idle) {
       this.sprite.anims.play(`${this.prefix}_idle`, true);
-      return;
     }
-    if (hurtingStates.includes(current)) {
+
+    if (lockedStates.includes(current)) {
       return;
     }
 
-    if (actions.block) {
-      this.sprite.anims.play(`${this.prefix}_block`, true);
-    } else if (actions.jabRight) {
-      this.playOnce(`${this.prefix}_jabRight`);
-    } else if (actions.jabLeft) {
-      this.playOnce(`${this.prefix}_jabLeft`);
-    } else if (actions.uppercut) {
-      this.playOnce(`${this.prefix}_uppercut`);
-    } else if (actions.moveLeft) {
-      this.sprite.x -= move;
-      const anim = this.facingRight ? 'backward' : 'forward';
-      this.sprite.anims.play(`${this.prefix}_${anim}`, true);
-    } else if (actions.moveRight) {
-      this.sprite.x += move;
-      const anim = this.facingRight ? 'forward' : 'backward';
-      this.sprite.anims.play(`${this.prefix}_${anim}`, true);
+    const isInjured = injuredStates.includes(current);
+
+    if (!isInjured) {
+      if (actions.block) {
+        this.sprite.anims.play(`${this.prefix}_block`, true);
+      } else if (actions.jabRight) {
+        this.playOnce(`${this.prefix}_jabRight`);
+      } else if (actions.jabLeft) {
+        this.playOnce(`${this.prefix}_jabLeft`);
+      } else if (actions.uppercut) {
+        this.playOnce(`${this.prefix}_uppercut`);
+      } else if (actions.moveLeft) {
+        this.sprite.x -= move;
+        const anim = this.facingRight ? 'backward' : 'forward';
+        this.sprite.anims.play(`${this.prefix}_${anim}`, true);
+      } else if (actions.moveRight) {
+        this.sprite.x += move;
+        const anim = this.facingRight ? 'forward' : 'backward';
+        this.sprite.anims.play(`${this.prefix}_${anim}`, true);
+      } else {
+        this.sprite.anims.play(`${this.prefix}_idle`, true);
+      }
     } else {
-      this.sprite.anims.play(`${this.prefix}_idle`, true);
+      if (actions.moveLeft) {
+        this.sprite.x -= move;
+      } else if (actions.moveRight) {
+        this.sprite.x += move;
+      }
     }
 
     if (actions.moveUp) {
