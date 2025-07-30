@@ -57,12 +57,16 @@ class BootScene extends Phaser.Scene {
         `assets/5-Hurt/2-HurtAlt/__Boxer2_Hurt2_${frame}.png`
       );
       this.load.image(
-        `dizzy_${frame}`,
-        `assets/5-Hurt/3-Dizzy/__Boxer2_Dizzy_${frame}.png`
-      );
-      this.load.image(
         `ko_${frame}`,
         `assets/6-KO/__Boxer2_KO_${frame}.png`
+      );
+    }
+    // Dizzy animation uses 10 frames
+    for (let i = 0; i < 10; i++) {
+      const frame = i.toString().padStart(3, '0');
+      this.load.image(
+        `dizzy_${frame}`,
+        `assets/5-Hurt/3-Dizzy/__Boxer2_Dizzy_${frame}.png`
       );
     }
     // Load win animation frames (4 frames)

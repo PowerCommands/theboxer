@@ -43,8 +43,11 @@ export class GameScene extends Phaser.Scene {
       uppercutFrames.push({ key: `uppercut_${frame}` });
       hurt1Frames.push({ key: `hurt1_${frame}` });
       hurt2Frames.push({ key: `hurt2_${frame}` });
-      dizzyFrames.push({ key: `dizzy_${frame}` });
       koFrames.push({ key: `ko_${frame}` });
+    }
+    for (let i = 0; i < 10; i++) {
+      const frame = i.toString().padStart(3, '0');
+      dizzyFrames.push({ key: `dizzy_${frame}` });
     }
     for (let i = 0; i < 4; i++) {
       const frame = i.toString().padStart(3, '0');
@@ -102,19 +105,19 @@ export class GameScene extends Phaser.Scene {
       key: 'boxer1_hurt1',
       frames: hurt1Frames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: 'boxer1_hurt2',
       frames: hurt2Frames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: 'boxer1_dizzy',
       frames: dizzyFrames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: 'boxer1_ko',
@@ -182,19 +185,19 @@ export class GameScene extends Phaser.Scene {
       key: 'boxer2_hurt1',
       frames: hurt1Frames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: 'boxer2_hurt2',
       frames: hurt2Frames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: 'boxer2_dizzy',
       frames: dizzyFrames,
       frameRate: 10,
-      repeat: -1
+      repeat: 0
     });
     this.anims.create({
       key: 'boxer2_ko',
