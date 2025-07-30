@@ -77,14 +77,9 @@ class BootScene extends Phaser.Scene {
         `assets/7-Win/__Boxer2_win_${frame}.png`
       );
     }
-    this.load.spritesheet('boxer1', 'assets/boxer1.png', {
-      frameWidth: 64,
-      frameHeight: 64
-    });
-    this.load.spritesheet('boxer2', 'assets/boxer2.png', {
-      frameWidth: 64,
-      frameHeight: 64
-    });
+    // Legacy punch sprite sheets were removed from the project. The
+    // animations now rely solely on the individual frame images loaded
+    // above, so skip loading these missing assets.
   }
 
   create() {

@@ -60,12 +60,6 @@ export class GameScene extends Phaser.Scene {
       repeat: -1
     });
     this.anims.create({
-      key: 'boxer1_punch',
-      frames: this.anims.generateFrameNumbers('boxer1', { start: 1, end: 3 }),
-      frameRate: 8,
-      repeat: 0
-    });
-    this.anims.create({
       key: 'boxer1_jabRight',
       frames: jabRightFrames,
       frameRate: 10,
@@ -138,12 +132,6 @@ export class GameScene extends Phaser.Scene {
       frames: idleFrames,
       frameRate: 10,
       repeat: -1
-    });
-    this.anims.create({
-      key: 'boxer2_punch',
-      frames: this.anims.generateFrameNumbers('boxer2', { start: 1, end: 3 }),
-      frameRate: 8,
-      repeat: 0
     });
     this.anims.create({
       key: 'boxer2_jabRight',
