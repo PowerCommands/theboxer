@@ -21,6 +21,11 @@ export class Boxer {
       `${this.prefix}_hurt2`,
       `${this.prefix}_dizzy`,
     ];
+    const attackStates = [
+      `${this.prefix}_jabRight`,
+      `${this.prefix}_jabLeft`,
+      `${this.prefix}_uppercut`,
+    ];
     const lockedStates = [
       `${this.prefix}_ko`,
       `${this.prefix}_win`,
@@ -59,8 +64,9 @@ export class Boxer {
     }
 
     const isInjured = injuredStates.includes(current);
+    const isAttacking = attackStates.includes(current);
 
-    if (!isInjured) {
+    if (!isInjured && !isAttacking) {
       if (actions.block) {
         this.sprite.anims.play(`${this.prefix}_block`, true);
       } else if (actions.jabRight) {
