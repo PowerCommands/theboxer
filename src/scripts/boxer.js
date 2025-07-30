@@ -8,12 +8,22 @@ export class Boxer {
     this.speed = 200;
     this.sprite.setScale(400 / this.sprite.height);
     // boxer1 faces right, boxer2 faces left
-    if (prefix === 'boxer1') this.sprite.setFlipX(true);
+    this.facingRight = prefix === 'boxer1';
+    this.sprite.setFlipX(this.facingRight);
+    if (prefix === 'boxer2') this.sprite.setTint(0xbb7744);
   }
 
   update(delta) {
     const move = (this.speed * delta) / 1000;
     const actions = this.controller.getActions();
+
+    if (actions.turnLeft) {
+      this.facingRight = false;
+      this.sprite.setFlipX(false);
+    } else if (actions.turnRight) {
+      this.facingRight = true;
+      this.sprite.setFlipX(true);
+    }
 
     if (actions.block) {
       this.sprite.anims.play(`${this.prefix}_block`, true);
@@ -25,11 +35,11 @@ export class Boxer {
       this.playOnce(`${this.prefix}_uppercut`);
     } else if (actions.moveLeft) {
       this.sprite.x -= move;
-      const anim = this.prefix === 'boxer1' ? 'backward' : 'forward';
+      const anim = this.facingRight ? 'backward' : 'forward';
       this.sprite.anims.play(`${this.prefix}_${anim}`, true);
     } else if (actions.moveRight) {
       this.sprite.x += move;
-      const anim = this.prefix === 'boxer1' ? 'forward' : 'backward';
+      const anim = this.facingRight ? 'forward' : 'backward';
       this.sprite.anims.play(`${this.prefix}_${anim}`, true);
     } else {
       this.sprite.anims.play(`${this.prefix}_idle`, true);

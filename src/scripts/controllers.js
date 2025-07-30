@@ -5,15 +5,21 @@ export class KeyboardController {
   }
 
   getActions() {
+    const shift = this.cursors.shift.isDown;
+    const leftKey = this.keys.left || this.cursors.left;
+    const rightKey = this.keys.right || this.cursors.right;
+
     return {
-      moveLeft: this.cursors.left.isDown || this.keys.left?.isDown,
-      moveRight: this.cursors.right.isDown || this.keys.right?.isDown,
+      moveLeft: leftKey.isDown && !shift,
+      moveRight: rightKey.isDown && !shift,
       moveUp: this.cursors.up.isDown || this.keys.up?.isDown,
       moveDown: this.cursors.down.isDown || this.keys.down?.isDown,
       block: this.keys.block?.isDown,
       jabRight: Phaser.Input.Keyboard.JustDown(this.keys.jabRight),
       jabLeft: Phaser.Input.Keyboard.JustDown(this.keys.jabLeft),
       uppercut: Phaser.Input.Keyboard.JustDown(this.keys.uppercut),
+      turnLeft: shift && Phaser.Input.Keyboard.JustDown(leftKey),
+      turnRight: shift && Phaser.Input.Keyboard.JustDown(rightKey),
     };
   }
 }
@@ -37,6 +43,8 @@ export class RandomAIController {
         jabRight: Math.random() < 0.05,
         jabLeft: Math.random() < 0.05,
         uppercut: Math.random() < 0.02,
+        turnLeft: false,
+        turnRight: false,
       };
       this.current = actions;
     }
