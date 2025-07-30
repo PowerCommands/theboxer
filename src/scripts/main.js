@@ -60,6 +60,10 @@ class BootScene extends Phaser.Scene {
         `dizzy_${frame}`,
         `assets/5-Hurt/3-Dizzy/__Boxer2_Dizzy_${frame}.png`
       );
+      this.load.image(
+        `ko_${frame}`,
+        `assets/6-KO/__Boxer2_KO_${frame}.png`
+      );
     }
     this.load.spritesheet('boxer1', 'assets/boxer1.png', {
       frameWidth: 64,
