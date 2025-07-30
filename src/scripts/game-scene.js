@@ -29,6 +29,7 @@ export class GameScene extends Phaser.Scene {
     const hurt2Frames = [];
     const dizzyFrames = [];
     const koFrames = [];
+    const winFrames = [];
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
       forwardFrames.push({ key: `forward_${frame}` });
@@ -44,6 +45,10 @@ export class GameScene extends Phaser.Scene {
       hurt2Frames.push({ key: `hurt2_${frame}` });
       dizzyFrames.push({ key: `dizzy_${frame}` });
       koFrames.push({ key: `ko_${frame}` });
+    }
+    for (let i = 0; i < 4; i++) {
+      const frame = i.toString().padStart(3, '0');
+      winFrames.push({ key: `win_${frame}` });
     }
     this.anims.create({
       key: 'boxer1_idle',
@@ -116,6 +121,12 @@ export class GameScene extends Phaser.Scene {
       frames: koFrames,
       frameRate: 10,
       repeat: 0
+    });
+    this.anims.create({
+      key: 'boxer1_win',
+      frames: winFrames,
+      frameRate: 10,
+      repeat: -1
     });
 
     // define animations for boxer2
@@ -191,6 +202,12 @@ export class GameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: 0
     });
+    this.anims.create({
+      key: 'boxer2_win',
+      frames: winFrames,
+      frameRate: 10,
+      repeat: -1
+    });
 
     // controllers
     const controller1 = new KeyboardController(this, {
@@ -203,6 +220,7 @@ export class GameScene extends Phaser.Scene {
       dizzy: Phaser.Input.Keyboard.KeyCodes.THREE,
       idle: Phaser.Input.Keyboard.KeyCodes.SEVEN,
       ko: Phaser.Input.Keyboard.KeyCodes.NUMPAD_EIGHT,
+      win: Phaser.Input.Keyboard.KeyCodes.ZERO,
     });
     const controller2 = new KeyboardController(this, {
       left: Phaser.Input.Keyboard.KeyCodes.A,
@@ -218,6 +236,7 @@ export class GameScene extends Phaser.Scene {
       dizzy: Phaser.Input.Keyboard.KeyCodes.SIX,
       idle: Phaser.Input.Keyboard.KeyCodes.EIGHT,
       ko: Phaser.Input.Keyboard.KeyCodes.G,
+      win: Phaser.Input.Keyboard.KeyCodes.PLUS,
     });
 
     this.player1 = new Boxer(this, 200, 400, 'boxer1', controller1);

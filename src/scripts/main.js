@@ -65,6 +65,14 @@ class BootScene extends Phaser.Scene {
         `assets/6-KO/__Boxer2_KO_${frame}.png`
       );
     }
+    // Load win animation frames (4 frames)
+    for (let i = 0; i < 4; i++) {
+      const frame = i.toString().padStart(3, '0');
+      this.load.image(
+        `win_${frame}`,
+        `assets/7-Win/__Boxer2_win_${frame}.png`
+      );
+    }
     this.load.spritesheet('boxer1', 'assets/boxer1.png', {
       frameWidth: 64,
       frameHeight: 64
