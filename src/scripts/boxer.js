@@ -48,7 +48,7 @@ export class Boxer {
     }
 
     if (this.isKO) {
-      this.sprite.play(`${this.prefix}_ko`);
+      this.sprite.anims.play(`${this.prefix}_ko`, true);
       return;
     }
     if (this.isWinner) {

@@ -237,8 +237,16 @@ export class MatchScene extends Phaser.Scene {
 
     const centerX = width / 2;
     const centerY = height / 2;
-    this.player1Start = { x: centerX - 200, y: centerY + 100 };
-    this.player2Start = { x: centerX + 200, y: centerY + 100 };
+    const ringWidth = 800;
+    const margin = 50;
+    this.player1Start = {
+      x: centerX - ringWidth / 2 + margin,
+      y: centerY + 100,
+    };
+    this.player2Start = {
+      x: centerX + ringWidth / 2 - margin,
+      y: centerY + 100,
+    };
     this.player1 = new Boxer(
       this,
       this.player1Start.x,
@@ -255,6 +263,8 @@ export class MatchScene extends Phaser.Scene {
       controller2,
       data?.boxer2
     );
+
+    this.resetBoxers();
 
     this.ui = this.scene.get('OverlayUI');
     if (this.ui) {
@@ -310,12 +320,20 @@ export class MatchScene extends Phaser.Scene {
     }
   }
 
-  endRound(round) {
-    if (this.matchOver) return;
-    this.player1.sprite.anims.play('boxer1_idle');
-    this.player2.sprite.anims.play('boxer2_idle');
+  resetBoxers() {
     this.player1.sprite.setPosition(this.player1Start.x, this.player1Start.y);
     this.player2.sprite.setPosition(this.player2Start.x, this.player2Start.y);
+    this.player1.facingRight = true;
+    this.player2.facingRight = false;
+    this.player1.sprite.setFlipX(true);
+    this.player2.sprite.setFlipX(false);
+    this.player1.sprite.anims.play('boxer1_idle');
+    this.player2.sprite.anims.play('boxer2_idle');
+  }
+
+  endRound(round) {
+    if (this.matchOver) return;
+    this.resetBoxers();
     if (this.ui) {
       this.ui.startRound(180, round + 1);
     }
@@ -325,6 +343,8 @@ export class MatchScene extends Phaser.Scene {
     if (this.matchOver) return;
     this.matchOver = true;
     const winner = loser === this.player1 ? this.player2 : this.player1;
+    loser.isKO = true;
+    loser.sprite.anims.play(`${loser.prefix}_ko`);
     winner.isWinner = true;
     winner.sprite.play(`${winner.prefix}_win`);
     if (this.ui) {
