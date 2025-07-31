@@ -14,7 +14,7 @@ export class MatchScene extends Phaser.Scene {
   create(data) {
     console.log('MatchScene: create started');
 
-    this.hitLimit = 320; // max distance for a hit to register
+    this.hitLimit = 280; // max distance for a hit to register
 
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
@@ -119,11 +119,19 @@ export class MatchScene extends Phaser.Scene {
     if (!attacker.isAttacking() || attacker.hasHit) return;
     if (defender.isBlocking()) return;
     if (!this.isFacingCorrectly(attacker, defender)) return;
-    if (!this.isInRange(attacker, defender)) return;
+    const distance = Phaser.Math.Distance.Between(
+      attacker.sprite.x,
+      attacker.sprite.y,
+      defender.sprite.x,
+      defender.sprite.y
+    );
+    if (distance > this.hitLimit) return;
     if (!this.isColliding(attacker, defender)) return;
 
     attacker.hasHit = true;
-    this.healthManager.damage(defenderKey, 0.05 * attacker.power);
+    let damage = 0.05 * attacker.power;
+    if (distance >= 200) damage *= 0.5;
+    this.healthManager.damage(defenderKey, damage);
   }
 
   isFacingCorrectly(attacker, defender) {
