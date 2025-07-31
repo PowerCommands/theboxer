@@ -54,6 +54,7 @@ export class Boxer {
     this.isWinner = false;
     this.baseStrategy = controller.currentName;
     this.recoveryTimer = 0;
+    this.lowStaminaMode = false;
   }
 
   getCurrentState() {
@@ -136,7 +137,40 @@ export class Boxer {
 
     this.updateStrategy(opponent);
 
-    const actions = this.controller.getActions(this, opponent);
+    let actions = this.controller.getActions(this, opponent);
+
+    if (this.lowStaminaMode === undefined) this.lowStaminaMode = false;
+    if (this.stamina < 0.31) {
+      this.lowStaminaMode = true;
+    } else if (this.lowStaminaMode && this.stamina > 0.3) {
+      this.lowStaminaMode = false;
+    }
+    if (this.lowStaminaMode) {
+      actions = {
+        moveLeft: false,
+        moveRight: false,
+        moveUp: false,
+        moveDown: false,
+        block: false,
+        jabRight: false,
+        jabLeft: false,
+        uppercut: false,
+        turnLeft: false,
+        turnRight: false,
+        hurt1: false,
+        hurt2: false,
+        dizzy: false,
+        idle: false,
+        ko: false,
+        win: false,
+      };
+      if (Math.random() < 0.5) {
+        actions.block = true;
+      } else {
+        if (this.facingRight) actions.moveLeft = true;
+        else actions.moveRight = true;
+      }
+    }
 
     this.applyRecovery(delta, actions);
 
@@ -190,6 +224,11 @@ export class Boxer {
 
     if (actions.moveUp) this.sprite.y -= move;
     if (actions.moveDown) this.sprite.y += move;
+
+    const movingForward =
+      (actions.moveRight && this.facingRight) ||
+      (actions.moveLeft && !this.facingRight);
+    if (movingForward) this.adjustStamina(-0.01);
 
     this.applyBounds();
   }
