@@ -166,7 +166,7 @@ export class MatchScene extends Phaser.Scene {
     loser.sprite.anims.play(animKey(loser.prefix, 'ko'));
     winner.isWinner = true;
     winner.sprite.play(animKey(winner.prefix, 'win'));
-    this.roundTimer.stop();
+    this.roundTimer.pause();
     eventBus.emit('match-winner', winner.stats?.name || winner.prefix);
   }
 

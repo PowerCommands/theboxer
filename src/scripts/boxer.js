@@ -206,7 +206,9 @@ export class Boxer {
     for (const h of handlers) {
       if (h.check()) {
         h.action();
-        this.applyMovement(actions, move);
+        if (!this.isKO && !this.isWinner) {
+          this.applyMovement(actions, move);
+        }
         this.applyBounds();
         return;
       }
