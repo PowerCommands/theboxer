@@ -102,7 +102,8 @@ export class MatchScene extends Phaser.Scene {
     if (distance > this.hitLimit) return;
     if (!this.isColliding(attacker, defender)) return;
     if (defender.isBlocking()) {
-      attacker.adjustStats(-0.2);
+      attacker.adjustPower(-0.1);
+      attacker.adjustStamina(-0.1);
       return;
     }
 

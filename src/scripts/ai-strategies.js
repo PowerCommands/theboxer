@@ -32,6 +32,13 @@ export class OffensiveStrategy {
       } else {
         actions.moveLeft = true;
       }
+    } else if (Math.random() < 0.1) {
+      // back off occasionally to recover
+      if (boxer.sprite.x < opponent.sprite.x) {
+        actions.moveLeft = true;
+      } else {
+        actions.moveRight = true;
+      }
     }
     actions.block = Math.random() < 0.05;
     actions.jabRight = Math.random() < 0.4;
@@ -51,6 +58,13 @@ export class DefensiveStrategy {
         actions.moveLeft = true;
       } else {
         actions.moveRight = true;
+      }
+    } else if (Math.random() < 0.2) {
+      // step forward occasionally
+      if (boxer.sprite.x < opponent.sprite.x) {
+        actions.moveRight = true;
+      } else {
+        actions.moveLeft = true;
       }
     }
     actions.block = Math.random() < 0.6;
@@ -75,6 +89,13 @@ export class NeutralStrategy {
       }
     } else if (distance < retreatDistance) {
       if (boxer.sprite.x < opponent.sprite.x) {
+        actions.moveLeft = true;
+      } else {
+        actions.moveRight = true;
+      }
+    } else if (Math.random() < 0.15) {
+      // random small steps
+      if (Math.random() < 0.5) {
         actions.moveLeft = true;
       } else {
         actions.moveRight = true;
