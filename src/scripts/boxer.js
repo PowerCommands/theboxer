@@ -1,4 +1,5 @@
 import { BOXER_PREFIXES, animKey } from './helpers.js';
+import { eventBus } from './event-bus.js';
 
 export const States = {
   ATTACK: 'attack',
@@ -37,7 +38,9 @@ export class Boxer {
     this.stats = stats;
     this.speed = 200 * (stats.speed || 1);
     this.power = stats.power || 1;
+    this.maxPower = this.power;
     this.stamina = stats.stamina || 1;
+    this.maxStamina = this.stamina;
     this.maxHealth = stats.health || 1;
     this.health = this.maxHealth;
     // slightly smaller boxer sprites
@@ -193,6 +196,7 @@ export class Boxer {
         key === animKey(this.prefix, 'uppercut')
       ) {
         this.hasHit = false;
+        this.adjustStats(-0.2);
       }
       this.sprite.once('animationcomplete', () => {
         this.sprite.play(animKey(this.prefix, 'idle'));
@@ -212,6 +216,25 @@ export class Boxer {
   isBlocking() {
     const key = this.sprite.anims.currentAnim?.key;
     return key === animKey(this.prefix, 'block');
+  }
+
+  adjustStats(delta) {
+    this.power = Phaser.Math.Clamp(this.power + delta, 0, this.maxPower);
+    this.stamina = Phaser.Math.Clamp(this.stamina + delta, 0, this.maxStamina);
+    const player = this.prefix === BOXER_PREFIXES.P1 ? 'p1' : 'p2';
+    eventBus.emit('power-changed', { player, value: this.power / this.maxPower });
+    eventBus.emit('stamina-changed', {
+      player,
+      value: this.stamina / this.maxStamina,
+    });
+    if (this.stamina < 0.51) {
+      const name = this.controller.currentName;
+      if (name === 'offensive') {
+        this.controller.setStrategy('neutral');
+      } else if (name === 'neutral') {
+        this.controller.setStrategy('defensive');
+      }
+    }
   }
 
   takeDamage(amount) {

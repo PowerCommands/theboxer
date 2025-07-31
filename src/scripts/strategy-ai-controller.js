@@ -1,9 +1,15 @@
-import { OffensiveStrategy, DefensiveStrategy, createBaseActions } from './ai-strategies.js';
+import {
+  OffensiveStrategy,
+  DefensiveStrategy,
+  NeutralStrategy,
+  createBaseActions,
+} from './ai-strategies.js';
 
 export class StrategyAIController {
   constructor(initial = 'offensive') {
     this.strategies = {
       offensive: new OffensiveStrategy(),
+      neutral: new NeutralStrategy(),
       defensive: new DefensiveStrategy(),
     };
     this.currentName = initial in this.strategies ? initial : 'offensive';

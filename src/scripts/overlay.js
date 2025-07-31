@@ -60,6 +60,12 @@ export class OverlayUI extends Phaser.Scene {
     eventBus.on('health-changed', ({ player, value }) => {
       this.setBarValue(this.bars[player].health, value);
     });
+    eventBus.on('stamina-changed', ({ player, value }) => {
+      this.setBarValue(this.bars[player].stamina, value);
+    });
+    eventBus.on('power-changed', ({ player, value }) => {
+      this.setBarValue(this.bars[player].power, value);
+    });
     eventBus.on('match-winner', (name) => this.announceWinner(name));
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -67,6 +73,8 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('round-started');
       eventBus.off('set-names');
       eventBus.off('health-changed');
+      eventBus.off('stamina-changed');
+      eventBus.off('power-changed');
       eventBus.off('match-winner');
     });
   }
