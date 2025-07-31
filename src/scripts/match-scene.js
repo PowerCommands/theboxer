@@ -102,12 +102,16 @@ export class MatchScene extends Phaser.Scene {
     if (distance > this.hitLimit) return;
     if (!this.isColliding(attacker, defender)) return;
     attacker.hasHit = true;
+    const current = attacker.sprite.anims.currentAnim?.key;
+    const isUppercut = current === animKey(attacker.prefix, 'uppercut');
     let damage = 0.05 * attacker.power;
+    if (isUppercut) damage *= 2;
     if (distance >= 200) damage *= 0.5;
 
     if (defender.isBlocking()) {
-      attacker.adjustPower(-0.06);
-      attacker.adjustStamina(-0.06);
+      const penalty = isUppercut ? 0.12 : 0.06;
+      attacker.adjustPower(-penalty);
+      attacker.adjustStamina(-penalty);
       damage *= 0.5;
     }
 
