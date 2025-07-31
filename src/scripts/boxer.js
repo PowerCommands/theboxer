@@ -143,7 +143,7 @@ export class Boxer {
     if (this.lowStaminaMode === undefined) this.lowStaminaMode = false;
     if (this.stamina < 0.31) {
       this.lowStaminaMode = true;
-    } else if (this.lowStaminaMode && this.stamina > 0.3) {
+    } else if (this.lowStaminaMode && this.stamina > 0.5) {
       this.lowStaminaMode = false;
     }
     if (this.lowStaminaMode) {
@@ -259,7 +259,7 @@ export class Boxer {
       ) {
         this.hasHit = false;
         this.adjustPower(-0.03);
-        this.adjustStamina(-0.03);
+        this.adjustStamina(-0.015);
       }
       this.sprite.once('animationcomplete', () => {
         this.sprite.play(animKey(this.prefix, 'idle'));
