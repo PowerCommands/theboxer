@@ -1,9 +1,8 @@
+import { eventBus } from './event-bus.js';
+
 export class OverlayUI extends Phaser.Scene {
   constructor() {
     super('OverlayUI');
-    this.remainingTime = 0; // in seconds
-    this.roundNumber = 0;
-    this.pendingStart = false;
     this.pendingNames = ['', ''];
   }
 
@@ -55,25 +54,21 @@ export class OverlayUI extends Phaser.Scene {
     this.setBarValue(this.bars.p2.power, 1);
     this.setBarValue(this.bars.p2.health, 1);
 
-    // update timer once per second
-    this.time.addEvent({
-      delay: 1000,
-      loop: true,
-      callback: () => {
-        if (this.remainingTime > 0) {
-          this.remainingTime -= 1;
-          this.updateTimerText();
-          if (this.remainingTime === 0) {
-            this.events.emit('round-ended', this.roundNumber);
-          }
-        }
-      },
+    eventBus.on('timer-tick', (seconds) => this.updateTimerText(seconds));
+    eventBus.on('round-started', (round) => this.showRound(round));
+    eventBus.on('set-names', ({ p1, p2 }) => this.setNames(p1, p2));
+    eventBus.on('health-changed', ({ player, value }) => {
+      this.setBarValue(this.bars[player].health, value);
     });
+    eventBus.on('match-winner', (name) => this.announceWinner(name));
 
-    if (this.pendingStart) {
-      this.startRound(this.remainingTime, this.roundNumber);
-      this.pendingStart = false;
-    }
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      eventBus.off('timer-tick');
+      eventBus.off('round-started');
+      eventBus.off('set-names');
+      eventBus.off('health-changed');
+      eventBus.off('match-winner');
+    });
   }
 
   createBar(x, y, width, height, color) {
@@ -87,24 +82,18 @@ export class OverlayUI extends Phaser.Scene {
     bar.fill.width = w;
   }
 
-  updateTimerText() {
+  updateTimerText(seconds) {
     if (!this.timerText) return;
-    const minutes = Math.floor(this.remainingTime / 60);
-    const seconds = this.remainingTime % 60;
-    this.timerText.setText(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+    const minutes = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    this.timerText.setText(`${minutes}:${s.toString().padStart(2, '0')}`);
   }
 
-  startRound(seconds, number) {
-    this.remainingTime = seconds;
-    this.roundNumber = number;
-    if (!this.roundText) {
-      this.pendingStart = true;
-      return;
-    }
-    this.updateTimerText();
+  showRound(number) {
+    if (!this.roundText) return;
     this.roundText.setText(`Round ${number}`);
     this.time.delayedCall(2000, () => {
-      this.roundText.setText('');
+      if (this.roundText) this.roundText.setText('');
     });
   }
 
@@ -117,8 +106,7 @@ export class OverlayUI extends Phaser.Scene {
   }
 
   stopClock() {
-    this.remainingTime = 0;
-    this.updateTimerText();
+    this.updateTimerText(0);
   }
 
   announceWinner(name) {

@@ -1,6 +1,9 @@
 import { Boxer } from './boxer.js';
 import { KeyboardController } from './controllers.js';
 import { createBoxerAnimations } from './animation-factory.js';
+import { eventBus } from './event-bus.js';
+import { RoundTimer } from './round-timer.js';
+import { HealthManager } from './health-manager.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -84,14 +87,18 @@ export class MatchScene extends Phaser.Scene {
 
     this.resetBoxers();
 
-    this.ui = this.scene.get('OverlayUI');
-    if (this.ui) {
-      this.ui.setNames(data?.boxer1?.name || '', data?.boxer2?.name || '');
-      this.ui.events.on('round-ended', (round) => {
-        this.endRound(round);
-      });
-      this.ui.startRound(180, 1);
-    }
+    this.healthManager = new HealthManager(this.player1, this.player2);
+    this.roundTimer = new RoundTimer(this);
+    eventBus.on('round-ended', (round) => this.endRound(round));
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      eventBus.off('round-ended');
+    });
+
+    eventBus.emit('set-names', {
+      p1: data?.boxer1?.name || '',
+      p2: data?.boxer2?.name || '',
+    });
+    this.roundTimer.start(180, 1);
 
     this.events.on('boxer-ko', (b) => this.handleKO(b));
     this.matchOver = false;
@@ -127,14 +134,12 @@ export class MatchScene extends Phaser.Scene {
 
     const aBounds = attacker.sprite.getBounds();
     const dBounds = defender.sprite.getBounds();
-    if (distance <= this.hitLimit &&
-        Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds)) {
+    if (
+      distance <= this.hitLimit &&
+      Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds)
+    ) {
       attacker.hasHit = true;
-      defender.takeDamage(0.05 * attacker.power);
-      if (this.ui) {
-        const value = defender.health / defender.maxHealth;
-        this.ui.setBarValue(this.ui.bars[defenderKey].health, value);
-      }
+      this.healthManager.damage(defenderKey, 0.05 * attacker.power);
     }
   }
 
@@ -152,9 +157,7 @@ export class MatchScene extends Phaser.Scene {
   endRound(round) {
     if (this.matchOver) return;
     this.resetBoxers();
-    if (this.ui) {
-      this.ui.startRound(180, round + 1);
-    }
+    this.roundTimer.start(180, round + 1);
   }
 
   handleKO(loser) {
@@ -165,9 +168,7 @@ export class MatchScene extends Phaser.Scene {
     loser.sprite.anims.play(`${loser.prefix}_ko`);
     winner.isWinner = true;
     winner.sprite.play(`${winner.prefix}_win`);
-    if (this.ui) {
-      this.ui.stopClock();
-      this.ui.announceWinner(winner.stats?.name || winner.prefix);
-    }
+    this.roundTimer.stop();
+    eventBus.emit('match-winner', winner.stats?.name || winner.prefix);
   }
 }
