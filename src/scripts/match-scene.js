@@ -9,6 +9,8 @@ export class MatchScene extends Phaser.Scene {
   create(data) {
     console.log('MatchScene: create started');
 
+    this.hitLimit = 120; // max distance for a hit to register
+
     // add ring background
     this.add.image(400, 300, 'ring');
 
@@ -200,20 +202,9 @@ export class MatchScene extends Phaser.Scene {
       repeat: -1
     });
 
-    // controllers
+    // controllers (swapped controls so the boxer on the right uses the
+    // right-hand keys)
     const controller1 = new KeyboardController(this, {
-      jabRight: Phaser.Input.Keyboard.KeyCodes.PAGEDOWN,
-      jabLeft: Phaser.Input.Keyboard.KeyCodes.DELETE,
-      uppercut: Phaser.Input.Keyboard.KeyCodes.NUMPAD_ZERO,
-      block: Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE,
-      hurt1: Phaser.Input.Keyboard.KeyCodes.ONE,
-      hurt2: Phaser.Input.Keyboard.KeyCodes.TWO,
-      dizzy: Phaser.Input.Keyboard.KeyCodes.THREE,
-      idle: Phaser.Input.Keyboard.KeyCodes.SEVEN,
-      ko: Phaser.Input.Keyboard.KeyCodes.NUMPAD_EIGHT,
-      win: Phaser.Input.Keyboard.KeyCodes.ZERO,
-    });
-    const controller2 = new KeyboardController(this, {
       left: Phaser.Input.Keyboard.KeyCodes.A,
       right: Phaser.Input.Keyboard.KeyCodes.D,
       up: Phaser.Input.Keyboard.KeyCodes.W,
@@ -228,6 +219,18 @@ export class MatchScene extends Phaser.Scene {
       idle: Phaser.Input.Keyboard.KeyCodes.EIGHT,
       ko: Phaser.Input.Keyboard.KeyCodes.G,
       win: Phaser.Input.Keyboard.KeyCodes.PLUS,
+    });
+    const controller2 = new KeyboardController(this, {
+      jabRight: Phaser.Input.Keyboard.KeyCodes.PAGEDOWN,
+      jabLeft: Phaser.Input.Keyboard.KeyCodes.DELETE,
+      uppercut: Phaser.Input.Keyboard.KeyCodes.NUMPAD_ZERO,
+      block: Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE,
+      hurt1: Phaser.Input.Keyboard.KeyCodes.ONE,
+      hurt2: Phaser.Input.Keyboard.KeyCodes.TWO,
+      dizzy: Phaser.Input.Keyboard.KeyCodes.THREE,
+      idle: Phaser.Input.Keyboard.KeyCodes.SEVEN,
+      ko: Phaser.Input.Keyboard.KeyCodes.NUMPAD_EIGHT,
+      win: Phaser.Input.Keyboard.KeyCodes.ZERO,
     });
 
     this.player1Start = { x: 200, y: 400 };
@@ -251,6 +254,7 @@ export class MatchScene extends Phaser.Scene {
 
     this.ui = this.scene.get('OverlayUI');
     if (this.ui) {
+      this.ui.setNames(data?.boxer1?.name || '', data?.boxer2?.name || '');
       this.ui.events.on('round-ended', () => {
         this.endRound();
       });
@@ -279,9 +283,17 @@ export class MatchScene extends Phaser.Scene {
       return;
     }
 
+    const distance = Phaser.Math.Distance.Between(
+      attacker.sprite.x,
+      attacker.sprite.y,
+      defender.sprite.x,
+      defender.sprite.y
+    );
+
     const aBounds = attacker.sprite.getBounds();
     const dBounds = defender.sprite.getBounds();
-    if (Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds)) {
+    if (distance <= this.hitLimit &&
+        Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds)) {
       attacker.hasHit = true;
       defender.takeDamage(0.05 * attacker.power);
       if (this.ui) {

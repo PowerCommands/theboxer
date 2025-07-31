@@ -34,8 +34,8 @@ export class SelectBoxerScene extends Phaser.Scene {
       this.instruction.setText('Välj Boxer 2');
     } else {
       const [boxer1, boxer2] = this.choice;
-      this.scene.start('Match', { boxer1, boxer2 });
       this.scene.launch('OverlayUI');
+      this.scene.start('Match', { boxer1, boxer2 });
     }
   }
 }
