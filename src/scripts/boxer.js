@@ -126,9 +126,9 @@ export class Boxer {
     this.isWinner = true;
   }
 
-  update(delta) {
+  update(delta, opponent) {
     const move = (this.speed * delta) / 1000;
-    const actions = this.controller.getActions();
+    const actions = this.controller.getActions(this, opponent);
 
     this.handleFacing(actions);
 

@@ -1,5 +1,5 @@
 import { Boxer } from './boxer.js';
-import { KeyboardController } from './controllers.js';
+import { StrategyAIController } from './strategy-ai-controller.js';
 import { createBoxerAnimations } from './animation-factory.js';
 import { eventBus } from './event-bus.js';
 import { RoundTimer } from './round-timer.js';
@@ -25,36 +25,11 @@ export class MatchScene extends Phaser.Scene {
     createBoxerAnimations(this, BOXER_PREFIXES.P1);
     createBoxerAnimations(this, BOXER_PREFIXES.P2);
 
-    // controllers (swapped controls so the boxer on the right uses the
-    // right-hand keys)
-    const controller1 = new KeyboardController(this, {
-      left: Phaser.Input.Keyboard.KeyCodes.A,
-      right: Phaser.Input.Keyboard.KeyCodes.D,
-      up: Phaser.Input.Keyboard.KeyCodes.W,
-      down: Phaser.Input.Keyboard.KeyCodes.S,
-      jabRight: Phaser.Input.Keyboard.KeyCodes.E,
-      jabLeft: Phaser.Input.Keyboard.KeyCodes.Q,
-      uppercut: Phaser.Input.Keyboard.KeyCodes.F,
-      block: Phaser.Input.Keyboard.KeyCodes.X,
-      hurt1: Phaser.Input.Keyboard.KeyCodes.FOUR,
-      hurt2: Phaser.Input.Keyboard.KeyCodes.FIVE,
-      dizzy: Phaser.Input.Keyboard.KeyCodes.SIX,
-      idle: Phaser.Input.Keyboard.KeyCodes.EIGHT,
-      ko: Phaser.Input.Keyboard.KeyCodes.G,
-      win: Phaser.Input.Keyboard.KeyCodes.PLUS,
-    });
-    const controller2 = new KeyboardController(this, {
-      jabRight: Phaser.Input.Keyboard.KeyCodes.PAGEDOWN,
-      jabLeft: Phaser.Input.Keyboard.KeyCodes.DELETE,
-      uppercut: Phaser.Input.Keyboard.KeyCodes.NUMPAD_ZERO,
-      block: Phaser.Input.Keyboard.KeyCodes.NUMPAD_FIVE,
-      hurt1: Phaser.Input.Keyboard.KeyCodes.ONE,
-      hurt2: Phaser.Input.Keyboard.KeyCodes.TWO,
-      dizzy: Phaser.Input.Keyboard.KeyCodes.THREE,
-      idle: Phaser.Input.Keyboard.KeyCodes.SEVEN,
-      ko: Phaser.Input.Keyboard.KeyCodes.NUMPAD_EIGHT,
-      win: Phaser.Input.Keyboard.KeyCodes.ZERO,
-    });
+    // AI controllers using strategy pattern
+    const controller1 = new StrategyAIController('offensive');
+    const controller2 = new StrategyAIController('defensive');
+    // Example of switching strategy during the match:
+    // controller1.setStrategy('defensive');
 
     const centerX = width / 2;
     const centerY = height / 2;
@@ -108,8 +83,8 @@ export class MatchScene extends Phaser.Scene {
   }
 
   update(time, delta) {
-    this.player1.update(delta);
-    this.player2.update(delta);
+    this.player1.update(delta, this.player2);
+    this.player2.update(delta, this.player1);
 
     this.handleHit(this.player1, this.player2, 'p2');
     this.handleHit(this.player2, this.player1, 'p1');
@@ -184,5 +159,10 @@ export class MatchScene extends Phaser.Scene {
     winner.sprite.play(animKey(winner.prefix, 'win'));
     this.roundTimer.stop();
     eventBus.emit('match-winner', winner.stats?.name || winner.prefix);
+  }
+
+  setPlayerStrategy(player, name) {
+    const ctrl = player === 1 ? this.player1.controller : this.player2.controller;
+    if (ctrl && ctrl.setStrategy) ctrl.setStrategy(name);
   }
 }
