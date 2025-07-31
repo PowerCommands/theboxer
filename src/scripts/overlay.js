@@ -1,7 +1,8 @@
 export class OverlayUI extends Phaser.Scene {
   constructor() {
     super('OverlayUI');
-    this.roundTime = 0; // in seconds
+    this.remainingTime = 0; // in seconds
+    this.roundNumber = 0;
   }
 
   create() {
@@ -12,6 +13,12 @@ export class OverlayUI extends Phaser.Scene {
       color: '#ffffff',
     });
     this.timerText.setOrigin(0.5, 0);
+
+    this.roundText = this.add.text(width / 2, 50, '', {
+      font: '24px Arial',
+      color: '#ffffff',
+    });
+    this.roundText.setOrigin(0.5, 0);
 
     // create bars for player1 and player2
     this.bars = {
@@ -40,8 +47,13 @@ export class OverlayUI extends Phaser.Scene {
       delay: 1000,
       loop: true,
       callback: () => {
-        this.roundTime += 1;
-        this.updateTimerText();
+        if (this.remainingTime > 0) {
+          this.remainingTime -= 1;
+          this.updateTimerText();
+          if (this.remainingTime === 0) {
+            this.events.emit('round-ended', this.roundNumber);
+          }
+        }
       },
     });
   }
@@ -58,8 +70,18 @@ export class OverlayUI extends Phaser.Scene {
   }
 
   updateTimerText() {
-    const minutes = Math.floor(this.roundTime / 60);
-    const seconds = this.roundTime % 60;
+    const minutes = Math.floor(this.remainingTime / 60);
+    const seconds = this.remainingTime % 60;
     this.timerText.setText(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+  }
+
+  startRound(seconds, number) {
+    this.remainingTime = seconds;
+    this.roundNumber = number;
+    this.updateTimerText();
+    this.roundText.setText(`Round ${number}`);
+    this.time.delayedCall(2000, () => {
+      this.roundText.setText('');
+    });
   }
 }
