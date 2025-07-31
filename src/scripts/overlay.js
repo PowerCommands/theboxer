@@ -99,10 +99,7 @@ export class OverlayUI extends Phaser.Scene {
 
   showRound(number) {
     if (!this.roundText) return;
-    this.roundText.setText(`Round ${number}`);
-    this.time.delayedCall(2000, () => {
-      if (this.roundText) this.roundText.setText('');
-    });
+    this.roundText.setText(`Rond ${number}`);
   }
 
   setNames(p1, p2) {
