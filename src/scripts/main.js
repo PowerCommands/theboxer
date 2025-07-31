@@ -1,5 +1,5 @@
-// Import GameScene from its own file
-import { GameScene } from './game-scene.js';
+import { MatchScene } from './match-scene.js';
+import { SelectBoxerScene } from './select-boxer-scene.js';
 import { OverlayUI } from './overlay.js';
 
 class BootScene extends Phaser.Scene {
@@ -84,9 +84,8 @@ class BootScene extends Phaser.Scene {
   }
 
   create() {
-    console.log('BootScene: preload complete, switching to GameScene');
-    this.scene.start('Game');
-    this.scene.launch('OverlayUI');
+    console.log('BootScene: preload complete, switching to SelectBoxer');
+    this.scene.start('SelectBoxer');
   }
 }
 
@@ -96,7 +95,7 @@ const config = {
   width: 800,
   height: 600,
   backgroundColor: '#2d2d2d',
-  scene: [BootScene, GameScene, OverlayUI]
+  scene: [BootScene, SelectBoxerScene, MatchScene, OverlayUI]
 };
 
 window.addEventListener('load', () => {

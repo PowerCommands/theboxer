@@ -1,17 +1,20 @@
 export class Boxer {
-  constructor(scene, x, y, prefix, controller) {
+  constructor(scene, x, y, prefix, controller, stats = {}) {
     this.scene = scene;
     this.sprite = scene.add.sprite(x, y, 'idle_000');
     this.sprite.play(`${prefix}_idle`);
     this.prefix = prefix;
     this.controller = controller;
-    this.speed = 200;
+    this.speed = 200 * (stats.speed || 1);
+    this.power = stats.power || 1;
+    this.stamina = stats.stamina || 1;
+    this.maxHealth = stats.health || 1;
+    this.health = this.maxHealth;
     this.sprite.setScale(400 / this.sprite.height);
     // boxer1 faces right, boxer2 faces left
     this.facingRight = prefix === 'boxer1';
     this.sprite.setFlipX(this.facingRight);
     if (prefix === 'boxer2') this.sprite.setTint(0xbb7744);
-    this.health = 1;
     this.hasHit = false;
   }
 
@@ -148,7 +151,7 @@ export class Boxer {
   }
 
   takeDamage(amount) {
-    this.health = Phaser.Math.Clamp(this.health - amount, 0, 1);
+    this.health = Phaser.Math.Clamp(this.health - amount, 0, this.maxHealth);
 
     if (this.health === 0) {
       this.sprite.play(`${this.prefix}_ko`);

@@ -1,13 +1,13 @@
 import { Boxer } from './boxer.js';
 import { KeyboardController } from './controllers.js';
 
-export class GameScene extends Phaser.Scene {
+export class MatchScene extends Phaser.Scene {
   constructor() {
-    super('Game');
+    super('Match');
   }
 
-  create() {
-    console.log('GameScene: create started');
+  create(data) {
+    console.log('MatchScene: create started');
 
     // add ring background
     this.add.image(400, 300, 'ring');
@@ -230,12 +230,34 @@ export class GameScene extends Phaser.Scene {
       win: Phaser.Input.Keyboard.KeyCodes.PLUS,
     });
 
-    this.player1 = new Boxer(this, 200, 400, 'boxer1', controller1);
-    this.player2 = new Boxer(this, 600, 400, 'boxer2', controller2);
+    this.player1Start = { x: 200, y: 400 };
+    this.player2Start = { x: 600, y: 400 };
+    this.player1 = new Boxer(
+      this,
+      this.player1Start.x,
+      this.player1Start.y,
+      'boxer1',
+      controller1,
+      data?.boxer1
+    );
+    this.player2 = new Boxer(
+      this,
+      this.player2Start.x,
+      this.player2Start.y,
+      'boxer2',
+      controller2,
+      data?.boxer2
+    );
 
     this.ui = this.scene.get('OverlayUI');
+    if (this.ui) {
+      this.ui.events.on('round-ended', () => {
+        this.endRound();
+      });
+      this.ui.startRound(180, 1);
+    }
 
-    console.log('GameScene: create complete');
+    console.log('MatchScene: create complete');
   }
 
   update(time, delta) {
@@ -261,10 +283,18 @@ export class GameScene extends Phaser.Scene {
     const dBounds = defender.sprite.getBounds();
     if (Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds)) {
       attacker.hasHit = true;
-      defender.takeDamage(0.1);
+      defender.takeDamage(0.05 * attacker.power);
       if (this.ui) {
-        this.ui.setBarValue(this.ui.bars[defenderKey].health, defender.health);
+        const value = defender.health / defender.maxHealth;
+        this.ui.setBarValue(this.ui.bars[defenderKey].health, value);
       }
     }
+  }
+
+  endRound() {
+    this.player1.sprite.anims.play('boxer1_idle');
+    this.player2.sprite.anims.play('boxer2_idle');
+    this.player1.sprite.setPosition(this.player1Start.x, this.player1Start.y);
+    this.player2.sprite.setPosition(this.player2Start.x, this.player2Start.y);
   }
 }
