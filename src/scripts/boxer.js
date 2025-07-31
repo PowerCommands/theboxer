@@ -55,6 +55,7 @@ export class Boxer {
     this.baseStrategy = controller.currentName;
     this.recoveryTimer = 0;
     this.lowStaminaMode = false;
+    this.blockHoldTime = 0;
   }
 
   getCurrentState() {
@@ -173,6 +174,17 @@ export class Boxer {
     }
 
     this.applyRecovery(delta, actions);
+
+    if (actions.block && this.blockHoldTime <= 0) {
+      this.blockHoldTime = 2000;
+    }
+    if (this.blockHoldTime > 0) {
+      this.blockHoldTime -= delta;
+      actions.block = true;
+      actions.jabRight = false;
+      actions.jabLeft = false;
+      actions.uppercut = false;
+    }
 
     this.handleFacing(actions);
 
@@ -306,7 +318,7 @@ export class Boxer {
 
   applyRecovery(delta, actions) {
     this.recoveryTimer += delta;
-    if (this.recoveryTimer >= 2000) {
+    if (this.recoveryTimer >= 1000) {
       const movingBackward =
         (actions.moveLeft && this.facingRight) ||
         (actions.moveRight && !this.facingRight);
