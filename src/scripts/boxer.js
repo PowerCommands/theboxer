@@ -1,3 +1,5 @@
+import { BOXER_PREFIXES, animKey } from './helpers.js';
+
 export const States = {
   ATTACK: 'attack',
   INJURED: 'injured',
@@ -29,7 +31,7 @@ export class Boxer {
   constructor(scene, x, y, prefix, controller, stats = {}) {
     this.scene = scene;
     this.sprite = scene.add.sprite(x, y, 'idle_000');
-    this.sprite.play(`${prefix}_idle`);
+    this.sprite.play(animKey(prefix, 'idle'));
     this.prefix = prefix;
     this.controller = controller;
     this.stats = stats;
@@ -41,9 +43,9 @@ export class Boxer {
     // slightly smaller boxer sprites
     this.sprite.setScale(350 / this.sprite.height);
     // boxer1 faces right, boxer2 faces left
-    this.facingRight = prefix === 'boxer1';
+    this.facingRight = prefix === BOXER_PREFIXES.P1;
     this.sprite.setFlipX(this.facingRight);
-    if (prefix === 'boxer2') this.sprite.setTint(0xbb7744);
+    if (prefix === BOXER_PREFIXES.P2) this.sprite.setTint(0xbb7744);
     this.hasHit = false;
     this.isKO = false;
     this.isWinner = false;
@@ -61,7 +63,7 @@ export class Boxer {
   playAction(action) {
     const cfg = ACTION_ANIMS[action];
     if (!cfg) return;
-    const key = `${this.prefix}_${cfg.key}`;
+    const key = animKey(this.prefix, cfg.key);
     if (cfg.loop) {
       this.sprite.anims.play(key, true);
     } else {
@@ -114,13 +116,13 @@ export class Boxer {
   }
 
   triggerKO() {
-    this.sprite.play(`${this.prefix}_ko`);
+    this.sprite.play(animKey(this.prefix, 'ko'));
     this.isKO = true;
     this.scene.events.emit('boxer-ko', this);
   }
 
   triggerWin() {
-    this.sprite.anims.play(`${this.prefix}_win`, true);
+    this.sprite.anims.play(animKey(this.prefix, 'win'), true);
     this.isWinner = true;
   }
 
@@ -186,14 +188,14 @@ export class Boxer {
     if (this.sprite.anims.currentAnim?.key !== key) {
       this.sprite.play(key);
       if (
-        key === `${this.prefix}_jabRight` ||
-        key === `${this.prefix}_jabLeft` ||
-        key === `${this.prefix}_uppercut`
+        key === animKey(this.prefix, 'jabRight') ||
+        key === animKey(this.prefix, 'jabLeft') ||
+        key === animKey(this.prefix, 'uppercut')
       ) {
         this.hasHit = false;
       }
       this.sprite.once('animationcomplete', () => {
-        this.sprite.play(`${this.prefix}_idle`);
+        this.sprite.play(animKey(this.prefix, 'idle'));
       });
     }
   }
@@ -201,33 +203,33 @@ export class Boxer {
   isAttacking() {
     const key = this.sprite.anims.currentAnim?.key;
     return (
-      key === `${this.prefix}_jabRight` ||
-      key === `${this.prefix}_jabLeft` ||
-      key === `${this.prefix}_uppercut`
+      key === animKey(this.prefix, 'jabRight') ||
+      key === animKey(this.prefix, 'jabLeft') ||
+      key === animKey(this.prefix, 'uppercut')
     );
   }
 
   isBlocking() {
     const key = this.sprite.anims.currentAnim?.key;
-    return key === `${this.prefix}_block`;
+    return key === animKey(this.prefix, 'block');
   }
 
   takeDamage(amount) {
     this.health = Phaser.Math.Clamp(this.health - amount, 0, this.maxHealth);
 
     if (this.health === 0) {
-      this.sprite.play(`${this.prefix}_ko`);
+      this.sprite.play(animKey(this.prefix, 'ko'));
       this.isKO = true;
       this.scene.events.emit('boxer-ko', this);
       return;
     }
 
     if (this.health < 0.3) {
-      this.playOnce(`${this.prefix}_dizzy`);
+      this.playOnce(animKey(this.prefix, 'dizzy'));
     } else if (this.health < 0.4) {
-      this.playOnce(`${this.prefix}_hurt2`);
+      this.playOnce(animKey(this.prefix, 'hurt2'));
     } else if (this.health < 0.6) {
-      this.playOnce(`${this.prefix}_hurt1`);
+      this.playOnce(animKey(this.prefix, 'hurt1'));
     }
   }
 }
