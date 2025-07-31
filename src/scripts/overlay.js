@@ -115,4 +115,15 @@ export class OverlayUI extends Phaser.Scene {
       this.nameText.p2.setText(p2);
     }
   }
+
+  stopClock() {
+    this.remainingTime = 0;
+    this.updateTimerText();
+  }
+
+  announceWinner(name) {
+    if (this.roundText) {
+      this.roundText.setText(`${name} vinner på KO!`);
+    }
+  }
 }

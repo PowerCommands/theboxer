@@ -5,6 +5,7 @@ export class Boxer {
     this.sprite.play(`${prefix}_idle`);
     this.prefix = prefix;
     this.controller = controller;
+    this.stats = stats;
     this.speed = 200 * (stats.speed || 1);
     this.power = stats.power || 1;
     this.stamina = stats.stamina || 1;
@@ -16,6 +17,8 @@ export class Boxer {
     this.sprite.setFlipX(this.facingRight);
     if (prefix === 'boxer2') this.sprite.setTint(0xbb7744);
     this.hasHit = false;
+    this.isKO = false;
+    this.isWinner = false;
   }
 
   update(delta) {
@@ -44,12 +47,23 @@ export class Boxer {
       this.sprite.setFlipX(true);
     }
 
+    if (this.isKO) {
+      this.sprite.play(`${this.prefix}_ko`);
+      return;
+    }
+    if (this.isWinner) {
+      this.sprite.anims.play(`${this.prefix}_win`, true);
+      return;
+    }
     if (actions.ko) {
       this.sprite.play(`${this.prefix}_ko`);
+      this.isKO = true;
+      this.scene.events.emit('boxer-ko', this);
       return;
     }
     if (actions.win) {
       this.sprite.anims.play(`${this.prefix}_win`, true);
+      this.isWinner = true;
       return;
     }
     if (actions.hurt1) {
@@ -155,6 +169,8 @@ export class Boxer {
 
     if (this.health === 0) {
       this.sprite.play(`${this.prefix}_ko`);
+      this.isKO = true;
+      this.scene.events.emit('boxer-ko', this);
       return;
     }
 
