@@ -175,15 +175,19 @@ export class Boxer {
 
     this.applyRecovery(delta, actions);
 
-    if (actions.block && this.blockHoldTime <= 0) {
-      this.blockHoldTime = 2000;
-    }
-    if (this.blockHoldTime > 0) {
-      this.blockHoldTime -= delta;
-      actions.block = true;
-      actions.jabRight = false;
-      actions.jabLeft = false;
-      actions.uppercut = false;
+    if (this.lowStaminaMode) {
+      if (actions.block && this.blockHoldTime <= 0) {
+        this.blockHoldTime = 1000;
+      }
+      if (this.blockHoldTime > 0) {
+        this.blockHoldTime -= delta;
+        actions.block = true;
+        actions.jabRight = false;
+        actions.jabLeft = false;
+        actions.uppercut = false;
+      }
+    } else {
+      this.blockHoldTime = 0;
     }
 
     this.handleFacing(actions);
@@ -240,7 +244,7 @@ export class Boxer {
     const movingForward =
       (actions.moveRight && this.facingRight) ||
       (actions.moveLeft && !this.facingRight);
-    if (movingForward) this.adjustStamina(-0.01);
+    if (movingForward) this.adjustStamina(-0.001);
 
     this.applyBounds();
   }
