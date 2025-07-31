@@ -36,4 +36,12 @@ export class RoundTimer {
     this.remaining = 0;
     eventBus.emit('timer-tick', this.remaining);
   }
+
+  pause() {
+    if (this.timerEvent) {
+      this.timerEvent.remove();
+      this.timerEvent = null;
+    }
+    eventBus.emit('timer-tick', this.remaining);
+  }
 }
