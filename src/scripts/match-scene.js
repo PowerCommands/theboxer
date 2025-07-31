@@ -4,6 +4,7 @@ import { createBoxerAnimations } from './animation-factory.js';
 import { eventBus } from './event-bus.js';
 import { RoundTimer } from './round-timer.js';
 import { HealthManager } from './health-manager.js';
+import { BOXER_PREFIXES, animKey } from './helpers.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -21,8 +22,8 @@ export class MatchScene extends Phaser.Scene {
     this.add.image(width / 2, height / 2, 'ring').setDisplaySize(880, 660);
 
     // create animations for both boxers
-    createBoxerAnimations(this, 'boxer1');
-    createBoxerAnimations(this, 'boxer2');
+    createBoxerAnimations(this, BOXER_PREFIXES.P1);
+    createBoxerAnimations(this, BOXER_PREFIXES.P2);
 
     // controllers (swapped controls so the boxer on the right uses the
     // right-hand keys)
@@ -72,7 +73,7 @@ export class MatchScene extends Phaser.Scene {
       this,
       this.player1Start.x,
       this.player1Start.y,
-      'boxer1',
+      BOXER_PREFIXES.P1,
       controller1,
       data?.boxer1
     );
@@ -80,7 +81,7 @@ export class MatchScene extends Phaser.Scene {
       this,
       this.player2Start.x,
       this.player2Start.y,
-      'boxer2',
+      BOXER_PREFIXES.P2,
       controller2,
       data?.boxer2
     );
@@ -150,8 +151,8 @@ export class MatchScene extends Phaser.Scene {
     this.player2.facingRight = false;
     this.player1.sprite.setFlipX(true);
     this.player2.sprite.setFlipX(false);
-    this.player1.sprite.anims.play('boxer1_idle');
-    this.player2.sprite.anims.play('boxer2_idle');
+    this.player1.sprite.anims.play(animKey(BOXER_PREFIXES.P1, 'idle'));
+    this.player2.sprite.anims.play(animKey(BOXER_PREFIXES.P2, 'idle'));
   }
 
   endRound(round) {
@@ -165,9 +166,9 @@ export class MatchScene extends Phaser.Scene {
     this.matchOver = true;
     const winner = loser === this.player1 ? this.player2 : this.player1;
     loser.isKO = true;
-    loser.sprite.anims.play(`${loser.prefix}_ko`);
+    loser.sprite.anims.play(animKey(loser.prefix, 'ko'));
     winner.isWinner = true;
-    winner.sprite.play(`${winner.prefix}_win`);
+    winner.sprite.play(animKey(winner.prefix, 'win'));
     this.roundTimer.stop();
     eventBus.emit('match-winner', winner.stats?.name || winner.prefix);
   }

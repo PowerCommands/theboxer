@@ -1,3 +1,5 @@
+import { animKey } from './helpers.js';
+
 export const ANIM_DEFS = {
   idle: { frameCount: 10, repeat: -1 },
   forward: { frameCount: 10, repeat: -1 },
@@ -21,7 +23,7 @@ export function createBoxerAnimations(scene, prefix) {
       frames.push({ key: `${key}_${frame}` });
     }
     scene.anims.create({
-      key: `${prefix}_${key}`,
+      key: animKey(prefix, key),
       frames,
       frameRate: 10,
       repeat,
