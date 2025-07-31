@@ -1,3 +1,30 @@
+export const States = {
+  ATTACK: 'attack',
+  INJURED: 'injured',
+  LOCKED: 'locked',
+};
+
+const STATE_ANIMS = {
+  [States.ATTACK]: ['jabRight', 'jabLeft', 'uppercut'],
+  [States.INJURED]: ['hurt1', 'hurt2', 'dizzy'],
+  [States.LOCKED]: ['ko', 'win'],
+};
+
+const ACTION_ANIMS = {
+  block: { key: 'block', loop: true },
+  forward: { key: 'forward', loop: true },
+  backward: { key: 'backward', loop: true },
+  jabRight: { key: 'jabRight' },
+  jabLeft: { key: 'jabLeft' },
+  uppercut: { key: 'uppercut' },
+  hurt1: { key: 'hurt1' },
+  hurt2: { key: 'hurt2' },
+  dizzy: { key: 'dizzy' },
+  idle: { key: 'idle', loop: true },
+  ko: { key: 'ko' },
+  win: { key: 'win', loop: true },
+};
+
 export class Boxer {
   constructor(scene, x, y, prefix, controller, stats = {}) {
     this.scene = scene;
@@ -22,24 +49,27 @@ export class Boxer {
     this.isWinner = false;
   }
 
-  update(delta) {
-    const move = (this.speed * delta) / 1000;
-    const actions = this.controller.getActions();
-    const injuredStates = [
-      `${this.prefix}_hurt1`,
-      `${this.prefix}_hurt2`,
-      `${this.prefix}_dizzy`,
-    ];
-    const attackStates = [
-      `${this.prefix}_jabRight`,
-      `${this.prefix}_jabLeft`,
-      `${this.prefix}_uppercut`,
-    ];
-    const lockedStates = [
-      `${this.prefix}_ko`,
-      `${this.prefix}_win`,
-    ];
+  getCurrentState() {
+    const key = this.sprite.anims.currentAnim?.key || '';
+    const base = key.replace(`${this.prefix}_`, '');
+    if (STATE_ANIMS[States.LOCKED].includes(base)) return States.LOCKED;
+    if (STATE_ANIMS[States.INJURED].includes(base)) return States.INJURED;
+    if (STATE_ANIMS[States.ATTACK].includes(base)) return States.ATTACK;
+    return null;
+  }
 
+  playAction(action) {
+    const cfg = ACTION_ANIMS[action];
+    if (!cfg) return;
+    const key = `${this.prefix}_${cfg.key}`;
+    if (cfg.loop) {
+      this.sprite.anims.play(key, true);
+    } else {
+      this.playOnce(key);
+    }
+  }
+
+  handleFacing(actions) {
     if (actions.turnLeft) {
       this.facingRight = false;
       this.sprite.setFlipX(false);
@@ -47,81 +77,28 @@ export class Boxer {
       this.facingRight = true;
       this.sprite.setFlipX(true);
     }
+  }
 
-    if (this.isKO) {
-      // KO animation is triggered when the knockout occurs, so simply
-      // keep the boxer in the final KO frame without replaying it.
-      return;
+  moveHorizontal(actions, amount) {
+    if (actions.moveLeft) {
+      this.sprite.x -= amount;
+      const anim = this.facingRight ? 'backward' : 'forward';
+      this.playAction(anim);
+    } else if (actions.moveRight) {
+      this.sprite.x += amount;
+      const anim = this.facingRight ? 'forward' : 'backward';
+      this.playAction(anim);
     }
-    if (this.isWinner) {
-      this.sprite.anims.play(`${this.prefix}_win`, true);
-      return;
-    }
-    if (actions.ko) {
-      this.sprite.play(`${this.prefix}_ko`);
-      this.isKO = true;
-      this.scene.events.emit('boxer-ko', this);
-      return;
-    }
-    if (actions.win) {
-      this.sprite.anims.play(`${this.prefix}_win`, true);
-      this.isWinner = true;
-      return;
-    }
-    if (actions.hurt1) {
-      this.playOnce(`${this.prefix}_hurt1`);
-    } else if (actions.hurt2) {
-      this.playOnce(`${this.prefix}_hurt2`);
-    } else if (actions.dizzy) {
-      this.playOnce(`${this.prefix}_dizzy`);
-    } else if (actions.idle) {
-      this.sprite.anims.play(`${this.prefix}_idle`, true);
-    }
+  }
 
-    const current = this.sprite.anims.currentAnim?.key || '';
+  applyMovement(actions, amount) {
+    if (actions.moveLeft) this.sprite.x -= amount;
+    if (actions.moveRight) this.sprite.x += amount;
+    if (actions.moveUp) this.sprite.y -= amount;
+    if (actions.moveDown) this.sprite.y += amount;
+  }
 
-    if (lockedStates.includes(current)) {
-      return;
-    }
-
-    const isInjured = injuredStates.includes(current);
-    const isAttacking = attackStates.includes(current);
-
-    if (!isInjured && !isAttacking) {
-      if (actions.block) {
-        this.sprite.anims.play(`${this.prefix}_block`, true);
-      } else if (actions.jabRight) {
-        this.playOnce(`${this.prefix}_jabRight`);
-      } else if (actions.jabLeft) {
-        this.playOnce(`${this.prefix}_jabLeft`);
-      } else if (actions.uppercut) {
-        this.playOnce(`${this.prefix}_uppercut`);
-      } else if (actions.moveLeft) {
-        this.sprite.x -= move;
-        const anim = this.facingRight ? 'backward' : 'forward';
-        this.sprite.anims.play(`${this.prefix}_${anim}`, true);
-      } else if (actions.moveRight) {
-        this.sprite.x += move;
-        const anim = this.facingRight ? 'forward' : 'backward';
-        this.sprite.anims.play(`${this.prefix}_${anim}`, true);
-      } else {
-        this.sprite.anims.play(`${this.prefix}_idle`, true);
-      }
-    } else {
-      if (actions.moveLeft) {
-        this.sprite.x -= move;
-      } else if (actions.moveRight) {
-        this.sprite.x += move;
-      }
-    }
-
-    if (actions.moveUp) {
-      this.sprite.y -= move;
-    } else if (actions.moveDown) {
-      this.sprite.y += move;
-    }
-
-    // boundaries
+  applyBounds() {
     const width = this.scene.sys.game.config.width;
     const height = this.scene.sys.game.config.height;
     this.sprite.x = Phaser.Math.Clamp(
@@ -134,6 +111,75 @@ export class Boxer {
       this.sprite.displayHeight / 2,
       height - this.sprite.displayHeight / 2
     );
+  }
+
+  triggerKO() {
+    this.sprite.play(`${this.prefix}_ko`);
+    this.isKO = true;
+    this.scene.events.emit('boxer-ko', this);
+  }
+
+  triggerWin() {
+    this.sprite.anims.play(`${this.prefix}_win`, true);
+    this.isWinner = true;
+  }
+
+  update(delta) {
+    const move = (this.speed * delta) / 1000;
+    const actions = this.controller.getActions();
+
+    this.handleFacing(actions);
+
+    const handlers = [
+      { check: () => this.isKO, action: () => {} },
+      { check: () => this.isWinner, action: () => this.playAction('win') },
+      { check: () => actions.ko, action: () => this.triggerKO() },
+      { check: () => actions.win, action: () => this.triggerWin() },
+      { check: () => actions.hurt1, action: () => this.playAction('hurt1') },
+      { check: () => actions.hurt2, action: () => this.playAction('hurt2') },
+      { check: () => actions.dizzy, action: () => this.playAction('dizzy') },
+      { check: () => actions.idle, action: () => this.playAction('idle') },
+    ];
+
+    for (const h of handlers) {
+      if (h.check()) {
+        h.action();
+        this.applyMovement(actions, move);
+        this.applyBounds();
+        return;
+      }
+    }
+
+    const state = this.getCurrentState();
+    if (state === States.LOCKED) {
+      this.applyMovement(actions, move);
+      this.applyBounds();
+      return;
+    }
+
+    if (state !== States.ATTACK && state !== States.INJURED) {
+      if (actions.block) {
+        this.playAction('block');
+      } else if (actions.jabRight) {
+        this.playAction('jabRight');
+      } else if (actions.jabLeft) {
+        this.playAction('jabLeft');
+      } else if (actions.uppercut) {
+        this.playAction('uppercut');
+      } else if (actions.moveLeft || actions.moveRight) {
+        this.moveHorizontal(actions, move);
+      } else {
+        this.playAction('idle');
+      }
+    } else {
+      if (actions.moveLeft) this.sprite.x -= move;
+      if (actions.moveRight) this.sprite.x += move;
+    }
+
+    if (actions.moveUp) this.sprite.y -= move;
+    if (actions.moveDown) this.sprite.y += move;
+
+    this.applyBounds();
   }
 
   playOnce(key) {
