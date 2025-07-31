@@ -118,30 +118,35 @@ export class MatchScene extends Phaser.Scene {
   handleHit(attacker, defender, defenderKey) {
     if (!attacker.isAttacking() || attacker.hasHit) return;
     if (defender.isBlocking()) return;
+    if (!this.isFacingCorrectly(attacker, defender)) return;
+    if (!this.isInRange(attacker, defender)) return;
+    if (!this.isColliding(attacker, defender)) return;
 
-    if (
+    attacker.hasHit = true;
+    this.healthManager.damage(defenderKey, 0.05 * attacker.power);
+  }
+
+  isFacingCorrectly(attacker, defender) {
+    return !(
       (attacker.facingRight && defender.sprite.x < attacker.sprite.x) ||
       (!attacker.facingRight && defender.sprite.x > attacker.sprite.x)
-    ) {
-      return;
-    }
+    );
+  }
 
+  isInRange(attacker, defender) {
     const distance = Phaser.Math.Distance.Between(
       attacker.sprite.x,
       attacker.sprite.y,
       defender.sprite.x,
       defender.sprite.y
     );
+    return distance <= this.hitLimit;
+  }
 
+  isColliding(attacker, defender) {
     const aBounds = attacker.sprite.getBounds();
     const dBounds = defender.sprite.getBounds();
-    if (
-      distance <= this.hitLimit &&
-      Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds)
-    ) {
-      attacker.hasHit = true;
-      this.healthManager.damage(defenderKey, 0.05 * attacker.power);
-    }
+    return Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds);
   }
 
   resetBoxers() {
