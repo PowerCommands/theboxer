@@ -14,6 +14,7 @@ export class StrategyAIController {
     };
     this.currentName = initial in this.strategies ? initial : 'offensive';
     this.current = this.strategies[this.currentName];
+    this.baseStrategy = this.currentName;
     this.lastSwitch = 0;
     this.switchCooldown = 1000; // ms
     this.lastDecision = 0;

@@ -52,6 +52,8 @@ export class Boxer {
     this.hasHit = false;
     this.isKO = false;
     this.isWinner = false;
+    this.baseStrategy = controller.currentName;
+    this.recoveryTimer = 0;
   }
 
   getCurrentState() {
@@ -131,7 +133,12 @@ export class Boxer {
 
   update(delta, opponent) {
     const move = (this.speed * delta) / 1000;
+
+    this.updateStrategy(opponent);
+
     const actions = this.controller.getActions(this, opponent);
+
+    this.applyRecovery(delta, actions);
 
     this.handleFacing(actions);
 
@@ -196,7 +203,8 @@ export class Boxer {
         key === animKey(this.prefix, 'uppercut')
       ) {
         this.hasHit = false;
-        this.adjustStats(-0.2);
+        this.adjustPower(-0.05);
+        this.adjustStamina(-0.05);
       }
       this.sprite.once('animationcomplete', () => {
         this.sprite.play(animKey(this.prefix, 'idle'));
@@ -218,22 +226,57 @@ export class Boxer {
     return key === animKey(this.prefix, 'block');
   }
 
-  adjustStats(delta) {
+  adjustPower(delta) {
     this.power = Phaser.Math.Clamp(this.power + delta, 0, this.maxPower);
-    this.stamina = Phaser.Math.Clamp(this.stamina + delta, 0, this.maxStamina);
     const player = this.prefix === BOXER_PREFIXES.P1 ? 'p1' : 'p2';
     eventBus.emit('power-changed', { player, value: this.power / this.maxPower });
+  }
+
+  adjustStamina(delta) {
+    this.stamina = Phaser.Math.Clamp(this.stamina + delta, 0, this.maxStamina);
+    const player = this.prefix === BOXER_PREFIXES.P1 ? 'p1' : 'p2';
     eventBus.emit('stamina-changed', {
       player,
       value: this.stamina / this.maxStamina,
     });
+  }
+
+  adjustHealth(delta) {
+    this.health = Phaser.Math.Clamp(this.health + delta, 0, this.maxHealth);
+    const player = this.prefix === BOXER_PREFIXES.P1 ? 'p1' : 'p2';
+    eventBus.emit('health-changed', {
+      player,
+      value: this.health / this.maxHealth,
+    });
+  }
+
+  updateStrategy(opponent) {
+    let desired = this.baseStrategy;
     if (this.stamina < 0.51) {
-      const name = this.controller.currentName;
-      if (name === 'offensive') {
-        this.controller.setStrategy('neutral');
-      } else if (name === 'neutral') {
-        this.controller.setStrategy('defensive');
+      if (desired === 'offensive') desired = 'neutral';
+      else if (desired === 'neutral') desired = 'defensive';
+    }
+
+    if (opponent.health / opponent.maxHealth < 0.31) {
+      if (desired === 'defensive') desired = 'neutral';
+      else if (desired === 'neutral') desired = 'offensive';
+    }
+
+    this.controller.setStrategy(desired);
+  }
+
+  applyRecovery(delta, actions) {
+    this.recoveryTimer += delta;
+    if (this.recoveryTimer >= 2000) {
+      const movingBackward =
+        (actions.moveLeft && this.facingRight) ||
+        (actions.moveRight && !this.facingRight);
+      if (actions.block || movingBackward) {
+        this.adjustStamina(0.02);
+        this.adjustHealth(0.02);
       }
+      this.adjustPower(0.1 * this.stamina);
+      this.recoveryTimer = 0;
     }
   }
 
