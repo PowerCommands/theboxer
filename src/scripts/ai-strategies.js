@@ -21,6 +21,8 @@ function baseActions() {
   };
 }
 
+const FAR_DISTANCE = 400;
+
 export class OffensiveStrategy {
   decide(boxer, opponent) {
     const actions = baseActions();
@@ -40,10 +42,17 @@ export class OffensiveStrategy {
         actions.moveRight = true;
       }
     }
-    actions.block = Math.random() < 0.05;
-    actions.jabRight = Math.random() < 0.4;
-    actions.jabLeft = Math.random() < 0.4;
-    actions.uppercut = Math.random() < 0.2;
+
+    if (distance <= FAR_DISTANCE) {
+      actions.block = Math.random() < 0.05;
+      actions.jabRight = Math.random() < 0.4;
+      actions.jabLeft = Math.random() < 0.4;
+      actions.uppercut = Math.random() < 0.2;
+    } else if (boxer.stamina / boxer.maxStamina > 0.5) {
+      if (boxer.sprite.x < opponent.sprite.x) actions.moveRight = true;
+      else actions.moveLeft = true;
+    }
+
     return actions;
   }
 }
@@ -67,10 +76,15 @@ export class DefensiveStrategy {
         actions.moveLeft = true;
       }
     }
-    actions.block = Math.random() < 0.6;
-    actions.jabRight = Math.random() < 0.1;
-    actions.jabLeft = Math.random() < 0.1;
-    actions.uppercut = Math.random() < 0.05;
+    if (distance <= FAR_DISTANCE) {
+      actions.block = Math.random() < 0.6;
+      actions.jabRight = Math.random() < 0.1;
+      actions.jabLeft = Math.random() < 0.1;
+      actions.uppercut = Math.random() < 0.05;
+    } else if (boxer.stamina / boxer.maxStamina > 0.5) {
+      if (boxer.sprite.x < opponent.sprite.x) actions.moveRight = true;
+      else actions.moveLeft = true;
+    }
     return actions;
   }
 }
@@ -101,10 +115,15 @@ export class NeutralStrategy {
         actions.moveRight = true;
       }
     }
-    actions.block = Math.random() < 0.3;
-    actions.jabRight = Math.random() < 0.25;
-    actions.jabLeft = Math.random() < 0.25;
-    actions.uppercut = Math.random() < 0.1;
+    if (distance <= FAR_DISTANCE) {
+      actions.block = Math.random() < 0.3;
+      actions.jabRight = Math.random() < 0.25;
+      actions.jabLeft = Math.random() < 0.25;
+      actions.uppercut = Math.random() < 0.1;
+    } else if (boxer.stamina / boxer.maxStamina > 0.5) {
+      if (boxer.sprite.x < opponent.sprite.x) actions.moveRight = true;
+      else actions.moveLeft = true;
+    }
     return actions;
   }
 }

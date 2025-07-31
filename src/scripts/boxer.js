@@ -244,7 +244,7 @@ export class Boxer {
     const movingForward =
       (actions.moveRight && this.facingRight) ||
       (actions.moveLeft && !this.facingRight);
-    if (movingForward) this.adjustStamina(-0.001);
+    if (movingForward) this.adjustStamina(-0.0006);
 
     this.applyBounds();
   }
@@ -258,8 +258,8 @@ export class Boxer {
         key === animKey(this.prefix, 'uppercut')
       ) {
         this.hasHit = false;
-        this.adjustPower(-0.05);
-        this.adjustStamina(-0.05);
+        this.adjustPower(-0.03);
+        this.adjustStamina(-0.03);
       }
       this.sprite.once('animationcomplete', () => {
         this.sprite.play(animKey(this.prefix, 'idle'));
@@ -327,8 +327,8 @@ export class Boxer {
         (actions.moveLeft && this.facingRight) ||
         (actions.moveRight && !this.facingRight);
       if (actions.block || movingBackward) {
-        this.adjustStamina(0.02);
-        this.adjustHealth(0.02);
+        this.adjustStamina(0.03);
+        this.adjustHealth(0.03);
       }
       this.adjustPower(0.1 * this.stamina);
       this.recoveryTimer = 0;
