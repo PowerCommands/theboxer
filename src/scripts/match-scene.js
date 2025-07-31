@@ -92,7 +92,6 @@ export class MatchScene extends Phaser.Scene {
 
   handleHit(attacker, defender, defenderKey) {
     if (!attacker.isAttacking() || attacker.hasHit) return;
-    if (defender.isBlocking()) return;
     if (!this.isFacingCorrectly(attacker, defender)) return;
     const distance = Phaser.Math.Distance.Between(
       attacker.sprite.x,
@@ -102,6 +101,10 @@ export class MatchScene extends Phaser.Scene {
     );
     if (distance > this.hitLimit) return;
     if (!this.isColliding(attacker, defender)) return;
+    if (defender.isBlocking()) {
+      attacker.adjustStats(-0.2);
+      return;
+    }
 
     attacker.hasHit = true;
     let damage = 0.05 * attacker.power;

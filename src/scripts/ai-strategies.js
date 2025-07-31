@@ -61,6 +61,33 @@ export class DefensiveStrategy {
   }
 }
 
+export class NeutralStrategy {
+  decide(boxer, opponent) {
+    const actions = baseActions();
+    const distance = Math.abs(opponent.sprite.x - boxer.sprite.x);
+    const approachDistance = 170;
+    const retreatDistance = 130;
+    if (distance > approachDistance) {
+      if (boxer.sprite.x < opponent.sprite.x) {
+        actions.moveRight = true;
+      } else {
+        actions.moveLeft = true;
+      }
+    } else if (distance < retreatDistance) {
+      if (boxer.sprite.x < opponent.sprite.x) {
+        actions.moveLeft = true;
+      } else {
+        actions.moveRight = true;
+      }
+    }
+    actions.block = Math.random() < 0.3;
+    actions.jabRight = Math.random() < 0.25;
+    actions.jabLeft = Math.random() < 0.25;
+    actions.uppercut = Math.random() < 0.1;
+    return actions;
+  }
+}
+
 export function createBaseActions() {
   return baseActions();
 }
