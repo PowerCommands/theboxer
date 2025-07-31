@@ -9,10 +9,12 @@ export class MatchScene extends Phaser.Scene {
   create(data) {
     console.log('MatchScene: create started');
 
-    this.hitLimit = 120; // max distance for a hit to register
+    this.hitLimit = 320; // max distance for a hit to register
 
-    // add ring background
-    this.add.image(400, 300, 'ring');
+    const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
+    // add ring background sized to 800x600 and centered
+    this.add.image(width / 2, height / 2, 'ring').setDisplaySize(800, 600);
 
     // create idle animation frames shared by both boxers
     const idleFrames = [];
@@ -233,8 +235,10 @@ export class MatchScene extends Phaser.Scene {
       win: Phaser.Input.Keyboard.KeyCodes.ZERO,
     });
 
-    this.player1Start = { x: 200, y: 400 };
-    this.player2Start = { x: 600, y: 400 };
+    const centerX = width / 2;
+    const centerY = height / 2;
+    this.player1Start = { x: centerX - 200, y: centerY + 100 };
+    this.player2Start = { x: centerX + 200, y: centerY + 100 };
     this.player1 = new Boxer(
       this,
       this.player1Start.x,
@@ -255,11 +259,14 @@ export class MatchScene extends Phaser.Scene {
     this.ui = this.scene.get('OverlayUI');
     if (this.ui) {
       this.ui.setNames(data?.boxer1?.name || '', data?.boxer2?.name || '');
-      this.ui.events.on('round-ended', () => {
-        this.endRound();
+      this.ui.events.on('round-ended', (round) => {
+        this.endRound(round);
       });
       this.ui.startRound(180, 1);
     }
+
+    this.events.on('boxer-ko', (b) => this.handleKO(b));
+    this.matchOver = false;
 
     console.log('MatchScene: create complete');
   }
@@ -303,10 +310,26 @@ export class MatchScene extends Phaser.Scene {
     }
   }
 
-  endRound() {
+  endRound(round) {
+    if (this.matchOver) return;
     this.player1.sprite.anims.play('boxer1_idle');
     this.player2.sprite.anims.play('boxer2_idle');
     this.player1.sprite.setPosition(this.player1Start.x, this.player1Start.y);
     this.player2.sprite.setPosition(this.player2Start.x, this.player2Start.y);
+    if (this.ui) {
+      this.ui.startRound(180, round + 1);
+    }
+  }
+
+  handleKO(loser) {
+    if (this.matchOver) return;
+    this.matchOver = true;
+    const winner = loser === this.player1 ? this.player2 : this.player1;
+    winner.isWinner = true;
+    winner.sprite.play(`${winner.prefix}_win`);
+    if (this.ui) {
+      this.ui.stopClock();
+      this.ui.announceWinner(winner.stats?.name || winner.prefix);
+    }
   }
 }

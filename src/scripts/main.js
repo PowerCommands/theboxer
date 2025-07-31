@@ -92,8 +92,8 @@ class BootScene extends Phaser.Scene {
 // Phaser game configuration
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: 1024,
+  height: 768,
   backgroundColor: '#2d2d2d',
   scene: [BootScene, SelectBoxerScene, MatchScene, OverlayUI]
 };
