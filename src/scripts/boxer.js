@@ -327,10 +327,10 @@ export class Boxer {
         (actions.moveLeft && this.facingRight) ||
         (actions.moveRight && !this.facingRight);
       if (actions.block || movingBackward) {
-        this.adjustStamina(0.03);
-        this.adjustHealth(0.03);
+        this.adjustStamina(0.05);
+        this.adjustHealth(0.05);
       }
-      this.adjustPower(0.1 * this.stamina);
+      this.adjustPower(0.15 * this.stamina);
       this.recoveryTimer = 0;
     }
   }

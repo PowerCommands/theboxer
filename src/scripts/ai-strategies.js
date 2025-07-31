@@ -21,7 +21,7 @@ function baseActions() {
   };
 }
 
-const FAR_DISTANCE = 400;
+const FAR_DISTANCE = 300;
 
 export class OffensiveStrategy {
   decide(boxer, opponent) {
