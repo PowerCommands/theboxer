@@ -241,11 +241,12 @@ export class MatchScene extends Phaser.Scene {
     const margin = 50;
     this.player1Start = {
       x: centerX - ringWidth / 2 + margin,
-      y: centerY + 100,
+      // start closer to the middle of the ring vertically
+      y: centerY,
     };
     this.player2Start = {
       x: centerX + ringWidth / 2 - margin,
-      y: centerY + 100,
+      y: centerY,
     };
     this.player1 = new Boxer(
       this,

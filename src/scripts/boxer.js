@@ -11,7 +11,8 @@ export class Boxer {
     this.stamina = stats.stamina || 1;
     this.maxHealth = stats.health || 1;
     this.health = this.maxHealth;
-    this.sprite.setScale(400 / this.sprite.height);
+    // slightly smaller boxer sprites
+    this.sprite.setScale(350 / this.sprite.height);
     // boxer1 faces right, boxer2 faces left
     this.facingRight = prefix === 'boxer1';
     this.sprite.setFlipX(this.facingRight);
@@ -48,7 +49,8 @@ export class Boxer {
     }
 
     if (this.isKO) {
-      this.sprite.anims.play(`${this.prefix}_ko`, true);
+      // KO animation is triggered when the knockout occurs, so simply
+      // keep the boxer in the final KO frame without replaying it.
       return;
     }
     if (this.isWinner) {
