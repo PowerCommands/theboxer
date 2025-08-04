@@ -56,6 +56,7 @@ export class Boxer {
     this.recoveryTimer = 0;
     this.lowStaminaMode = false;
     this.blockHoldTime = 0;
+    this.isRetreating = false;
   }
 
   getCurrentState() {
@@ -123,8 +124,10 @@ export class Boxer {
   }
 
   triggerKO() {
+    this.sprite.removeAllListeners('animationcomplete');
     this.sprite.play(animKey(this.prefix, 'ko'));
     this.isKO = true;
+    this.isRetreating = false;
     this.scene.events.emit('boxer-ko', this);
   }
 
@@ -188,6 +191,60 @@ export class Boxer {
       }
     } else {
       this.blockHoldTime = 0;
+    }
+
+    if (this.isRetreating) {
+      const width = this.scene.sys.game.config.width;
+      const minX = this.sprite.displayWidth / 2;
+      const maxX = width - this.sprite.displayWidth / 2;
+
+      if (this.facingRight) {
+        if (this.sprite.x > minX) {
+          actions = {
+            moveLeft: true,
+            moveRight: false,
+            moveUp: false,
+            moveDown: false,
+            block: false,
+            jabRight: false,
+            jabLeft: false,
+            uppercut: false,
+            turnLeft: false,
+            turnRight: false,
+            hurt1: false,
+            hurt2: false,
+            dizzy: false,
+            idle: false,
+            ko: false,
+            win: false,
+          };
+        } else {
+          this.isRetreating = false;
+        }
+      } else {
+        if (this.sprite.x < maxX) {
+          actions = {
+            moveLeft: false,
+            moveRight: true,
+            moveUp: false,
+            moveDown: false,
+            block: false,
+            jabRight: false,
+            jabLeft: false,
+            uppercut: false,
+            turnLeft: false,
+            turnRight: false,
+            hurt1: false,
+            hurt2: false,
+            dizzy: false,
+            idle: false,
+            ko: false,
+            win: false,
+          };
+        } else {
+          this.isRetreating = false;
+        }
+      }
     }
 
     this.handleFacing(actions);
@@ -344,11 +401,15 @@ export class Boxer {
     this.health = Phaser.Math.Clamp(this.health - amount, 0, this.maxHealth);
 
     if (this.health === 0) {
+      this.sprite.removeAllListeners('animationcomplete');
       this.sprite.play(animKey(this.prefix, 'ko'));
       this.isKO = true;
+      this.isRetreating = false;
       this.scene.events.emit('boxer-ko', this);
       return;
     }
+
+    this.isRetreating = true;
 
     if (this.health < 0.3) {
       this.playOnce(animKey(this.prefix, 'dizzy'));
