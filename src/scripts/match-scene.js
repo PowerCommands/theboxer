@@ -5,6 +5,7 @@ import { eventBus } from './event-bus.js';
 import { RoundTimer } from './round-timer.js';
 import { HealthManager } from './health-manager.js';
 import { BOXER_PREFIXES, animKey } from './helpers.js';
+import { RuleManager } from './rule-manager.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -65,6 +66,9 @@ export class MatchScene extends Phaser.Scene {
 
     this.healthManager = new HealthManager(this.player1, this.player2);
     this.roundTimer = new RoundTimer(this);
+    this.ruleManager = new RuleManager(this.player1, this.player2);
+    this.roundLength = 180;
+    this.lastSecond = -1;
     eventBus.on('round-ended', (round) => this.endRound(round));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       eventBus.off('round-ended');
@@ -144,6 +148,12 @@ export class MatchScene extends Phaser.Scene {
       statsLine,
       strategyLine,
     ]);
+
+    const currentSecond = this.roundLength - this.roundTimer.remaining;
+    if (currentSecond !== this.lastSecond && currentSecond < this.roundLength) {
+      this.ruleManager.evaluate(currentSecond);
+      this.lastSecond = currentSecond;
+    }
 
     if (this.paused) return;
 
