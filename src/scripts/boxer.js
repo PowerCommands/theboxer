@@ -401,7 +401,7 @@ export class Boxer {
 
     const oppTired = opponent.stamina < opponent.maxStamina / 3;
     if (oppTired && !this.opponentWasTired && !tired) {
-      if (this.controller.shiftLevel) this.controller.shiftLevel(1);
+      if (this.controller.shiftLevel) this.controller.shiftLevel(2);
       this.opponentWasTired = true;
     }
     if (!oppTired) this.opponentWasTired = false;
