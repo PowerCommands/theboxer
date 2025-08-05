@@ -44,4 +44,20 @@ export class RoundTimer {
     }
     eventBus.emit('timer-tick', this.remaining);
   }
+
+  resume() {
+    if (this.timerEvent || this.remaining <= 0) return;
+    this.timerEvent = this.scene.time.addEvent({
+      delay: 500,
+      loop: true,
+      callback: () => {
+        this.remaining -= 1;
+        eventBus.emit('timer-tick', this.remaining);
+        if (this.remaining <= 0) {
+          this.stop();
+          eventBus.emit('round-ended', this.round);
+        }
+      },
+    });
+  }
 }

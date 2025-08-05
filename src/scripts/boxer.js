@@ -58,6 +58,7 @@ export class Boxer {
     this.isRetreating = false;
     this.wasTired = false;
     this.opponentWasTired = false;
+    this.lastAction = 'idle';
   }
 
   getCurrentState() {
@@ -73,6 +74,7 @@ export class Boxer {
     const cfg = ACTION_ANIMS[action];
     if (!cfg) return;
     const key = animKey(this.prefix, cfg.key);
+    this.lastAction = action;
     if (cfg.loop) {
       this.sprite.anims.play(key, true);
     } else {
@@ -322,7 +324,7 @@ export class Boxer {
         this.adjustStamina(-staminaCost);
       }
       this.sprite.once('animationcomplete', () => {
-        this.sprite.play(animKey(this.prefix, 'idle'));
+        this.playAction('idle');
       });
     }
   }
