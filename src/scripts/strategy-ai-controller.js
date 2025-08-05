@@ -1,6 +1,7 @@
 import { STRATEGIES, createBaseActions } from './ai-strategies.js';
 
 function convertAction(action, boxer, opponent, preferredDistance) {
+  if (action.none) return createBaseActions();
   const res = createBaseActions();
   if (action.block) res.block = true;
   if (action.jabLeft) res.jabLeft = true;
@@ -8,7 +9,12 @@ function convertAction(action, boxer, opponent, preferredDistance) {
   if (action.uppercut) res.uppercut = true;
 
   const isAttacking = action.jabLeft || action.jabRight || action.uppercut;
+  const isBlocking = action.block;
   const currentDist = Math.abs(boxer.sprite.x - opponent.sprite.x);
+
+  if (currentDist > 350 && (isAttacking || isBlocking)) {
+    return createBaseActions();
+  }
 
   if (isAttacking) {
     if (action.forward && currentDist > 200) {

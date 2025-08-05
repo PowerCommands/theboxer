@@ -27,9 +27,14 @@ function generateStrategy(level) {
   const blockProb = Math.max(0.7 - 0.05 * level, 0.1);
   const jabProb = Math.min(0.05 * level, 0.5);
   const upperProb = Math.min(0.02 * level, 0.25);
+  const noneProb = Math.max(0.6 - 0.05 * level, 0.05);
 
   const actions = [];
   for (let i = 0; i < 180; i++) {
+    if (Math.random() < noneProb) {
+      actions.push({ none: true });
+      continue;
+    }
     const act = {
       forward: false,
       back: false,
