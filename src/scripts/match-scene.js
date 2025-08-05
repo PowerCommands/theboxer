@@ -108,10 +108,13 @@ export class MatchScene extends Phaser.Scene {
     const statsLine =
       `P1 S:${this.player1.stamina.toFixed(2)} H:${this.player1.health.toFixed(2)} P:${this.player1.power.toFixed(2)} | ` +
       `P2 S:${this.player2.stamina.toFixed(2)} H:${this.player2.health.toFixed(2)} P:${this.player2.power.toFixed(2)}`;
+    const strategyLine =
+      `Strategi: P1 ${this.player1.controller.getLevel()} | P2 ${this.player2.controller.getLevel()}`;
     this.debugText.setText([
       `Distans: ${distance.toFixed(1)}`,
       `P1: ${action1} | P2: ${action2}`,
       statsLine,
+      strategyLine,
     ]);
 
     if (this.paused) return;
