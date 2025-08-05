@@ -80,6 +80,7 @@ export class MatchScene extends Phaser.Scene {
     this.matchOver = false;
 
     this.breaking = false;
+    this.closeTime = null;
     this.breakText = this.add
       .text(width / 2, height / 2, 'BREAK', {
         font: '64px Arial',
@@ -107,16 +108,28 @@ export class MatchScene extends Phaser.Scene {
   }
 
   update(time, delta) {
-    const distance = Phaser.Math.Distance.Between(
+    const rawDistance = Phaser.Math.Distance.Between(
       this.player1.sprite.x,
       this.player1.sprite.y,
       this.player2.sprite.x,
       this.player2.sprite.y
     );
+    const distance =
+      this.player1.sprite.x < this.player2.sprite.x
+        ? rawDistance
+        : -rawDistance;
 
-    if (!this.breaking && distance < 100) {
-      this.resetBoxers();
-      this.showBreak();
+    if (!this.breaking) {
+      if (Math.abs(distance) < 50) {
+        if (this.closeTime === null) this.closeTime = time;
+        else if (time - this.closeTime >= 5000) {
+          this.resetBoxers();
+          this.showBreak();
+          this.closeTime = null;
+        }
+      } else {
+        this.closeTime = null;
+      }
     }
     const action1 = this.player1.lastAction;
     const action2 = this.player2.lastAction;

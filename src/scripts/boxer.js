@@ -128,20 +128,6 @@ export class Boxer {
     );
   }
 
-  preventOverlap(opponent) {
-    const minDist =
-      (this.sprite.displayWidth + opponent.sprite.displayWidth) / 2;
-    if (this.prefix === BOXER_PREFIXES.P1) {
-      if (this.sprite.x > opponent.sprite.x - minDist) {
-        this.sprite.x = opponent.sprite.x - minDist;
-      }
-    } else {
-      if (this.sprite.x < opponent.sprite.x + minDist) {
-        this.sprite.x = opponent.sprite.x + minDist;
-      }
-    }
-  }
-
   triggerKO() {
     this.sprite.removeAllListeners('animationcomplete');
     this.sprite.play(animKey(this.prefix, 'ko'));
@@ -341,7 +327,6 @@ export class Boxer {
       (actions.moveRight && this.facingRight) ||
       (actions.moveLeft && !this.facingRight);
     if (movingForward) this.adjustStamina(-0.0003);
-    this.preventOverlap(opponent);
     this.applyBounds();
   }
 
