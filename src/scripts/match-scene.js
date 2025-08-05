@@ -79,10 +79,43 @@ export class MatchScene extends Phaser.Scene {
     this.events.on('boxer-ko', (b) => this.handleKO(b));
     this.matchOver = false;
 
+    this.paused = false;
+    this.debugText = this.add
+      .text(width / 2, height - 100, '', {
+        font: '16px monospace',
+        color: '#ffffff',
+        align: 'center',
+      })
+      .setOrigin(0.5, 0);
+    this.input.keyboard.on('keydown-P', (event) => {
+      if (event.ctrlKey) {
+        this.togglePause();
+      }
+    });
+
     console.log('MatchScene: create complete');
   }
 
   update(time, delta) {
+    const distance = Phaser.Math.Distance.Between(
+      this.player1.sprite.x,
+      this.player1.sprite.y,
+      this.player2.sprite.x,
+      this.player2.sprite.y
+    );
+    const action1 = this.player1.lastAction;
+    const action2 = this.player2.lastAction;
+    const statsLine =
+      `P1 S:${this.player1.stamina.toFixed(2)} H:${this.player1.health.toFixed(2)} P:${this.player1.power.toFixed(2)} | ` +
+      `P2 S:${this.player2.stamina.toFixed(2)} H:${this.player2.health.toFixed(2)} P:${this.player2.power.toFixed(2)}`;
+    this.debugText.setText([
+      `Distans: ${distance.toFixed(1)}`,
+      `P1: ${action1} | P2: ${action2}`,
+      statsLine,
+    ]);
+
+    if (this.paused) return;
+
     this.player1.update(delta, this.player2);
     this.player2.update(delta, this.player1);
 
@@ -173,5 +206,18 @@ export class MatchScene extends Phaser.Scene {
   setPlayerStrategy(player, level) {
     const ctrl = player === 1 ? this.player1.controller : this.player2.controller;
     if (ctrl && ctrl.setLevel) ctrl.setLevel(level);
+  }
+
+  togglePause() {
+    this.paused = !this.paused;
+    if (this.paused) {
+      this.roundTimer.pause();
+      this.player1.sprite.anims.pause();
+      this.player2.sprite.anims.pause();
+    } else {
+      this.roundTimer.resume();
+      this.player1.sprite.anims.resume();
+      this.player2.sprite.anims.resume();
+    }
   }
 }
