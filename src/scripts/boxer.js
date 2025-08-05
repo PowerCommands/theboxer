@@ -56,6 +56,7 @@ export class Boxer {
     this.recoveryTimer = 0;
     this.lowStaminaMode = false;
     this.blockHoldTime = 0;
+    this.blockDebounce = 0;
     this.isRetreating = false;
     this.wasTired = false;
     this.opponentWasTired = false;
@@ -127,6 +128,20 @@ export class Boxer {
     );
   }
 
+  preventOverlap(opponent) {
+    const minDist =
+      (this.sprite.displayWidth + opponent.sprite.displayWidth) / 2;
+    if (this.prefix === BOXER_PREFIXES.P1) {
+      if (this.sprite.x > opponent.sprite.x - minDist) {
+        this.sprite.x = opponent.sprite.x - minDist;
+      }
+    } else {
+      if (this.sprite.x < opponent.sprite.x + minDist) {
+        this.sprite.x = opponent.sprite.x + minDist;
+      }
+    }
+  }
+
   triggerKO() {
     this.sprite.removeAllListeners('animationcomplete');
     this.sprite.play(animKey(this.prefix, 'ko'));
@@ -146,6 +161,15 @@ export class Boxer {
     this.updateStrategy(opponent);
 
     let actions = this.controller.getActions(this, opponent);
+
+    if (actions.block) {
+      this.blockDebounce += delta;
+      if (this.blockDebounce < 120) {
+        actions.block = false;
+      }
+    } else {
+      this.blockDebounce = 0;
+    }
 
     if (this.lowStaminaMode === undefined) this.lowStaminaMode = false;
     if (this.stamina < this.maxStamina / 3) {
@@ -292,9 +316,7 @@ export class Boxer {
     }
 
     if (state !== States.ATTACK && state !== States.INJURED) {
-      if (actions.block) {
-        this.playAction('block');
-      } else if (actions.jabRight) {
+      if (actions.jabRight) {
         this.playAction('jabRight');
       } else if (actions.jabLeft) {
         this.playAction('jabLeft');
@@ -302,6 +324,8 @@ export class Boxer {
         this.playAction('uppercut');
       } else if (actions.moveLeft || actions.moveRight) {
         this.moveHorizontal(actions, move);
+      } else if (actions.block) {
+        this.playAction('block');
       } else {
         this.playAction('idle');
       }
@@ -317,7 +341,7 @@ export class Boxer {
       (actions.moveRight && this.facingRight) ||
       (actions.moveLeft && !this.facingRight);
     if (movingForward) this.adjustStamina(-0.0003);
-
+    this.preventOverlap(opponent);
     this.applyBounds();
   }
 
