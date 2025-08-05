@@ -29,6 +29,8 @@ The table below lists the keys used to control each boxer.
 | KO | Numpad 8 | `G` |
 | Win | `0` | `+` |
 
+Press `Shift` + `P` to pause the match.
+
 ## Available Boxers
 
 | Namn | Land | Stamina | Power | Health | Speed |
