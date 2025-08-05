@@ -15,7 +15,7 @@ export class RoundTimer {
     eventBus.emit('round-started', this.round);
     eventBus.emit('timer-tick', this.remaining);
     this.timerEvent = this.scene.time.addEvent({
-      delay: 1000,
+      delay: 500,
       loop: true,
       callback: () => {
         this.remaining -= 1;

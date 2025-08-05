@@ -25,11 +25,11 @@ export class MatchScene extends Phaser.Scene {
     createBoxerAnimations(this, BOXER_PREFIXES.P1);
     createBoxerAnimations(this, BOXER_PREFIXES.P2);
 
-    // AI controllers using strategy pattern
-    const controller1 = new StrategyAIController('offensive');
-    const controller2 = new StrategyAIController('defensive');
+    // AI controllers using offensive level strategies
+    const controller1 = new StrategyAIController(4);
+    const controller2 = new StrategyAIController(6);
     // Example of switching strategy during the match:
-    // controller1.setStrategy('defensive');
+    // controller1.setLevel(5);
 
     const centerX = width / 2;
     const centerY = height / 2;
@@ -170,8 +170,8 @@ export class MatchScene extends Phaser.Scene {
     eventBus.emit('match-winner', winner.stats?.name || winner.prefix);
   }
 
-  setPlayerStrategy(player, name) {
+  setPlayerStrategy(player, level) {
     const ctrl = player === 1 ? this.player1.controller : this.player2.controller;
-    if (ctrl && ctrl.setStrategy) ctrl.setStrategy(name);
+    if (ctrl && ctrl.setLevel) ctrl.setLevel(level);
   }
 }

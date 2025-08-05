@@ -52,11 +52,12 @@ export class Boxer {
     this.hasHit = false;
     this.isKO = false;
     this.isWinner = false;
-    this.baseStrategy = controller.currentName;
     this.recoveryTimer = 0;
     this.lowStaminaMode = false;
     this.blockHoldTime = 0;
     this.isRetreating = false;
+    this.wasTired = false;
+    this.opponentWasTired = false;
   }
 
   getCurrentState() {
@@ -144,9 +145,9 @@ export class Boxer {
     let actions = this.controller.getActions(this, opponent);
 
     if (this.lowStaminaMode === undefined) this.lowStaminaMode = false;
-    if (this.stamina < 0.31) {
+    if (this.stamina < this.maxStamina / 3) {
       this.lowStaminaMode = true;
-    } else if (this.lowStaminaMode && this.stamina > 0.5) {
+    } else if (this.lowStaminaMode && this.stamina >= this.maxStamina / 2) {
       this.lowStaminaMode = false;
     }
     if (this.lowStaminaMode) {
@@ -168,12 +169,9 @@ export class Boxer {
         ko: false,
         win: false,
       };
-      if (Math.random() < 0.5) {
-        actions.block = true;
-      } else {
-        if (this.facingRight) actions.moveLeft = true;
-        else actions.moveRight = true;
-      }
+      if (this.facingRight) actions.moveLeft = true;
+      else actions.moveRight = true;
+      actions.block = true;
     }
 
     this.applyRecovery(delta, actions);
@@ -368,18 +366,21 @@ export class Boxer {
   }
 
   updateStrategy(opponent) {
-    let desired = this.baseStrategy;
-    if (this.stamina < 0.51) {
-      if (desired === 'offensive') desired = 'neutral';
-      else if (desired === 'neutral') desired = 'defensive';
+    const tired = this.stamina < this.maxStamina / 3;
+    if (tired) {
+      this.wasTired = true;
+    }
+    if (this.wasTired && this.stamina >= this.maxStamina / 2) {
+      this.wasTired = false;
+      if (this.controller.shiftLevel) this.controller.shiftLevel(-1);
     }
 
-    if (opponent.health / opponent.maxHealth < 0.31) {
-      if (desired === 'defensive') desired = 'neutral';
-      else if (desired === 'neutral') desired = 'offensive';
+    const oppTired = opponent.stamina < opponent.maxStamina / 3;
+    if (oppTired && !this.opponentWasTired && !tired) {
+      if (this.controller.shiftLevel) this.controller.shiftLevel(1);
+      this.opponentWasTired = true;
     }
-
-    this.controller.setStrategy(desired);
+    if (!oppTired) this.opponentWasTired = false;
   }
 
   applyRecovery(delta, actions) {
