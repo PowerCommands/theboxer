@@ -88,7 +88,7 @@ export class MatchScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
     this.input.keyboard.on('keydown-P', (event) => {
-      if (event.ctrlKey) {
+      if (event.shiftKey) {
         this.togglePause();
       }
     });
