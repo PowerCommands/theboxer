@@ -25,11 +25,6 @@ export class StrategyAIController {
     this.lastDecision = 0;
     this.decisionInterval = 500; // ms per round second
     this.cached = createBaseActions();
-    this.retreating = false;
-    this.lastRetreat = 0;
-    this.idleSeeking = false;
-    this.lastIdleSeek = 0;
-    this.lastMove = Date.now();
   }
 
   getLevel() {
@@ -49,58 +44,10 @@ export class StrategyAIController {
     const strategy = STRATEGIES[this.level - 1];
     if (now - this.lastDecision > this.decisionInterval) {
       const action = strategy.actions[this.index % strategy.actions.length];
-      this.cached = convertAction(
-        action,
-        boxer,
-        opponent
-      );
+      this.cached = convertAction(action, boxer, opponent);
       this.index += 1;
       this.lastDecision = now;
     }
-
-    const dist = Math.abs(boxer.sprite.x - opponent.sprite.x);
-
-    if (this.cached.moveLeft || this.cached.moveRight) {
-      this.lastMove = now;
-    }
-
-    if (this.retreating) {
-      if (dist < strategy.distance) {
-        const forced = createBaseActions();
-        if (boxer.sprite.x < opponent.sprite.x) forced.moveLeft = true;
-        else forced.moveRight = true;
-        this.cached = forced;
-        this.lastMove = now;
-      } else {
-        this.retreating = false;
-        this.lastRetreat = now;
-      }
-    } else if (dist < 50 && now - this.lastRetreat > 10000) {
-      this.retreating = true;
-    } else if (!this.idleSeeking) {
-      if (now - this.lastMove > 5000 && now - this.lastIdleSeek > 10000) {
-        this.idleSeeking = true;
-      }
-    }
-
-    if (this.idleSeeking && !this.retreating) {
-      if (Math.abs(dist - strategy.distance) > 10) {
-        const forced = createBaseActions();
-        if (dist < strategy.distance) {
-          if (boxer.sprite.x < opponent.sprite.x) forced.moveLeft = true;
-          else forced.moveRight = true;
-        } else {
-          if (boxer.sprite.x < opponent.sprite.x) forced.moveRight = true;
-          else forced.moveLeft = true;
-        }
-        this.cached = forced;
-        this.lastMove = now;
-      } else {
-        this.idleSeeking = false;
-        this.lastIdleSeek = now;
-      }
-    }
-
     return this.cached;
   }
 }
