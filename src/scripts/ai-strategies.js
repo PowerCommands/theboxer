@@ -1,4 +1,4 @@
-// AI strategies controlling boxer behaviour
+// Precomputed AI strategies for 10 offensive levels
 
 function baseActions() {
   return {
@@ -21,113 +21,44 @@ function baseActions() {
   };
 }
 
-const FAR_DISTANCE = 300;
+function generateStrategy(level) {
+  const forwardProb = Math.min(0.1 + 0.05 * level, 0.8);
+  const backProb = Math.max(0.6 - 0.05 * level, 0.05);
+  const blockProb = Math.max(0.7 - 0.05 * level, 0.1);
+  const jabProb = Math.min(0.05 * level, 0.5);
+  const upperProb = Math.min(0.02 * level, 0.25);
 
-export class OffensiveStrategy {
-  decide(boxer, opponent) {
-    const actions = baseActions();
-    const distance = Math.abs(opponent.sprite.x - boxer.sprite.x);
-    const approachDistance = 150;
-    if (distance > approachDistance) {
-      if (boxer.sprite.x < opponent.sprite.x) {
-        actions.moveRight = true;
-      } else {
-        actions.moveLeft = true;
-      }
-    } else if (Math.random() < 0.1) {
-      // back off occasionally to recover
-      if (boxer.sprite.x < opponent.sprite.x) {
-        actions.moveLeft = true;
-      } else {
-        actions.moveRight = true;
-      }
+  const actions = [];
+  for (let i = 0; i < 180; i++) {
+    const act = {
+      forward: false,
+      back: false,
+      block: false,
+      jabLeft: false,
+      jabRight: false,
+      uppercut: false,
+    };
+    if (Math.random() < forwardProb) {
+      act.forward = true;
+    } else if (Math.random() < backProb) {
+      act.back = true;
     }
-
-    if (distance <= FAR_DISTANCE) {
-      actions.block = Math.random() < 0.05;
-      actions.jabRight = Math.random() < 0.4;
-      actions.jabLeft = Math.random() < 0.4;
-      actions.uppercut = Math.random() < 0.2;
-    } else if (boxer.stamina / boxer.maxStamina > 0.5) {
-      if (boxer.sprite.x < opponent.sprite.x) actions.moveRight = true;
-      else actions.moveLeft = true;
+    if (Math.random() < blockProb) act.block = true;
+    if (Math.random() < jabProb) {
+      if (Math.random() < 0.5) act.jabLeft = true;
+      else act.jabRight = true;
     }
-
-    return actions;
+    if (Math.random() < upperProb) act.uppercut = true;
+    actions.push(act);
   }
+  return actions;
 }
 
-export class DefensiveStrategy {
-  decide(boxer, opponent) {
-    const actions = baseActions();
-    const distance = Math.abs(opponent.sprite.x - boxer.sprite.x);
-    const retreatDistance = 200;
-    if (distance < retreatDistance) {
-      if (boxer.sprite.x < opponent.sprite.x) {
-        actions.moveLeft = true;
-      } else {
-        actions.moveRight = true;
-      }
-    } else if (Math.random() < 0.2) {
-      // step forward occasionally
-      if (boxer.sprite.x < opponent.sprite.x) {
-        actions.moveRight = true;
-      } else {
-        actions.moveLeft = true;
-      }
-    }
-    if (distance <= FAR_DISTANCE) {
-      actions.block = Math.random() < 0.6;
-      actions.jabRight = Math.random() < 0.1;
-      actions.jabLeft = Math.random() < 0.1;
-      actions.uppercut = Math.random() < 0.05;
-    } else if (boxer.stamina / boxer.maxStamina > 0.5) {
-      if (boxer.sprite.x < opponent.sprite.x) actions.moveRight = true;
-      else actions.moveLeft = true;
-    }
-    return actions;
-  }
-}
-
-export class NeutralStrategy {
-  decide(boxer, opponent) {
-    const actions = baseActions();
-    const distance = Math.abs(opponent.sprite.x - boxer.sprite.x);
-    const approachDistance = 170;
-    const retreatDistance = 130;
-    if (distance > approachDistance) {
-      if (boxer.sprite.x < opponent.sprite.x) {
-        actions.moveRight = true;
-      } else {
-        actions.moveLeft = true;
-      }
-    } else if (distance < retreatDistance) {
-      if (boxer.sprite.x < opponent.sprite.x) {
-        actions.moveLeft = true;
-      } else {
-        actions.moveRight = true;
-      }
-    } else if (Math.random() < 0.15) {
-      // random small steps
-      if (Math.random() < 0.5) {
-        actions.moveLeft = true;
-      } else {
-        actions.moveRight = true;
-      }
-    }
-    if (distance <= FAR_DISTANCE) {
-      actions.block = Math.random() < 0.3;
-      actions.jabRight = Math.random() < 0.25;
-      actions.jabLeft = Math.random() < 0.25;
-      actions.uppercut = Math.random() < 0.1;
-    } else if (boxer.stamina / boxer.maxStamina > 0.5) {
-      if (boxer.sprite.x < opponent.sprite.x) actions.moveRight = true;
-      else actions.moveLeft = true;
-    }
-    return actions;
-  }
-}
+export const STRATEGIES = Array.from({ length: 10 }, (_, i) =>
+  generateStrategy(i + 1)
+);
 
 export function createBaseActions() {
   return baseActions();
 }
+
