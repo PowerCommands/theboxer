@@ -54,9 +54,10 @@ function generateStrategy(level) {
   return actions;
 }
 
-export const STRATEGIES = Array.from({ length: 10 }, (_, i) =>
-  generateStrategy(i + 1)
-);
+export const STRATEGIES = Array.from({ length: 10 }, (_, i) => ({
+  distance: 300 - i * 10,
+  actions: generateStrategy(i + 1),
+}));
 
 export function createBaseActions() {
   return baseActions();

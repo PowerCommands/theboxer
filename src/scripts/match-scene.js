@@ -79,6 +79,16 @@ export class MatchScene extends Phaser.Scene {
     this.events.on('boxer-ko', (b) => this.handleKO(b));
     this.matchOver = false;
 
+    this.breaking = false;
+    this.breakText = this.add
+      .text(width / 2, height / 2, 'BREAK', {
+        font: '64px Arial',
+        color: '#ffffff',
+        align: 'center',
+      })
+      .setOrigin(0.5)
+      .setVisible(false);
+
     this.paused = false;
     this.debugText = this.add
       .text(width / 2, height - 100, '', {
@@ -103,6 +113,11 @@ export class MatchScene extends Phaser.Scene {
       this.player2.sprite.x,
       this.player2.sprite.y
     );
+
+    if (!this.breaking && distance < 100) {
+      this.resetBoxers();
+      this.showBreak();
+    }
     const action1 = this.player1.lastAction;
     const action2 = this.player2.lastAction;
     const statsLine =
@@ -209,6 +224,15 @@ export class MatchScene extends Phaser.Scene {
   setPlayerStrategy(player, level) {
     const ctrl = player === 1 ? this.player1.controller : this.player2.controller;
     if (ctrl && ctrl.setLevel) ctrl.setLevel(level);
+  }
+
+  showBreak() {
+    this.breaking = true;
+    this.breakText.setVisible(true);
+    this.time.delayedCall(5000, () => {
+      this.breakText.setVisible(false);
+      this.breaking = false;
+    });
   }
 
   togglePause() {
