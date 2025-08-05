@@ -1,5 +1,6 @@
 import { BOXER_PREFIXES, animKey } from './helpers.js';
 import { eventBus } from './event-bus.js';
+import { createBaseActions } from './ai-strategies.js';
 
 export const States = {
   ATTACK: 'attack',
@@ -247,6 +248,18 @@ export class Boxer {
       }
     }
 
+    const distance = Phaser.Math.Distance.Between(
+      this.sprite.x,
+      this.sprite.y,
+      opponent.sprite.x,
+      opponent.sprite.y
+    );
+    if (distance > 400) {
+      actions = createBaseActions();
+      if (this.sprite.x < opponent.sprite.x) actions.moveRight = true;
+      else actions.moveLeft = true;
+    }
+
     this.handleFacing(actions);
 
     const handlers = [
@@ -303,7 +316,7 @@ export class Boxer {
     const movingForward =
       (actions.moveRight && this.facingRight) ||
       (actions.moveLeft && !this.facingRight);
-    if (movingForward) this.adjustStamina(-0.0006);
+    if (movingForward) this.adjustStamina(-0.0003);
 
     this.applyBounds();
   }
