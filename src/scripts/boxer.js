@@ -283,7 +283,17 @@ export class Boxer {
       this.scene.events.emit('boxer-ko', this);
       return;
     }
-
-    this.playOnce(animKey(this.prefix, 'hurt1'));
+    
+    if(this.health < 0.2){
+      this.playOnce(animKey(this.prefix, 'dizzy'));      
+      return;
+    }
+    if(this.health < 0.35){
+      this.playOnce(animKey(this.prefix, 'hurt2'));      
+      return;
+    }        
+    if(amount > 0.015){
+      this.playOnce(animKey(this.prefix, 'hurt1'));
+    }    
   }
 }
