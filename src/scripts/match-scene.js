@@ -1,5 +1,6 @@
 import { Boxer } from './boxer.js';
 import { StrategyAIController } from './strategy-ai-controller.js';
+import { KeyboardController } from './controllers.js';
 import { createBoxerAnimations } from './animation-factory.js';
 import { eventBus } from './event-bus.js';
 import { RoundTimer } from './round-timer.js';
@@ -26,11 +27,20 @@ export class MatchScene extends Phaser.Scene {
     createBoxerAnimations(this, BOXER_PREFIXES.P1);
     createBoxerAnimations(this, BOXER_PREFIXES.P2);
 
-    // AI controllers using offensive level strategies
-    const controller1 = new StrategyAIController(4);
-    const controller2 = new StrategyAIController(6);
-    // Example of switching strategy during the match:
-    // controller1.setLevel(5);
+    // Player 1 uses keyboard, player 2 uses AI strategy
+    const controller1 = new KeyboardController(this, {
+      block: 'NUMPAD_FIVE',
+      jabRight: 'PAGEDOWN',
+      jabLeft: 'DELETE',
+      uppercut: 'NUMPAD_ZERO',
+      hurt1: 'ONE',
+      hurt2: 'TWO',
+      dizzy: 'THREE',
+      idle: 'SEVEN',
+      ko: 'NUMPAD_EIGHT',
+      win: 'ZERO',
+    });
+    const controller2 = new StrategyAIController(data?.aiLevel || 1);
 
     const centerX = width / 2;
     const centerY = height / 2;
@@ -140,8 +150,10 @@ export class MatchScene extends Phaser.Scene {
     const statsLine =
       `P1 S:${this.player1.stamina.toFixed(2)} H:${this.player1.health.toFixed(2)} P:${this.player1.power.toFixed(2)} | ` +
       `P2 S:${this.player2.stamina.toFixed(2)} H:${this.player2.health.toFixed(2)} P:${this.player2.power.toFixed(2)}`;
+    const getLevel = (ctrl) =>
+      typeof ctrl.getLevel === 'function' ? ctrl.getLevel() : 'N/A';
     const strategyLine =
-      `Strategi: P1 ${this.player1.controller.getLevel()} | P2 ${this.player2.controller.getLevel()}`;
+      `Strategi: P1 ${getLevel(this.player1.controller)} | P2 ${getLevel(this.player2.controller)}`;
     this.debugText.setText([
       `Distans: ${distance.toFixed(1)}`,
       `P1: ${action1} | P2: ${action2}`,

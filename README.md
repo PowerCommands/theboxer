@@ -1,33 +1,35 @@
 # The Boxer
 
 A small boxing game built with Phaser. Two boxers are displayed in the ring.
-Each boxer is controlled by a controller object. The current setup uses a
-keyboard controller for both boxers so you can play locally with two sets of
-keys. Because the behaviour is abstracted through controllers it is trivial to
-swap a boxer to a programmatic or AI driven controller in the future.
+Each boxer is controlled by a controller object. When the game starts you first
+select the boxer you will control with the keyboard, then choose an opponent
+that is steered by the computer along with its opening strategy. Because the
+behaviour is abstracted through controllers it is trivial to swap a boxer to a
+different type of controller in the future.
 
 ## Keyboard Controls
 
-The table below lists the keys used to control each boxer.
+The table below lists the keys used to control the player boxer. The opponent
+is controlled by the AI and has no keyboard controls.
 
-| Action | Player 1 | Player 2 |
-|-------|---------|---------|
-| Move left | Left Arrow | `A` |
-| Move right | Right Arrow | `D` |
-| Move up | Up Arrow | `W` |
-| Move down | Down Arrow | `S` |
-| Turn left | `Shift` + Left Arrow | `Shift` + `A` |
-| Turn right | `Shift` + Right Arrow | `Shift` + `D` |
-| Block | Numpad 5 | `X` |
-| Jab right | Page Down | `E` |
-| Jab left | Delete | `Q` |
-| Uppercut | Numpad 0 | `F` |
-| Hurt 1 | `1` | `4` |
-| Hurt 2 | `2` | `5` |
-| Dizzy | `3` | `6` |
-| Idle | `7` | `8` |
-| KO | Numpad 8 | `G` |
-| Win | `0` | `+` |
+| Action | Player |
+|-------|-------|
+| Move left | Left Arrow |
+| Move right | Right Arrow |
+| Move up | Up Arrow |
+| Move down | Down Arrow |
+| Turn left | `Shift` + Left Arrow |
+| Turn right | `Shift` + Right Arrow |
+| Block | Numpad 5 |
+| Jab right | Page Down |
+| Jab left | Delete |
+| Uppercut | Numpad 0 |
+| Hurt 1 | `1` |
+| Hurt 2 | `2` |
+| Dizzy | `3` |
+| Idle | `7` |
+| KO | Numpad 8 |
+| Win | `0` |
 
 Press `Shift` + `P` to pause the match.
 
