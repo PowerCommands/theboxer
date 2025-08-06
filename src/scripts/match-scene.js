@@ -29,16 +29,18 @@ export class MatchScene extends Phaser.Scene {
 
     // Player 1 uses keyboard, player 2 uses AI strategy
     const controller1 = new KeyboardController(this, {
-      block: 'NUMPAD_FIVE',
-      jabRight: 'PAGEDOWN',
-      jabLeft: 'DELETE',
-      uppercut: 'NUMPAD_ZERO',
+      block: 'S',
+      jabRight: 'E',
+      jabLeft: 'Q',
+      uppercut: 'W',
       hurt1: 'ONE',
       hurt2: 'TWO',
       dizzy: 'THREE',
       idle: 'SEVEN',
       ko: 'NUMPAD_EIGHT',
       win: 'ZERO',
+      left: 'A',
+      right: 'D'
     });
     const controller2 = new StrategyAIController(data?.aiLevel || 1);
 
