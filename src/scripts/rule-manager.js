@@ -17,13 +17,23 @@ export class RuleManager {
     }
   }
 
-  evaluate(currentSecond) {
+  recover(boxer){
+    boxer.adjustHealth(0.01 * boxer.stamina);
+    boxer.adjustPower(0.01 * boxer.stamina);
+    boxer.adjustStamina(0.002);
+  }
+
+  evaluate(currentSecond) {    
+
     if (this.activeRule && currentSecond < this.activeUntil) {
       return;
     }
     if (this.activeRule && currentSecond >= this.activeUntil) {
       this.activeRule = null;
-    }    
+    }
+    
+    this.recover(this.b1);
+    this.recover(this.b2);
 
     const tired1 = this.b1.stamina / this.b1.maxStamina < 0.3;
     const tired2 = this.b2.stamina / this.b2.maxStamina < 0.3;
