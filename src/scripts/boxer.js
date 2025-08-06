@@ -131,7 +131,7 @@ export class Boxer {
         opponent.sprite.x,
         opponent.sprite.y
       );
-      if (dist < 50) {
+      if (dist < 150) {
         this.sprite.x = prevX;
         this.sprite.y = prevY;
       }
