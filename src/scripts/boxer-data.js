@@ -1,7 +1,7 @@
 export const BOXERS = [
   {
     name: 'Glass Joe',
-    country: 'Frankrike',
+    country: 'France',
     stamina: 1.0,
     power: 1.0,
     health: 1.0,
@@ -9,7 +9,7 @@ export const BOXERS = [
   },
   {
     name: 'Von Kaiser',
-    country: 'Tyskland',
+    country: 'Germany',
     stamina: 1.2,
     power: 1.2,
     health: 1.0,
@@ -25,7 +25,7 @@ export const BOXERS = [
   },
   {
     name: 'Don Flamenco',
-    country: 'Spanien',
+    country: 'Spain',
     stamina: 1.3,
     power: 1.5,
     health: 1.0,
@@ -41,7 +41,7 @@ export const BOXERS = [
   },
   {
     name: 'Great Tiger',
-    country: 'Indien',
+    country: 'India',
     stamina: 1.4,
     power: 1.0,
     health: 1.0,
@@ -49,7 +49,7 @@ export const BOXERS = [
   },
   {
     name: 'Bald Bull',
-    country: 'Turkiet',
+    country: 'Turkey',
     stamina: 1.5,
     power: 2.0,
     health: 2.0,
@@ -57,7 +57,7 @@ export const BOXERS = [
   },
   {
     name: 'Soda Popinski',
-    country: 'Ryssland',
+    country: 'Russia',
     stamina: 1.0,
     power: 2.0,
     health: 1.5,

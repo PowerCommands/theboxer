@@ -12,7 +12,7 @@ export class SelectBoxerScene extends Phaser.Scene {
   create() {
     const width = this.sys.game.config.width;
     this.instruction = this.add
-      .text(width / 2, 20, 'Välj din boxer', {
+      .text(width / 2, 20, 'Choose your boxer', {
         font: '24px Arial',
         color: '#ffffff',
       })
@@ -38,7 +38,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.clearOptions();
     for (let i = 1; i <= 10; i++) {
       const y = 60 + i * 30;
-      const txt = this.add.text(50, y, `Strategi ${i}`, {
+      const txt = this.add.text(50, y, `Strategy ${i}`, {
         font: '20px Arial',
         color: '#ffffff',
       });
@@ -57,10 +57,10 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.choice.push(BOXERS[index]);
     if (this.step === 1) {
       this.step = 2;
-      this.instruction.setText('Välj din motståndare');
+      this.instruction.setText('Choose your opponent');
     } else if (this.step === 2) {
       this.step = 3;
-      this.instruction.setText('Välj motståndarens strategi');
+      this.instruction.setText("Choose the opponent's strategy");
       this.showStrategyOptions();
     }
   }
@@ -74,9 +74,11 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.clearOptions();
     const width = this.sys.game.config.width;
     const [player, opponent] = this.choice;
-    this.instruction.setText('Sammanfattning');
+    this.instruction.setText('Summary');
 
-    const summaryText = `Du: ${player.name}\nMotståndare: ${opponent.name}\nStrategi: ${this.selectedStrategy}`;
+    const summaryText = `You: ${player.name}
+Opponent: ${opponent.name}
+Strategy: ${this.selectedStrategy}`;
     const summary = this.add
       .text(width / 2, 80, summaryText, {
         font: '20px Arial',
@@ -112,17 +114,18 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.choice = [];
     this.step = 1;
     this.selectedStrategy = null;
-    this.instruction.setText('Välj din boxer');
+    this.instruction.setText('Choose your boxer');
     this.showBoxerOptions();
   }
 
   startMatch() {
     const [boxer1, boxer2] = this.choice;
+    const aiLevel = this.selectedStrategy ?? 1;
     this.scene.launch('OverlayUI');
     this.scene.start('Match', {
       boxer1,
       boxer2,
-      aiLevel: this.selectedStrategy,
+      aiLevel,
     });
   }
 }

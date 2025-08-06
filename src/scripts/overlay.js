@@ -99,7 +99,7 @@ export class OverlayUI extends Phaser.Scene {
 
   showRound(number) {
     if (!this.roundText) return;
-    this.roundText.setText(`Rond ${number}`);
+    this.roundText.setText(`Round ${number}`);
   }
 
   setNames(p1, p2) {
@@ -116,7 +116,7 @@ export class OverlayUI extends Phaser.Scene {
 
   announceWinner(name) {
     if (this.roundText) {
-      this.roundText.setText(`${name} vinner på KO!`);
+      this.roundText.setText(`${name} wins by KO!`);
     }
   }
 }

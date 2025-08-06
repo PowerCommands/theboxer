@@ -150,15 +150,19 @@ export class MatchScene extends Phaser.Scene {
     const statsLine =
       `P1 S:${this.player1.stamina.toFixed(2)} H:${this.player1.health.toFixed(2)} P:${this.player1.power.toFixed(2)} | ` +
       `P2 S:${this.player2.stamina.toFixed(2)} H:${this.player2.health.toFixed(2)} P:${this.player2.power.toFixed(2)}`;
-    const getLevel = (ctrl) =>
-      typeof ctrl.getLevel === 'function' ? ctrl.getLevel() : 'N/A';
+    const getStrategy = (ctrl) =>
+      ctrl instanceof KeyboardController
+        ? 'human player'
+        : ctrl.getLevel();
     const strategyLine =
-      `Strategi: P1 ${getLevel(this.player1.controller)} | P2 ${getLevel(this.player2.controller)}`;
+      `Strategy: P1 ${getStrategy(this.player1.controller)} | P2 ${getStrategy(this.player2.controller)}`;
+    const ruleLine = `Rule: ${this.ruleManager.activeRule || 'none'}`;
     this.debugText.setText([
-      `Distans: ${distance.toFixed(1)}`,
+      `Distance: ${distance.toFixed(1)}`,
       `P1: ${action1} | P2: ${action2}`,
       statsLine,
       strategyLine,
+      ruleLine,
     ]);
 
     const currentSecond = this.roundLength - this.roundTimer.remaining;
