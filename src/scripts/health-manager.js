@@ -16,9 +16,10 @@ export class HealthManager {
   damage(targetKey, amount) {
     const boxer = targetKey === 'p1' ? this.boxer1 : this.boxer2;
     boxer.takeDamage(amount);
-    eventBus.emit('health-changed', {
-      player: targetKey,
-      value: boxer.health / boxer.maxHealth,
-    });
+  }
+
+  adjustHealth(targetKey, delta) {
+    const boxer = targetKey === 'p1' ? this.boxer1 : this.boxer2;
+    boxer.adjustHealth(delta);
   }
 }
