@@ -4,7 +4,7 @@ export const ANIM_DEFS = {
   idle: { frameCount: 10, repeat: -1 },
   forward: { frameCount: 10, repeat: -1 },
   backward: { frameCount: 10, repeat: -1 },
-  block: { frameCount: 10, repeat: -1 },
+  block: { frameCount: 10, repeat: 0 },
   jabRight: { frameCount: 8, repeat: 0 },
   jabLeft: { frameCount: 8, repeat: 0 },
   uppercut: { frameCount: 8, repeat: 0 },
