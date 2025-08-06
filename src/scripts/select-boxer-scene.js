@@ -101,7 +101,11 @@ Strategy: ${this.selectedStrategy}`;
       })
       .setOrigin(0.5, 0)
       .setInteractive({ useHandCursor: true });
-    okBtn.on('pointerdown', () => this.startMatch());
+    okBtn.on('pointerdown', () => {
+      // Wait for pointer release before starting match to avoid
+      // leaving the input system in an inconsistent state.
+      this.input.once('pointerup', () => this.startMatch());
+    });
 
     const cancelBtn = this.add
       .text(width / 2 + 60, 200, 'Cancel', {
@@ -110,7 +114,10 @@ Strategy: ${this.selectedStrategy}`;
       })
       .setOrigin(0.5, 0)
       .setInteractive({ useHandCursor: true });
-    cancelBtn.on('pointerdown', () => this.resetSelection());
+    cancelBtn.on('pointerdown', () => {
+      // Similarly defer resetting until after the pointerup event.
+      this.input.once('pointerup', () => this.resetSelection());
+    });
 
     this.options.push(okBtn, cancelBtn);
   }
