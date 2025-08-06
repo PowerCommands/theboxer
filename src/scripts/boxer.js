@@ -1,6 +1,5 @@
 import { BOXER_PREFIXES, animKey } from './helpers.js';
 import { eventBus } from './event-bus.js';
-import { createBaseActions } from './ai-strategies.js';
 
 export const States = {
   ATTACK: 'attack',
@@ -53,15 +52,7 @@ export class Boxer {
     this.hasHit = false;
     this.isKO = false;
     this.isWinner = false;
-    this.recoveryTimer = 0;
-    this.lowStaminaMode = false;
-    this.blockHoldTime = 0;
-    this.blockDebounce = 0;
-    this.isRetreating = false;
-    this.wasTired = false;
-    this.opponentWasTired = false;
     this.lastAction = 'idle';
-    this.lastActionSecond = -1;
   }
 
   getCurrentState() {
@@ -138,7 +129,6 @@ export class Boxer {
     this.sprite.removeAllListeners('animationcomplete');
     this.sprite.play(animKey(this.prefix, 'ko'));
     this.isKO = true;
-    this.isRetreating = false;
     this.scene.events.emit('boxer-ko', this);
   }
 
@@ -150,137 +140,7 @@ export class Boxer {
   update(delta, opponent, currentSecond) {
     const move = (this.speed * delta) / 1000;
 
-    this.updateStrategy(opponent);
-
     let actions = this.controller.getActions(this, opponent, currentSecond);
-
-    if (currentSecond === this.lastActionSecond) {
-      this.applyRecovery(delta, actions);
-      return;
-    }
-    this.lastActionSecond = currentSecond;
-
-    if (actions.block) {
-      this.blockDebounce += delta;
-      if (this.blockDebounce < 120) {
-        actions.block = false;
-      }
-    } else {
-      this.blockDebounce = 0;
-    }
-
-    if (this.lowStaminaMode === undefined) this.lowStaminaMode = false;
-    if (this.stamina < this.maxStamina / 3) {
-      this.lowStaminaMode = true;
-    } else if (this.lowStaminaMode && this.stamina >= this.maxStamina / 2) {
-      this.lowStaminaMode = false;
-    }
-    if (this.lowStaminaMode) {
-      actions = {
-        moveLeft: false,
-        moveRight: false,
-        moveUp: false,
-        moveDown: false,
-        block: false,
-        jabRight: false,
-        jabLeft: false,
-        uppercut: false,
-        turnLeft: false,
-        turnRight: false,
-        hurt1: false,
-        hurt2: false,
-        dizzy: false,
-        idle: false,
-        ko: false,
-        win: false,
-      };
-      if (this.facingRight) actions.moveLeft = true;
-      else actions.moveRight = true;
-      actions.block = true;
-    }
-
-    this.applyRecovery(delta, actions);
-
-    if (this.lowStaminaMode) {
-      if (actions.block && this.blockHoldTime <= 0) {
-        this.blockHoldTime = 1000;
-      }
-      if (this.blockHoldTime > 0) {
-        this.blockHoldTime -= delta;
-        actions.block = true;
-        actions.jabRight = false;
-        actions.jabLeft = false;
-        actions.uppercut = false;
-      }
-    } else {
-      this.blockHoldTime = 0;
-    }
-
-    if (this.isRetreating) {
-      const width = this.scene.sys.game.config.width;
-      const minX = this.sprite.displayWidth / 2;
-      const maxX = width - this.sprite.displayWidth / 2;
-
-      if (this.facingRight) {
-        if (this.sprite.x > minX) {
-          actions = {
-            moveLeft: true,
-            moveRight: false,
-            moveUp: false,
-            moveDown: false,
-            block: false,
-            jabRight: false,
-            jabLeft: false,
-            uppercut: false,
-            turnLeft: false,
-            turnRight: false,
-            hurt1: false,
-            hurt2: false,
-            dizzy: false,
-            idle: false,
-            ko: false,
-            win: false,
-          };
-        } else {
-          this.isRetreating = false;
-        }
-      } else {
-        if (this.sprite.x < maxX) {
-          actions = {
-            moveLeft: false,
-            moveRight: true,
-            moveUp: false,
-            moveDown: false,
-            block: false,
-            jabRight: false,
-            jabLeft: false,
-            uppercut: false,
-            turnLeft: false,
-            turnRight: false,
-            hurt1: false,
-            hurt2: false,
-            dizzy: false,
-            idle: false,
-            ko: false,
-            win: false,
-          };
-        } else {
-          this.isRetreating = false;
-        }
-      }
-    }
-
-    const distance = Phaser.Math.Distance.Between(
-      this.sprite.x,
-      this.sprite.y,
-      opponent.sprite.x,
-      opponent.sprite.y
-    );
-    if (distance > 400) {
-      actions = createBaseActions();
-      if (this.sprite.x < opponent.sprite.x) actions.moveRight = true;
-      else actions.moveLeft = true;
-    }
 
     this.handleFacing(actions);
 
@@ -335,10 +195,6 @@ export class Boxer {
     if (actions.moveUp) this.sprite.y -= move;
     if (actions.moveDown) this.sprite.y += move;
 
-    const movingForward =
-      (actions.moveRight && this.facingRight) ||
-      (actions.moveLeft && !this.facingRight);
-    if (movingForward) this.adjustStamina(-0.0003);
     this.applyBounds();
   }
 
@@ -401,39 +257,6 @@ export class Boxer {
     });
   }
 
-  updateStrategy(opponent) {
-    const tired = this.stamina < this.maxStamina / 3;
-    if (tired) {
-      this.wasTired = true;
-    }
-    if (this.wasTired && this.stamina >= this.maxStamina / 2) {
-      this.wasTired = false;
-      if (this.controller.shiftLevel) this.controller.shiftLevel(-1);
-    }
-
-    const oppTired = opponent.stamina < opponent.maxStamina / 3;
-    if (oppTired && !this.opponentWasTired && !tired) {
-      if (this.controller.shiftLevel) this.controller.shiftLevel(2);
-      this.opponentWasTired = true;
-    }
-    if (!oppTired) this.opponentWasTired = false;
-  }
-
-  applyRecovery(delta, actions) {
-    this.recoveryTimer += delta;
-    if (this.recoveryTimer >= 1000) {
-      const movingBackward =
-        (actions.moveLeft && this.facingRight) ||
-        (actions.moveRight && !this.facingRight);
-      if (actions.block || movingBackward) {
-        this.adjustStamina(0.05);
-        this.adjustHealth(0.02);
-      }
-      this.adjustPower(0.15 * this.stamina);
-      this.recoveryTimer = 0;
-    }
-  }
-
   takeDamage(amount) {
     this.health = Phaser.Math.Clamp(this.health - amount, 0, this.maxHealth);
 
@@ -441,19 +264,10 @@ export class Boxer {
       this.sprite.removeAllListeners('animationcomplete');
       this.sprite.play(animKey(this.prefix, 'ko'));
       this.isKO = true;
-      this.isRetreating = false;
       this.scene.events.emit('boxer-ko', this);
       return;
     }
 
-    this.isRetreating = true;
-
-    if (this.health < 0.3) {
-      this.playOnce(animKey(this.prefix, 'dizzy'));
-    } else if (this.health < 0.4) {
-      this.playOnce(animKey(this.prefix, 'hurt2'));
-    } else if (this.health < 0.6) {
-      this.playOnce(animKey(this.prefix, 'hurt1'));
-    }
+    this.playOnce(animKey(this.prefix, 'hurt1'));
   }
 }
