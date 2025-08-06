@@ -4,6 +4,7 @@ export class OverlayUI extends Phaser.Scene {
   constructor() {
     super('OverlayUI');
     this.pendingNames = ['', ''];
+    this.newMatchText = null;
   }
 
   create() {
@@ -117,6 +118,23 @@ export class OverlayUI extends Phaser.Scene {
   announceWinner(name) {
     if (this.roundText) {
       this.roundText.setText(`${name} wins by KO!`);
+    }
+    if (!this.newMatchText) {
+      const width = this.sys.game.config.width;
+      const height = this.sys.game.config.height;
+      this.newMatchText = this.add
+        .text(width / 2, height / 2, 'Start New Match', {
+          font: '32px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true });
+      this.newMatchText.on('pointerup', () => {
+        this.scene.stop('Match');
+        this.scene.start('SelectBoxer');
+      });
+    } else {
+      this.newMatchText.setVisible(true);
     }
   }
 }
