@@ -110,7 +110,7 @@ export class Boxer {
     if (actions.moveDown) this.sprite.y += amount;
   }
 
-  applyBounds() {
+  applyBounds(opponent, prevX, prevY) {
     const width = this.scene.sys.game.config.width;
     const height = this.scene.sys.game.config.height;
     this.sprite.x = Phaser.Math.Clamp(
@@ -123,6 +123,19 @@ export class Boxer {
       this.sprite.displayHeight / 2,
       height - this.sprite.displayHeight / 2
     );
+
+    if (opponent) {
+      const dist = Phaser.Math.Distance.Between(
+        this.sprite.x,
+        this.sprite.y,
+        opponent.sprite.x,
+        opponent.sprite.y
+      );
+      if (dist < 50) {
+        this.sprite.x = prevX;
+        this.sprite.y = prevY;
+      }
+    }
   }
 
   triggerKO() {
@@ -139,6 +152,9 @@ export class Boxer {
 
   update(delta, opponent, currentSecond) {
     const move = (this.speed * delta) / 1000;
+
+    const prevX = this.sprite.x;
+    const prevY = this.sprite.y;
 
     let actions = this.controller.getActions(this, opponent, currentSecond);
 
@@ -161,7 +177,7 @@ export class Boxer {
         if (!this.isKO && !this.isWinner) {
           this.applyMovement(actions, move);
         }
-        this.applyBounds();
+        this.applyBounds(opponent, prevX, prevY);
         return;
       }
     }
@@ -169,7 +185,7 @@ export class Boxer {
     const state = this.getCurrentState();
     if (state === States.LOCKED) {
       this.applyMovement(actions, move);
-      this.applyBounds();
+      this.applyBounds(opponent, prevX, prevY);
       return;
     }
 
@@ -195,7 +211,7 @@ export class Boxer {
     if (actions.moveUp) this.sprite.y -= move;
     if (actions.moveDown) this.sprite.y += move;
 
-    this.applyBounds();
+    this.applyBounds(opponent, prevX, prevY);
   }
 
   playOnce(key) {
