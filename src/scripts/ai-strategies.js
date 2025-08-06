@@ -60,7 +60,6 @@ function generateStrategy(level) {
 }
 
 export const STRATEGIES = Array.from({ length: 10 }, (_, i) => ({
-  distance: 300 - i * 10,
   actions: generateStrategy(i + 1),
 }));
 
