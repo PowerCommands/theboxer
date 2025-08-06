@@ -101,10 +101,15 @@ Strategy: ${this.selectedStrategy}`;
       })
       .setOrigin(0.5, 0)
       .setInteractive({ useHandCursor: true });
-    okBtn.on('pointerdown', () => {
-      // Wait for pointer release before starting match to avoid
-      // leaving the input system in an inconsistent state.
-      this.input.once('pointerup', () => this.startMatch());
+    // Use the button's own pointerup event to start the match.
+    // Listening on the scene's global input and waiting for a
+    // subsequent pointerup could miss the event if the pointer is
+    // released outside the game canvas. By reacting directly to the
+    // button's pointerup event we ensure the match always starts when
+    // the player confirms their selection, while still waiting until
+    // the click interaction has fully completed.
+    okBtn.on('pointerup', () => {
+      this.startMatch();
     });
 
     const cancelBtn = this.add
@@ -114,9 +119,11 @@ Strategy: ${this.selectedStrategy}`;
       })
       .setOrigin(0.5, 0)
       .setInteractive({ useHandCursor: true });
-    cancelBtn.on('pointerdown', () => {
-      // Similarly defer resetting until after the pointerup event.
-      this.input.once('pointerup', () => this.resetSelection());
+    // Likewise, handle cancel on pointerup so that destroying and
+    // recreating the option elements does not interfere with the
+    // current pointerdown processing.
+    cancelBtn.on('pointerup', () => {
+      this.resetSelection();
     });
 
     this.options.push(okBtn, cancelBtn);
