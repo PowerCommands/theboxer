@@ -36,15 +36,15 @@ Press `Shift` + `P` to pause the match.
 
 ## Available Boxers
 
-| Namn | Land | Stamina | Power | Health | Speed |
+| Name | Country | Stamina | Power | Health | Speed |
 |------|------|---------|-------|--------|-------|
-| Glass Joe | Frankrike | 1.0 | 1.0 | 1.0 | 1.0 |
-| Von Kaiser | Tyskland | 1.2 | 1.2 | 1.0 | 1.0 |
+| Glass Joe | France | 1.0 | 1.0 | 1.0 | 1.0 |
+| Von Kaiser | Germany | 1.2 | 1.2 | 1.0 | 1.0 |
 | Piston Honda | Japan | 1.3 | 1.3 | 1.2 | 1.0 |
-| Don Flamenco | Spanien | 1.3 | 1.5 | 1.0 | 1.2 |
+| Don Flamenco | Spain | 1.3 | 1.5 | 1.0 | 1.2 |
 | King Hippo | Hippo Island | 1.0 | 1.6 | 1.8 | 1.0 |
-| Great Tiger | Indien | 1.4 | 1.0 | 1.0 | 1.5 |
-| Bald Bull | Turkiet | 1.5 | 2.0 | 2.0 | 1.2 |
-| Soda Popinski | Ryssland | 1.0 | 2.0 | 1.5 | 2.0 |
+| Great Tiger | India | 1.4 | 1.0 | 1.0 | 1.5 |
+| Bald Bull | Turkey | 1.5 | 2.0 | 2.0 | 1.2 |
+| Soda Popinski | Russia | 1.0 | 2.0 | 1.5 | 2.0 |
 | Mr. Sandman | USA | 2.0 | 2.0 | 2.0 | 2.0 |
 | Mike Tyson | USA | 2.5 | 2.5 | 2.2 | 2.5 |
