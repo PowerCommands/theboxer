@@ -67,7 +67,13 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   selectStrategy(level) {
     this.selectedStrategy = level;
-    this.showSummary();
+    // Defer showing the summary until the pointer is released.
+    // Destroying interactive objects during their pointerdown handler
+    // can leave the input system in an inconsistent state, which makes
+    // subsequent buttons (like OK/Cancel) unresponsive. Waiting for the
+    // pointerup event ensures the previous interaction completes before
+    // clearing the options and adding new interactive elements.
+    this.input.once('pointerup', () => this.showSummary());
   }
 
   showSummary() {
