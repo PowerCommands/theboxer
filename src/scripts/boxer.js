@@ -37,7 +37,7 @@ export class Boxer {
     this.prefix = prefix;
     this.controller = controller;
     this.stats = stats;
-    this.speed = 200 * (stats.speed || 1);
+    this.speed = 400 * (stats.speed || 1);
     this.power = stats.power || 1;
     this.maxPower = this.power;
     this.stamina = stats.stamina || 1;
