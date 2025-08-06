@@ -274,7 +274,7 @@ export class Boxer {
   }
 
   takeDamage(amount) {
-    this.health = Phaser.Math.Clamp(this.health - amount, 0, this.maxHealth);
+    this.adjustHealth(-amount);
 
     if (this.health === 0) {
       this.sprite.removeAllListeners('animationcomplete');
