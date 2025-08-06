@@ -157,8 +157,8 @@ export class MatchScene extends Phaser.Scene {
 
     if (this.paused) return;
 
-    this.player1.update(delta, this.player2);
-    this.player2.update(delta, this.player1);
+    this.player1.update(delta, this.player2, currentSecond);
+    this.player2.update(delta, this.player1, currentSecond);
 
     this.handleHit(this.player1, this.player2, 'p2');
     this.handleHit(this.player2, this.player1, 'p1');

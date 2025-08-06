@@ -22,8 +22,7 @@ export class StrategyAIController {
   constructor(level = 1) {
     this.level = Phaser.Math.Clamp(level, 1, 10);
     this.index = 0;
-    this.lastDecision = 0;
-    this.decisionInterval = 500; // ms per round second
+    this.lastDecision = -1;
     this.cached = createBaseActions();
   }
 
@@ -39,14 +38,13 @@ export class StrategyAIController {
     this.setLevel(this.level + delta);
   }
 
-  getActions(boxer, opponent) {
-    const now = Date.now();
+  getActions(boxer, opponent, currentSecond) {
     const strategy = STRATEGIES[this.level - 1];
-    if (now - this.lastDecision > this.decisionInterval) {
+    if (currentSecond !== this.lastDecision) {
       const action = strategy.actions[this.index % strategy.actions.length];
       this.cached = convertAction(action, boxer, opponent);
       this.index += 1;
-      this.lastDecision = now;
+      this.lastDecision = currentSecond;
     }
     return this.cached;
   }

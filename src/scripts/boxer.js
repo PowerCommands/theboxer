@@ -15,7 +15,7 @@ const STATE_ANIMS = {
 };
 
 const ACTION_ANIMS = {
-  block: { key: 'block', loop: true },
+  block: { key: 'block' },
   forward: { key: 'forward', loop: true },
   backward: { key: 'backward', loop: true },
   jabRight: { key: 'jabRight' },
@@ -61,6 +61,7 @@ export class Boxer {
     this.wasTired = false;
     this.opponentWasTired = false;
     this.lastAction = 'idle';
+    this.lastActionSecond = -1;
   }
 
   getCurrentState() {
@@ -77,6 +78,11 @@ export class Boxer {
     if (!cfg) return;
     const key = animKey(this.prefix, cfg.key);
     this.lastAction = action;
+    if (action === 'block') {
+      if (this.isBlocking()) return;
+      this.sprite.play(key);
+      return;
+    }
     if (cfg.loop) {
       this.sprite.anims.play(key, true);
     } else {
@@ -141,12 +147,18 @@ export class Boxer {
     this.isWinner = true;
   }
 
-  update(delta, opponent) {
+  update(delta, opponent, currentSecond) {
     const move = (this.speed * delta) / 1000;
 
     this.updateStrategy(opponent);
 
-    let actions = this.controller.getActions(this, opponent);
+    let actions = this.controller.getActions(this, opponent, currentSecond);
+
+    if (currentSecond === this.lastActionSecond) {
+      this.applyRecovery(delta, actions);
+      return;
+    }
+    this.lastActionSecond = currentSecond;
 
     if (actions.block) {
       this.blockDebounce += delta;
