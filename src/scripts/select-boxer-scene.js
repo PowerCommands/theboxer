@@ -6,12 +6,13 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.step = 1;
     this.choice = [];
     this.options = [];
+    this.selectedStrategy = null;
   }
 
   create() {
     const width = this.sys.game.config.width;
     this.instruction = this.add
-      .text(width / 2, 20, 'Välj Boxer 1', {
+      .text(width / 2, 20, 'Välj din boxer', {
         font: '24px Arial',
         color: '#ffffff',
       })
@@ -42,7 +43,7 @@ export class SelectBoxerScene extends Phaser.Scene {
         color: '#ffffff',
       });
       txt.setInteractive({ useHandCursor: true });
-      txt.on('pointerdown', () => this.startMatch(i));
+      txt.on('pointerdown', () => this.selectStrategy(i));
       this.options.push(txt);
     }
   }
@@ -56,17 +57,72 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.choice.push(BOXERS[index]);
     if (this.step === 1) {
       this.step = 2;
-      this.instruction.setText('Välj Boxer 2');
+      this.instruction.setText('Välj din motståndare');
     } else if (this.step === 2) {
       this.step = 3;
-      this.instruction.setText('Välj Strategi');
+      this.instruction.setText('Välj motståndarens strategi');
       this.showStrategyOptions();
     }
   }
 
-  startMatch(level) {
+  selectStrategy(level) {
+    this.selectedStrategy = level;
+    this.showSummary();
+  }
+
+  showSummary() {
+    this.clearOptions();
+    const width = this.sys.game.config.width;
+    const [player, opponent] = this.choice;
+    this.instruction.setText('Sammanfattning');
+
+    const summaryText = `Du: ${player.name}\nMotståndare: ${opponent.name}\nStrategi: ${this.selectedStrategy}`;
+    const summary = this.add
+      .text(width / 2, 80, summaryText, {
+        font: '20px Arial',
+        color: '#ffffff',
+        align: 'center',
+      })
+      .setOrigin(0.5, 0);
+    this.options.push(summary);
+
+    const okBtn = this.add
+      .text(width / 2 - 60, 200, 'OK', {
+        font: '20px Arial',
+        color: '#00ff00',
+      })
+      .setOrigin(0.5, 0)
+      .setInteractive({ useHandCursor: true });
+    okBtn.on('pointerdown', () => this.startMatch());
+
+    const cancelBtn = this.add
+      .text(width / 2 + 60, 200, 'Cancel', {
+        font: '20px Arial',
+        color: '#ff0000',
+      })
+      .setOrigin(0.5, 0)
+      .setInteractive({ useHandCursor: true });
+    cancelBtn.on('pointerdown', () => this.resetSelection());
+
+    this.options.push(okBtn, cancelBtn);
+  }
+
+  resetSelection() {
+    this.clearOptions();
+    this.choice = [];
+    this.step = 1;
+    this.selectedStrategy = null;
+    this.instruction.setText('Välj din boxer');
+    this.showBoxerOptions();
+  }
+
+  startMatch() {
     const [boxer1, boxer2] = this.choice;
     this.scene.launch('OverlayUI');
-    this.scene.start('Match', { boxer1, boxer2, aiLevel: level });
+    this.scene.start('Match', {
+      boxer1,
+      boxer2,
+      aiLevel: this.selectedStrategy,
+    });
   }
 }

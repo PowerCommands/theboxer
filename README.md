@@ -3,9 +3,10 @@
 A small boxing game built with Phaser. Two boxers are displayed in the ring.
 Each boxer is controlled by a controller object. When the game starts you first
 select the boxer you will control with the keyboard, then choose an opponent
-that is steered by the computer along with its opening strategy. Because the
-behaviour is abstracted through controllers it is trivial to swap a boxer to a
-different type of controller in the future.
+that is steered by the computer along with its opening strategy. After picking
+a strategy you will be shown a summary of the match setup where you can confirm
+or cancel your choices. Because the behaviour is abstracted through controllers
+it is trivial to swap a boxer to a different type of controller in the future.
 
 ## Keyboard Controls
 
