@@ -18,8 +18,8 @@ export class RuleManager {
   }
 
   recover(boxer){
-    boxer.adjustHealth(0.01 * boxer.stamina);
-    boxer.adjustPower(0.01 * boxer.stamina);
+    boxer.adjustHealth(0.02 * boxer.stamina);
+    boxer.adjustPower(0.02 * boxer.stamina);
     boxer.adjustStamina(0.002);
   }
 
@@ -46,11 +46,12 @@ export class RuleManager {
         : null;
     };
 
+    const a1 = getActions(this.b1);
+    const a2 = getActions(this.b2);
+
     if (dist < 50) {
       const h1 = this.b1.health / this.b1.maxHealth;
-      const h2 = this.b2.health / this.b2.maxHealth;
-      const a1 = getActions(this.b1);
-      const a2 = getActions(this.b2);
+      const h2 = this.b2.health / this.b2.maxHealth;      
       if (h1 === h2) {
         const seq = [{ back: true }, { back: true }, { back: true }];
         if (a1) this.fill(a1, currentSecond, seq);
@@ -66,11 +67,27 @@ export class RuleManager {
       this.activeUntil = currentSecond + 3;
     }
 
+    if(this.b1.isStaggered == true){      
+      this.fill(a1, currentSecond, [{ back: true }, { back: true }, { back: true }, { back: true }]);
+      this.activeRule = 'staggered';
+      this.activeUntil = currentSecond + 4;
+      this.b1.isStaggered = false;      
+    }
+
+    if(this.b2.isStaggered == true){
+      this.fill(a2, currentSecond, [{ back: true }, { back: true }, { back: true }, { back: true }]);
+      this.activeRule = 'staggered';
+      this.activeUntil = currentSecond + 4;      
+      this.b2.isStaggered = false;      
+    }
+
+    if(this.b1.isStaggered == true || this.b2.isStaggered == true){
+      return;
+    }
+
     if (dist > 450) {
       const h1 = this.b1.health / this.b1.maxHealth;
-      const h2 = this.b2.health / this.b2.maxHealth;
-      const a1 = getActions(this.b1);
-      const a2 = getActions(this.b2);
+      const h2 = this.b2.health / this.b2.maxHealth;      
       if (h1 === h2) {
         const seq = [{ forward: true }, { forward: true }, { forward: true }];
         if (a1) this.fill(a1, currentSecond, seq);
@@ -84,11 +101,10 @@ export class RuleManager {
       }
       this.activeRule = 'ranged-distance';
       this.activeUntil = currentSecond + 3;
+      return;
     }
 
-    if (tired1 && tired2) {
-      const a1 = getActions(this.b1);
-      const a2 = getActions(this.b2);
+    if (tired1 && tired2) {      
       const seq = [{ back: true }, { back: true }, { back: true }];
       if (a1) this.fill(a1, currentSecond, seq);
       if (a2) this.fill(a2, currentSecond, seq);
@@ -103,9 +119,7 @@ export class RuleManager {
       }
       if (typeof this.b2.controller.shiftLevel === 'function') {
         this.b2.controller.shiftLevel(2);
-      }
-      const a1 = getActions(this.b1);
-      const a2 = getActions(this.b2);
+      }      
       if (a1)
         this.fill(a1, currentSecond, [
           { back: true },
@@ -129,9 +143,7 @@ export class RuleManager {
       }
       if (typeof this.b1.controller.shiftLevel === 'function') {
         this.b1.controller.shiftLevel(2);
-      }
-      const a1 = getActions(this.b1);
-      const a2 = getActions(this.b2);
+      }      
       if (a2)
         this.fill(a2, currentSecond, [
           { back: true },
@@ -150,4 +162,3 @@ export class RuleManager {
     }
   }
 }
-

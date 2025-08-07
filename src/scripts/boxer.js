@@ -50,6 +50,7 @@ export class Boxer {
     this.sprite.setFlipX(this.facingRight);
     if (prefix === BOXER_PREFIXES.P2) this.sprite.setTint(0xbb7744);
     this.hasHit = false;
+    this.isStaggered = false;
     this.isKO = false;
     this.isWinner = false;
     this.lastAction = 'idle';
@@ -224,8 +225,8 @@ export class Boxer {
       ) {
         this.hasHit = false;
         const isUppercut = key === animKey(this.prefix, 'uppercut');
-        const powerCost = isUppercut ? 0.06 : 0.03;
-        const staminaCost = isUppercut ? 0.03 : 0.015;
+        const powerCost = isUppercut ? 0.1 : 0.15;
+        const staminaCost = isUppercut ? 0.06 : 0.03;
         this.adjustPower(-powerCost);
         this.adjustStamina(-staminaCost);
       }
@@ -275,6 +276,9 @@ export class Boxer {
 
   takeDamage(amount) {
     this.adjustHealth(-amount);
+    if(amount > 0.1){
+      this.isStaggered = true;
+    }    
 
     if (this.health === 0) {
       this.sprite.removeAllListeners('animationcomplete');
