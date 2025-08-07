@@ -59,7 +59,12 @@ function generateStrategy(level) {
   return actions;
 }
 
-export const STRATEGIES = Array.from({ length: 10 }, (_, i) => ({
+// Separate strategy sets for each boxer so identical levels don't share actions
+export const STRATEGIES_P1 = Array.from({ length: 10 }, (_, i) => ({
+  actions: generateStrategy(i + 1),
+}));
+
+export const STRATEGIES_P2 = Array.from({ length: 10 }, (_, i) => ({
   actions: generateStrategy(i + 1),
 }));
 

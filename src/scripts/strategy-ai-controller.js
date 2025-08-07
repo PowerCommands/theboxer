@@ -1,4 +1,4 @@
-import { STRATEGIES, createBaseActions } from './ai-strategies.js';
+import { STRATEGIES_P1, STRATEGIES_P2, createBaseActions } from './ai-strategies.js';
 
 function convertAction(action, boxer, opponent) {
   if (action.none) return createBaseActions();
@@ -19,11 +19,12 @@ function convertAction(action, boxer, opponent) {
 }
 
 export class StrategyAIController {
-  constructor(level = 1) {
+  constructor(level = 1, boxerId = 1) {
     this.level = Phaser.Math.Clamp(level, 1, 10);
     this.index = 0;
     this.lastDecision = -1;
     this.cached = createBaseActions();
+    this.boxerId = boxerId === 2 ? 2 : 1;
   }
 
   getLevel() {
@@ -39,7 +40,8 @@ export class StrategyAIController {
   }
 
   getActions(boxer, opponent, currentSecond) {
-    const strategy = STRATEGIES[this.level - 1];
+    const strategies = this.boxerId === 1 ? STRATEGIES_P1 : STRATEGIES_P2;
+    const strategy = strategies[this.level - 1];
     if (currentSecond !== this.lastDecision) {
       const action = strategy.actions[this.index % strategy.actions.length];
       this.cached = convertAction(action, boxer, opponent);
