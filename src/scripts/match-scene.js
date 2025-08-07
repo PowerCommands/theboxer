@@ -81,6 +81,8 @@ export class MatchScene extends Phaser.Scene {
     this.ruleManager = new RuleManager(this.player1, this.player2);
     this.roundLength = 180;
     this.lastSecond = -1;
+    this.hits = { p1: 0, p2: 0 };
+    this.maxRounds = Phaser.Math.Clamp(data?.rounds || 1, 1, 13);
     eventBus.on('round-ended', (round) => this.endRound(round));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       eventBus.off('round-ended');
@@ -90,6 +92,7 @@ export class MatchScene extends Phaser.Scene {
       p1: data?.boxer1?.name || '',
       p2: data?.boxer2?.name || '',
     });
+    eventBus.emit('hit-update', { p1: 0, p2: 0 });
     this.roundTimer.start(180, 1);
 
     this.events.on('boxer-ko', (b) => this.handleKO(b));
@@ -200,14 +203,21 @@ export class MatchScene extends Phaser.Scene {
     if (isUppercut) damage *= 2;
     if (distance >= 200) damage *= 0.5;
 
+    let blocked = false;
     if (defender.isBlocking()) {
       const penalty = isUppercut ? 0.12 : 0.06;
       attacker.adjustPower(-penalty);
       attacker.adjustStamina(-penalty);
       damage *= 0.5;
+      blocked = true;
     }
 
     this.healthManager.damage(defenderKey, damage);
+    if (!blocked) {
+      const attackerKey = defenderKey === 'p1' ? 'p2' : 'p1';
+      this.hits[attackerKey] += 1;
+      eventBus.emit('hit-update', { p1: this.hits.p1, p2: this.hits.p2 });
+    }
   }
 
   isFacingCorrectly(attacker, defender) {
@@ -246,8 +256,12 @@ export class MatchScene extends Phaser.Scene {
 
   endRound(round) {
     if (this.matchOver) return;
-    this.resetBoxers();
-    this.roundTimer.start(180, round + 1);
+    if (round >= this.maxRounds) {
+      this.determineWinnerByPoints();
+    } else {
+      this.resetBoxers();
+      this.roundTimer.start(180, round + 1);
+    }
   }
 
   handleKO(loser) {
@@ -259,7 +273,32 @@ export class MatchScene extends Phaser.Scene {
     winner.isWinner = true;
     winner.sprite.play(animKey(winner.prefix, 'win'));
     this.roundTimer.pause();
-    eventBus.emit('match-winner', winner.stats?.name || winner.prefix);
+    eventBus.emit('match-winner', {
+      name: winner.stats?.name || winner.prefix,
+      method: 'KO',
+      round: this.roundTimer.round,
+    });
+  }
+
+  determineWinnerByPoints() {
+    if (this.matchOver) return;
+    this.matchOver = true;
+    let winner;
+    if (this.hits.p1 === this.hits.p2) {
+      winner = this.player1.health > this.player2.health ? this.player1 : this.player2;
+    } else {
+      winner = this.hits.p1 > this.hits.p2 ? this.player1 : this.player2;
+    }
+    const loser = winner === this.player1 ? this.player2 : this.player1;
+    winner.isWinner = true;
+    winner.sprite.play(animKey(winner.prefix, 'win'));
+    loser.sprite.play(animKey(loser.prefix, 'idle'));
+    this.roundTimer.pause();
+    eventBus.emit('match-winner', {
+      name: winner.stats?.name || winner.prefix,
+      method: 'Points',
+      round: this.roundTimer.round,
+    });
   }
 
   setPlayerStrategy(player, level) {

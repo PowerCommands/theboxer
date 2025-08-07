@@ -7,6 +7,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.choice = [];
     this.options = [];
     this.selectedStrategy = null;
+    this.selectedRounds = null;
   }
 
   create() {
@@ -75,12 +76,35 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   selectStrategy(level) {
     this.selectedStrategy = level;
-    // Defer showing the summary until the pointer is released.
+    // Defer showing the next options until the pointer is released.
     // Destroying interactive objects during their pointerdown handler
     // can leave the input system in an inconsistent state, which makes
     // subsequent buttons (like OK/Cancel) unresponsive. Waiting for the
     // pointerup event ensures the previous interaction completes before
     // clearing the options and adding new interactive elements.
+    this.input.once('pointerup', () => {
+      this.step = 4;
+      this.instruction.setText('Choose number of rounds (1-13)');
+      this.showRoundOptions();
+    });
+  }
+
+  showRoundOptions() {
+    this.clearOptions();
+    for (let i = 1; i <= 13; i++) {
+      const y = 60 + i * 25;
+      const txt = this.add.text(50, y, `${i}`, {
+        font: '20px Arial',
+        color: '#ffffff',
+      });
+      txt.setInteractive({ useHandCursor: true });
+      txt.on('pointerdown', () => this.selectRounds(i));
+      this.options.push(txt);
+    }
+  }
+
+  selectRounds(num) {
+    this.selectedRounds = num;
     this.input.once('pointerup', () => this.showSummary());
   }
 
@@ -92,7 +116,8 @@ export class SelectBoxerScene extends Phaser.Scene {
 
     const summaryText = `You: ${player.name}
 Opponent: ${opponent.name}
-Strategy: ${this.selectedStrategy}`;
+Strategy: ${this.selectedStrategy}
+Rounds: ${this.selectedRounds}`;
     const summary = this.add
       .text(width / 2, 80, summaryText, {
         font: '20px Arial',
@@ -141,6 +166,7 @@ Strategy: ${this.selectedStrategy}`;
     this.choice = [];
     this.step = 1;
     this.selectedStrategy = null;
+    this.selectedRounds = null;
     this.instruction.setText('Choose your boxer');
     this.showBoxerOptions();
   }
@@ -148,11 +174,13 @@ Strategy: ${this.selectedStrategy}`;
   startMatch() {
     const [boxer1, boxer2] = this.choice;
     const aiLevel = this.selectedStrategy ?? 1;
+    const rounds = this.selectedRounds ?? 1;
     this.scene.launch('OverlayUI');
     this.scene.start('Match', {
       boxer1,
       boxer2,
       aiLevel,
+      rounds,
     });
   }
 }

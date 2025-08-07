@@ -47,6 +47,17 @@ export class OverlayUI extends Phaser.Scene {
       },
     };
 
+    this.hitText = {
+      p1: this.add.text(20, 80, 'Hits: 0', {
+        font: '16px Arial',
+        color: '#ffffff',
+      }),
+      p2: this.add.text(width - 170, 80, 'Hits: 0', {
+        font: '16px Arial',
+        color: '#ffffff',
+      }),
+    };
+
     // initialize full bars
     this.setBarValue(this.bars.p1.stamina, 1);
     this.setBarValue(this.bars.p1.power, 1);
@@ -67,7 +78,11 @@ export class OverlayUI extends Phaser.Scene {
     eventBus.on('power-changed', ({ player, value }) => {
       this.setBarValue(this.bars[player].power, value);
     });
-    eventBus.on('match-winner', (name) => this.announceWinner(name));
+    eventBus.on('match-winner', (data) => this.announceWinner(data));
+    eventBus.on('hit-update', ({ p1, p2 }) => {
+      this.hitText.p1.setText(`Hits: ${p1}`);
+      this.hitText.p2.setText(`Hits: ${p2}`);
+    });
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       eventBus.off('timer-tick');
@@ -77,6 +92,7 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('stamina-changed');
       eventBus.off('power-changed');
       eventBus.off('match-winner');
+      eventBus.off('hit-update');
     });
   }
 
@@ -115,9 +131,13 @@ export class OverlayUI extends Phaser.Scene {
     this.updateTimerText(0);
   }
 
-  announceWinner(name) {
+  announceWinner({ name, method, round }) {
     if (this.roundText) {
-      this.roundText.setText(`${name} wins by KO!`);
+      if (method === 'KO') {
+        this.roundText.setText(`${name} wins by KO in round ${round}!`);
+      } else {
+        this.roundText.setText(`${name} wins on points!`);
+      }
     }
     if (!this.newMatchText) {
       const width = this.sys.game.config.width;
