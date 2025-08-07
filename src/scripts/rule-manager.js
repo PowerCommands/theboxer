@@ -7,6 +7,7 @@ export class RuleManager {
     this.activeRule = null;
     this.activeUntil = 0;
     this.boxerRules = { p1: null, p2: null };
+    this.lastStrategyMinute = { p1: -1, p2: -1 };
   }
 
   fill(actions, start, seq) {
@@ -22,6 +23,20 @@ export class RuleManager {
     boxer.adjustHealth(0.02 * boxer.stamina);
     boxer.adjustPower(0.02 * boxer.stamina);
     boxer.adjustStamina(0.002);
+  }
+
+  canShift(boxer, currentSecond) {
+    const minute = Math.floor(currentSecond / 60);
+    if (this.lastStrategyMinute[boxer] !== minute) {
+      this.lastStrategyMinute[boxer] = minute;
+      return true;
+    }
+    return false;
+  }
+
+  resetStrategyChanges() {
+    this.lastStrategyMinute.p1 = -1;
+    this.lastStrategyMinute.p2 = -1;
   }
 
   evaluate(currentSecond) {
@@ -134,10 +149,16 @@ export class RuleManager {
       }
 
       if (tired1 && !tired2) {
-        if (typeof this.b1.controller.shiftLevel === 'function') {
+        if (
+          typeof this.b1.controller.shiftLevel === 'function' &&
+          this.canShift('p1', currentSecond)
+        ) {
           this.b1.controller.shiftLevel(-1);
         }
-        if (typeof this.b2.controller.shiftLevel === 'function') {
+        if (
+          typeof this.b2.controller.shiftLevel === 'function' &&
+          this.canShift('p2', currentSecond)
+        ) {
           this.b2.controller.shiftLevel(1);
         }
         if (a1)
@@ -160,10 +181,16 @@ export class RuleManager {
       }
 
       if (!tired1 && tired2) {
-        if (typeof this.b2.controller.shiftLevel === 'function') {
+        if (
+          typeof this.b2.controller.shiftLevel === 'function' &&
+          this.canShift('p2', currentSecond)
+        ) {
           this.b2.controller.shiftLevel(-1);
         }
-        if (typeof this.b1.controller.shiftLevel === 'function') {
+        if (
+          typeof this.b1.controller.shiftLevel === 'function' &&
+          this.canShift('p1', currentSecond)
+        ) {
           this.b1.controller.shiftLevel(1);
         }
         if (a2)

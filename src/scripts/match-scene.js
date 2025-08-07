@@ -236,6 +236,7 @@ export class MatchScene extends Phaser.Scene {
 
   endRound(round) {
     if (this.matchOver) return;
+    this.ruleManager.resetStrategyChanges();
     if (round >= this.maxRounds) {
       this.determineWinnerByPoints();
     } else {
