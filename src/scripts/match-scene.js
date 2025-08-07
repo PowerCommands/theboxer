@@ -112,13 +112,29 @@ export class MatchScene extends Phaser.Scene {
       .setVisible(false);
 
     this.paused = false;
-    this.debugText = this.add
-      .text(width / 2, height - 100, '', {
-        font: '16px monospace',
-        color: '#ffffff',
-        align: 'center',
-      })
-      .setOrigin(0.5, 0);
+    this.debugText = {
+      p1: this.add
+        .text(20, height - 100, '', {
+          font: '16px monospace',
+          color: '#ffffff',
+          align: 'left',
+        })
+        .setOrigin(0, 0),
+      p2: this.add
+        .text(width - 20, height - 100, '', {
+          font: '16px monospace',
+          color: '#ffffff',
+          align: 'right',
+        })
+        .setOrigin(1, 0),
+      center: this.add
+        .text(width / 2, height - 100, '', {
+          font: '16px monospace',
+          color: '#ffffff',
+          align: 'center',
+        })
+        .setOrigin(0.5, 0),
+    };
     this.input.keyboard.on('keydown-P', (event) => {
       if (event.shiftKey) {
         this.togglePause();
@@ -152,25 +168,14 @@ export class MatchScene extends Phaser.Scene {
         this.closeTime = null;
       }
     }
-    const action1 = this.player1.lastAction;
-    const action2 = this.player2.lastAction;
-    const statsLine =
-      `P1 S:${this.player1.stamina.toFixed(2)} H:${this.player1.health.toFixed(2)} P:${this.player1.power.toFixed(2)} | ` +
-      `P2 S:${this.player2.stamina.toFixed(2)} H:${this.player2.health.toFixed(2)} P:${this.player2.power.toFixed(2)}`;
-    const getStrategy = (ctrl) =>
-      ctrl instanceof KeyboardController
-        ? 'human player'
-        : ctrl.getLevel();
-    const strategyLine =
-      `Strategy: P1 ${getStrategy(this.player1.controller)} | P2 ${getStrategy(this.player2.controller)}`;
-    const ruleLine = `Rule: ${this.ruleManager.activeRule || 'none'}`;
-    this.debugText.setText([
-      `Distance: ${distance.toFixed(1)}`,
-      `P1: ${action1} | P2: ${action2}`,
-      statsLine,
-      strategyLine,
-      ruleLine,
-    ]);
+
+    this.debugText.center.setText(`Distance: ${distance.toFixed(1)}`);
+    this.debugText.p1.setText(
+      `Stamina: ${this.player1.stamina.toFixed(2)}\nPower: ${this.player1.power.toFixed(2)}\nHealth: ${this.player1.health.toFixed(2)}`
+    );
+    this.debugText.p2.setText(
+      `Stamina: ${this.player2.stamina.toFixed(2)}\nPower: ${this.player2.power.toFixed(2)}\nHealth: ${this.player2.health.toFixed(2)}`
+    );
 
     const currentSecond = this.roundLength - this.roundTimer.remaining;
     if (currentSecond !== this.lastSecond && currentSecond < this.roundLength) {
@@ -198,12 +203,27 @@ export class MatchScene extends Phaser.Scene {
     this.player2.sprite.anims.play(animKey(BOXER_PREFIXES.P2, 'idle'));
   }
 
+  recoverBoxer(boxer) {
+    if (boxer.stamina / boxer.maxStamina < 0.5) {
+      boxer.adjustStamina(boxer.maxStamina * 0.75 - boxer.stamina);
+    }
+    if (boxer.power / boxer.maxPower < 0.5) {
+      boxer.adjustPower(boxer.maxPower * 0.75 - boxer.power);
+    }
+    const minHealth = boxer.maxHealth * 0.25;
+    let targetHealth = boxer.health + boxer.maxHealth * 0.25;
+    targetHealth = Phaser.Math.Clamp(targetHealth, minHealth, boxer.maxHealth);
+    boxer.adjustHealth(targetHealth - boxer.health);
+  }
+
   endRound(round) {
     if (this.matchOver) return;
     if (round >= this.maxRounds) {
       this.determineWinnerByPoints();
     } else {
       this.resetBoxers();
+      this.recoverBoxer(this.player1);
+      this.recoverBoxer(this.player2);
       this.roundTimer.start(180, round + 1);
     }
   }
