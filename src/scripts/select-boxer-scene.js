@@ -6,7 +6,9 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.step = 1;
     this.choice = [];
     this.options = [];
-    this.selectedStrategy = null;
+    this.selectedStrategy1 = null;
+    this.selectedStrategy2 = null;
+    this.isBoxer1Human = true;
     this.selectedRounds = null;
   }
 
@@ -18,6 +20,30 @@ export class SelectBoxerScene extends Phaser.Scene {
         color: '#ffffff',
       })
       .setOrigin(0.5, 0);
+
+    // checkbox to toggle human control for boxer1
+    const cbX = width - 250;
+    this.humanBox = this.add
+      .rectangle(cbX, 25, 20, 20, 0xffffff)
+      .setOrigin(0, 0)
+      .setInteractive({ useHandCursor: true });
+    this.humanCheck = this.add
+      .text(cbX + 10, 25, 'X', {
+        font: '20px Arial',
+        color: '#000000',
+      })
+      .setOrigin(0.5, 0);
+    this.add
+      .text(cbX + 30, 20, 'Human Controlled', {
+        font: '20px Arial',
+        color: '#ffffff',
+      })
+      .setOrigin(0, 0);
+    this.humanBox.on('pointerdown', () => {
+      this.isBoxer1Human = !this.isBoxer1Human;
+      this.humanCheck.setVisible(this.isBoxer1Human);
+    });
+
     // When returning to this scene (e.g. after a match) the previous
     // selection state may still linger because the scene instance is
     // reused.  Reset everything so that the boxer options can be
@@ -65,28 +91,38 @@ export class SelectBoxerScene extends Phaser.Scene {
   selectBoxer(index) {
     this.choice.push(BOXERS[index]);
     if (this.step === 1) {
-      this.step = 2;
-      this.instruction.setText('Choose your opponent');
-    } else if (this.step === 2) {
-      this.step = 3;
+      this.humanBox.disableInteractive();
+      if (this.isBoxer1Human) {
+        this.step = 3;
+        this.instruction.setText('Choose your opponent');
+      } else {
+        this.step = 2;
+        this.instruction.setText('Choose Player 1 strategy');
+        this.showStrategyOptions();
+      }
+    } else if (this.step === 3) {
+      this.step = 4;
       this.instruction.setText("Choose the opponent's strategy");
       this.showStrategyOptions();
     }
   }
 
   selectStrategy(level) {
-    this.selectedStrategy = level;
-    // Defer showing the next options until the pointer is released.
-    // Destroying interactive objects during their pointerdown handler
-    // can leave the input system in an inconsistent state, which makes
-    // subsequent buttons (like OK/Cancel) unresponsive. Waiting for the
-    // pointerup event ensures the previous interaction completes before
-    // clearing the options and adding new interactive elements.
-    this.input.once('pointerup', () => {
-      this.step = 4;
-      this.instruction.setText('Choose number of rounds (1-13)');
-      this.showRoundOptions();
-    });
+    if (this.step === 2) {
+      this.selectedStrategy1 = level;
+      this.input.once('pointerup', () => {
+        this.step = 3;
+        this.instruction.setText('Choose your opponent');
+        this.showBoxerOptions();
+      });
+    } else if (this.step === 4) {
+      this.selectedStrategy2 = level;
+      this.input.once('pointerup', () => {
+        this.step = 5;
+        this.instruction.setText('Choose number of rounds (1-13)');
+        this.showRoundOptions();
+      });
+    }
   }
 
   showRoundOptions() {
@@ -114,10 +150,16 @@ export class SelectBoxerScene extends Phaser.Scene {
     const [player, opponent] = this.choice;
     this.instruction.setText('Summary');
 
-    const summaryText = `You: ${player.name}
-Opponent: ${opponent.name}
-Strategy: ${this.selectedStrategy}
-Rounds: ${this.selectedRounds}`;
+    const summaryLines = [
+      `Player 1: ${player.name}`,
+      this.isBoxer1Human
+        ? 'Human controlled'
+        : `Strategy: ${this.selectedStrategy1}`,
+      `Player 2: ${opponent.name}`,
+      `Strategy: ${this.selectedStrategy2}`,
+      `Rounds: ${this.selectedRounds}`,
+    ];
+    const summaryText = summaryLines.join('\n');
     const summary = this.add
       .text(width / 2, 80, summaryText, {
         font: '20px Arial',
@@ -165,21 +207,27 @@ Rounds: ${this.selectedRounds}`;
   resetSelection() {
     this.choice = [];
     this.step = 1;
-    this.selectedStrategy = null;
+    this.selectedStrategy1 = null;
+    this.selectedStrategy2 = null;
     this.selectedRounds = null;
+    this.isBoxer1Human = true;
+    if (this.humanCheck) this.humanCheck.setVisible(true);
+    if (this.humanBox) this.humanBox.setInteractive({ useHandCursor: true });
     this.instruction.setText('Choose your boxer');
     this.showBoxerOptions();
   }
 
   startMatch() {
     const [boxer1, boxer2] = this.choice;
-    const aiLevel = this.selectedStrategy ?? 1;
     const rounds = this.selectedRounds ?? 1;
+    const aiLevel1 = this.isBoxer1Human ? null : this.selectedStrategy1 ?? 1;
+    const aiLevel2 = this.selectedStrategy2 ?? 1;
     this.scene.launch('OverlayUI');
     this.scene.start('Match', {
       boxer1,
       boxer2,
-      aiLevel,
+      aiLevel1,
+      aiLevel2,
       rounds,
     });
   }
