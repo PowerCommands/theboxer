@@ -186,18 +186,19 @@ export class MatchScene extends Phaser.Scene {
       typeof this.player2.controller.getLevel === 'function'
         ? `Strategy: ${this.player2.controller.getLevel()}`
         : 'Human controlled boxer';
-    const rule = `Rule: ${this.ruleManager.activeRule || 'none'}`;
+    const rule1 = `Rule: ${this.ruleManager.boxerRules.p1 || 'none'}`;
+    const rule2 = `Rule: ${this.ruleManager.boxerRules.p2 || 'none'}`;
     this.debugText.p1.setText(
       `Stamina: ${this.player1.stamina.toFixed(2)}\n` +
         `Power: ${this.player1.power.toFixed(2)}\n` +
         `Health: ${this.player1.health.toFixed(2)}\n` +
-        `${strat1}\n${rule}`
+        `${strat1}\n${rule1}`
     );
     this.debugText.p2.setText(
       `Stamina: ${this.player2.stamina.toFixed(2)}\n` +
         `Power: ${this.player2.power.toFixed(2)}\n` +
         `Health: ${this.player2.health.toFixed(2)}\n` +
-        `${strat2}\n${rule}`
+        `${strat2}\n${rule2}`
     );
 
     if (this.paused) return;

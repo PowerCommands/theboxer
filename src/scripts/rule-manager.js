@@ -6,6 +6,7 @@ export class RuleManager {
     this.b2 = boxer2;
     this.activeRule = null;
     this.activeUntil = 0;
+    this.boxerRules = { p1: null, p2: null };
   }
 
   fill(actions, start, seq) {
@@ -30,6 +31,8 @@ export class RuleManager {
       }
       if (this.activeRule && currentSecond >= this.activeUntil) {
         this.activeRule = null;
+        this.boxerRules.p1 = null;
+        this.boxerRules.p2 = null;
       }
 
       this.recover(this.b1);
@@ -65,24 +68,37 @@ export class RuleManager {
         }
         this.activeRule = 'close-distance';
         this.activeUntil = currentSecond + 3;
+        this.boxerRules.p1 = 'close-distance';
+        this.boxerRules.p2 = 'close-distance';
       }
 
-      if (this.b1.isStaggered == true) {
-        this.fill(a1, currentSecond, [{ back: true }, { back: true }, { back: true }, { back: true }]);
-        this.activeRule = 'staggered';
-        this.activeUntil = currentSecond + 4;
+      const staggered1 = this.b1.isStaggered === true;
+      const staggered2 = this.b2.isStaggered === true;
+      if (staggered1) {
+        this.fill(a1, currentSecond, [
+          { back: true },
+          { back: true },
+          { back: true },
+          { back: true },
+        ]);
         this.b1.isStaggered = false;
       }
 
-      if (this.b2.isStaggered == true) {
-        this.fill(a2, currentSecond, [{ back: true }, { back: true }, { back: true }, { back: true }]);
-        this.activeRule = 'staggered';
-        this.activeUntil = currentSecond + 4;
+      if (staggered2) {
+        this.fill(a2, currentSecond, [
+          { back: true },
+          { back: true },
+          { back: true },
+          { back: true },
+        ]);
         this.b2.isStaggered = false;
       }
 
-      if (this.b1.isStaggered == true || this.b2.isStaggered == true) {
-        return;
+      if (staggered1 || staggered2) {
+        this.activeRule = 'staggered';
+        this.activeUntil = currentSecond + 4;
+        this.boxerRules.p1 = staggered1 ? 'staggered' : null;
+        this.boxerRules.p2 = staggered2 ? 'staggered' : null;
       }
 
       if (dist > 450) {
@@ -101,6 +117,8 @@ export class RuleManager {
         }
         this.activeRule = 'ranged-distance';
         this.activeUntil = currentSecond + 3;
+        this.boxerRules.p1 = 'ranged-distance';
+        this.boxerRules.p2 = 'ranged-distance';
         return;
       }
 
@@ -110,6 +128,8 @@ export class RuleManager {
         if (a2) this.fill(a2, currentSecond, seq);
         this.activeRule = 'both-tired';
         this.activeUntil = currentSecond + seq.length;
+        this.boxerRules.p1 = 'both-tired';
+        this.boxerRules.p2 = 'both-tired';
         return;
       }
 
@@ -134,6 +154,8 @@ export class RuleManager {
           ]);
         this.activeRule = 'p1-tired';
         this.activeUntil = currentSecond + 3;
+        this.boxerRules.p1 = 'p1-tired';
+        this.boxerRules.p2 = null;
         return;
       }
 
@@ -158,6 +180,8 @@ export class RuleManager {
           ]);
         this.activeRule = 'p2-tired';
         this.activeUntil = currentSecond + 3;
+        this.boxerRules.p1 = null;
+        this.boxerRules.p2 = 'p2-tired';
         return;
       }
     } catch (err) {
