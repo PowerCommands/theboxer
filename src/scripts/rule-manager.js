@@ -218,6 +218,10 @@ export class RuleManager {
         return;
       }
     } catch (err) {
+      this.activeRule = 'none';
+      this.activeUntil = currentSecond + 1;
+      this.boxerRules.p1 = 'none';
+      this.boxerRules.p2 = 'none';
       console.error('RuleManager evaluate error:', err);
       return;
     }
