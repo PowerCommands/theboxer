@@ -41,9 +41,14 @@ export class HitManager {
     else if (current === animKey(attacker.prefix, 'jabRight')) punch = 'jabRight';
     else if (current === animKey(attacker.prefix, 'jabLeft')) punch = 'jabLeft';
 
+    if(punch == 'jabLeft' && distance > (this.hitLimit*0.75)){
+      return;
+    }
+
     let damage = 0.05 * attacker.power;
     if (punch === 'uppercut') damage *= 2;
-    if (distance >= 200) damage *= 0.5;
+    if (punch === 'jabLeft') damage *= 1.5;
+    if (distance >= 265) damage *= 0.5;
 
     let blocked = false;
     if (defender.isBlocking()) {
