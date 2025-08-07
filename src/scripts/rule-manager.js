@@ -22,7 +22,7 @@ export class RuleManager {
   recover(boxer){
     boxer.adjustHealth(0.02 * boxer.stamina);
     boxer.adjustPower(0.02 * boxer.stamina);
-    boxer.adjustStamina(0.002);
+    boxer.adjustStamina(0.008);
   }
 
   canShift(boxer, currentSecond) {

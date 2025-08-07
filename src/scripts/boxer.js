@@ -225,8 +225,8 @@ export class Boxer {
       ) {
         this.hasHit = false;
         const isUppercut = key === animKey(this.prefix, 'uppercut');
-        const powerCost = isUppercut ? 0.1 : 0.15;
-        const staminaCost = isUppercut ? 0.06 : 0.03;
+        const powerCost = isUppercut ? 0.15 : 0.1;
+        const staminaCost = isUppercut ? 0.05 : 0.03;
         this.adjustPower(-powerCost);
         this.adjustStamina(-staminaCost);
       }
@@ -276,7 +276,7 @@ export class Boxer {
 
   takeDamage(amount) {
     this.adjustHealth(-amount);
-    if(amount > 0.1){
+    if(amount > 0.12){
       this.isStaggered = true;
     }    
 
@@ -288,15 +288,15 @@ export class Boxer {
       return;
     }
     
-    if(this.health < 0.2){
+    if(this.health < 0.25){
       this.playOnce(animKey(this.prefix, 'dizzy'));      
       return;
     }
-    if(this.health < 0.35){
+    if(this.health < 0.40){
       this.playOnce(animKey(this.prefix, 'hurt2'));      
       return;
     }        
-    if(amount > 0.015){
+    if(amount > 0.012){
       this.playOnce(animKey(this.prefix, 'hurt1'));
     }    
   }

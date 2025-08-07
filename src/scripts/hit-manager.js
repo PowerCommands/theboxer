@@ -45,7 +45,7 @@ export class HitManager {
       return;
     }
 
-    let damage = 0.05 * attacker.power;
+    let damage = Math.max(0.009, 0.05 * attacker.power);
     if (punch === 'uppercut') damage *= 2;
     if (punch === 'jabLeft') damage *= 1.5;
     if (distance >= 265) damage *= 0.5;
