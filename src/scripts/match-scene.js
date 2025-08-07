@@ -5,6 +5,7 @@ import { createBoxerAnimations } from './animation-factory.js';
 import { eventBus } from './event-bus.js';
 import { RoundTimer } from './round-timer.js';
 import { HealthManager } from './health-manager.js';
+import { HitManager } from './hit-manager.js';
 import { BOXER_PREFIXES, animKey } from './helpers.js';
 import { RuleManager } from './rule-manager.js';
 
@@ -82,6 +83,7 @@ export class MatchScene extends Phaser.Scene {
     this.roundLength = 180;
     this.lastSecond = -1;
     this.hits = { p1: 0, p2: 0 };
+    this.hitManager = new HitManager(this.healthManager, this.hitLimit, this.hits);
     this.maxRounds = Phaser.Math.Clamp(data?.rounds || 1, 1, 13);
     eventBus.on('round-ended', (round) => this.endRound(round));
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -181,66 +183,8 @@ export class MatchScene extends Phaser.Scene {
     this.player1.update(delta, this.player2, currentSecond);
     this.player2.update(delta, this.player1, currentSecond);
 
-    this.handleHit(this.player1, this.player2, 'p2');
-    this.handleHit(this.player2, this.player1, 'p1');
-  }
-
-  handleHit(attacker, defender, defenderKey) {
-    if (!attacker.isAttacking() || attacker.hasHit) return;
-    if (!this.isFacingCorrectly(attacker, defender)) return;
-    const distance = Phaser.Math.Distance.Between(
-      attacker.sprite.x,
-      attacker.sprite.y,
-      defender.sprite.x,
-      defender.sprite.y
-    );
-    if (distance > this.hitLimit) return;
-    if (!this.isColliding(attacker, defender)) return;
-    attacker.hasHit = true;
-    const current = attacker.sprite.anims.currentAnim?.key;
-    const isUppercut = current === animKey(attacker.prefix, 'uppercut');
-    let damage = 0.05 * attacker.power;
-    if (isUppercut) damage *= 2;
-    if (distance >= 200) damage *= 0.5;
-
-    let blocked = false;
-    if (defender.isBlocking()) {
-      const penalty = isUppercut ? 0.12 : 0.06;
-      attacker.adjustPower(-penalty);
-      attacker.adjustStamina(-penalty);
-      damage *= 0.5;
-      blocked = true;
-    }
-
-    this.healthManager.damage(defenderKey, damage);
-    if (!blocked) {
-      const attackerKey = defenderKey === 'p1' ? 'p2' : 'p1';
-      this.hits[attackerKey] += 1;
-      eventBus.emit('hit-update', { p1: this.hits.p1, p2: this.hits.p2 });
-    }
-  }
-
-  isFacingCorrectly(attacker, defender) {
-    return !(
-      (attacker.facingRight && defender.sprite.x < attacker.sprite.x) ||
-      (!attacker.facingRight && defender.sprite.x > attacker.sprite.x)
-    );
-  }
-
-  isInRange(attacker, defender) {
-    const distance = Phaser.Math.Distance.Between(
-      attacker.sprite.x,
-      attacker.sprite.y,
-      defender.sprite.x,
-      defender.sprite.y
-    );
-    return distance <= this.hitLimit;
-  }
-
-  isColliding(attacker, defender) {
-    const aBounds = attacker.sprite.getBounds();
-    const dBounds = defender.sprite.getBounds();
-    return Phaser.Geom.Intersects.RectangleToRectangle(aBounds, dBounds);
+    this.hitManager.handleHit(this.player1, this.player2, 'p2');
+    this.hitManager.handleHit(this.player2, this.player1, 'p1');
   }
 
   resetBoxers() {
