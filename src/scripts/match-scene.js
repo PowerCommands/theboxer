@@ -28,22 +28,24 @@ export class MatchScene extends Phaser.Scene {
     createBoxerAnimations(this, BOXER_PREFIXES.P1);
     createBoxerAnimations(this, BOXER_PREFIXES.P2);
 
-    // Player 1 uses keyboard, player 2 uses AI strategy
-    const controller1 = new KeyboardController(this, {
-      block: 'S',
-      jabRight: 'E',
-      jabLeft: 'Q',
-      uppercut: 'W',
-      hurt1: 'ONE',
-      hurt2: 'TWO',
-      dizzy: 'THREE',
-      idle: 'SEVEN',
-      ko: 'NUMPAD_EIGHT',
-      win: 'ZERO',
-      left: 'A',
-      right: 'D'
-    });
-    const controller2 = new StrategyAIController(data?.aiLevel || 1);
+    // Player 1 may be human or AI controlled; player 2 always AI
+    const controller1 = data?.aiLevel1
+      ? new StrategyAIController(data.aiLevel1)
+      : new KeyboardController(this, {
+          block: 'S',
+          jabRight: 'E',
+          jabLeft: 'Q',
+          uppercut: 'W',
+          hurt1: 'ONE',
+          hurt2: 'TWO',
+          dizzy: 'THREE',
+          idle: 'SEVEN',
+          ko: 'NUMPAD_EIGHT',
+          win: 'ZERO',
+          left: 'A',
+          right: 'D',
+        });
+    const controller2 = new StrategyAIController(data?.aiLevel2 || 1);
 
     const centerX = width / 2;
     const centerY = height / 2;
@@ -169,19 +171,34 @@ export class MatchScene extends Phaser.Scene {
       }
     }
 
-    this.debugText.center.setText(`Distance: ${distance.toFixed(1)}`);
-    this.debugText.p1.setText(
-      `Stamina: ${this.player1.stamina.toFixed(2)}\nPower: ${this.player1.power.toFixed(2)}\nHealth: ${this.player1.health.toFixed(2)}`
-    );
-    this.debugText.p2.setText(
-      `Stamina: ${this.player2.stamina.toFixed(2)}\nPower: ${this.player2.power.toFixed(2)}\nHealth: ${this.player2.health.toFixed(2)}`
-    );
-
     const currentSecond = this.roundLength - this.roundTimer.remaining;
     if (currentSecond !== this.lastSecond && currentSecond < this.roundLength) {
       this.ruleManager.evaluate(currentSecond);
       this.lastSecond = currentSecond;
     }
+
+    this.debugText.center.setText(`Distance: ${distance.toFixed(1)}`);
+    const strat1 =
+      typeof this.player1.controller.getLevel === 'function'
+        ? `Strategy: ${this.player1.controller.getLevel()}`
+        : 'Human controlled boxer';
+    const strat2 =
+      typeof this.player2.controller.getLevel === 'function'
+        ? `Strategy: ${this.player2.controller.getLevel()}`
+        : 'Human controlled boxer';
+    const rule = `Rule: ${this.ruleManager.activeRule || 'none'}`;
+    this.debugText.p1.setText(
+      `Stamina: ${this.player1.stamina.toFixed(2)}\n` +
+        `Power: ${this.player1.power.toFixed(2)}\n` +
+        `Health: ${this.player1.health.toFixed(2)}\n` +
+        `${strat1}\n${rule}`
+    );
+    this.debugText.p2.setText(
+      `Stamina: ${this.player2.stamina.toFixed(2)}\n` +
+        `Power: ${this.player2.power.toFixed(2)}\n` +
+        `Health: ${this.player2.health.toFixed(2)}\n` +
+        `${strat2}\n${rule}`
+    );
 
     if (this.paused) return;
 
