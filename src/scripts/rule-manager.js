@@ -1,4 +1,4 @@
-import { STRATEGIES } from './ai-strategies.js';
+import { STRATEGIES_P1, STRATEGIES_P2 } from './ai-strategies.js';
 
 export class RuleManager {
   constructor(boxer1, boxer2) {
@@ -59,9 +59,11 @@ export class RuleManager {
 
       const getActions = (boxer) => {
         const ctrl = boxer.controller;
-        return typeof ctrl.getLevel === 'function'
-          ? STRATEGIES[ctrl.getLevel() - 1].actions
-          : null;
+        if (typeof ctrl.getLevel === 'function') {
+          const strategies = boxer === this.b1 ? STRATEGIES_P1 : STRATEGIES_P2;
+          return strategies[ctrl.getLevel() - 1].actions;
+        }
+        return null;
       };
 
       const a1 = getActions(this.b1);
