@@ -12,12 +12,16 @@ export class SelectBoxerScene extends Phaser.Scene {
   create() {
     const width = this.sys.game.config.width;
     this.instruction = this.add
-      .text(width / 2, 20, 'Choose your boxer', {
+      .text(width / 2, 20, '', {
         font: '24px Arial',
         color: '#ffffff',
       })
       .setOrigin(0.5, 0);
-    this.showBoxerOptions();
+    // When returning to this scene (e.g. after a match) the previous
+    // selection state may still linger because the scene instance is
+    // reused.  Reset everything so that the boxer options can be
+    // selected again.
+    this.resetSelection();
   }
 
   showBoxerOptions() {
@@ -49,7 +53,11 @@ export class SelectBoxerScene extends Phaser.Scene {
   }
 
   clearOptions() {
-    this.options.forEach((o) => o.destroy());
+    this.options.forEach((o) => {
+      if (o && !o.destroyed) {
+        o.destroy();
+      }
+    });
     this.options = [];
   }
 
@@ -130,7 +138,6 @@ Strategy: ${this.selectedStrategy}`;
   }
 
   resetSelection() {
-    this.clearOptions();
     this.choice = [];
     this.step = 1;
     this.selectedStrategy = null;
