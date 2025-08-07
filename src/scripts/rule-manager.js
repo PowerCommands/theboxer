@@ -94,9 +94,12 @@ export class RuleManager {
           { back: true },
           { back: true },
           { back: true },
-          { back: true },
+          { block: true },
         ]);
         this.b1.isStaggered = false;
+        if(tired1){
+          this.b1.controller.shiftLevel(-1);
+        }
       }
 
       if (staggered2) {
@@ -104,9 +107,12 @@ export class RuleManager {
           { back: true },
           { back: true },
           { back: true },
-          { back: true },
+          { block: true },
         ]);
         this.b2.isStaggered = false;
+        if(tired2){
+          this.b2.controller.shiftLevel(-1);
+        }
       }
 
       if (staggered1 || staggered2) {
