@@ -138,7 +138,7 @@ export class RuleManager {
           this.b1.controller.shiftLevel(-1);
         }
         if (typeof this.b2.controller.shiftLevel === 'function') {
-          this.b2.controller.shiftLevel(2);
+          this.b2.controller.shiftLevel(1);
         }
         if (a1)
           this.fill(a1, currentSecond, [
@@ -164,7 +164,7 @@ export class RuleManager {
           this.b2.controller.shiftLevel(-1);
         }
         if (typeof this.b1.controller.shiftLevel === 'function') {
-          this.b1.controller.shiftLevel(2);
+          this.b1.controller.shiftLevel(1);
         }
         if (a2)
           this.fill(a2, currentSecond, [
