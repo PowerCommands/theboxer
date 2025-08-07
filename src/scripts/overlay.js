@@ -1,4 +1,5 @@
 import { eventBus } from './event-bus.js';
+import { appConfig } from './config.js';
 
 export class OverlayUI extends Phaser.Scene {
   constructor() {
@@ -9,14 +10,26 @@ export class OverlayUI extends Phaser.Scene {
 
   create() {
     const width = this.sys.game.config.width;
-    // create timer text centered at top
-    this.timerText = this.add.text(width / 2, 20, '0:00', {
+    // show application name and version
+    this.appInfoText = this.add.text(
+      width / 2,
+      10,
+      `${appConfig.name} v${appConfig.version}`,
+      {
+        font: '20px Arial',
+        color: '#ffffff',
+      }
+    );
+    this.appInfoText.setOrigin(0.5, 0);
+
+    // create timer text centered slightly lower
+    this.timerText = this.add.text(width / 2, 40, '0:00', {
       font: '24px Arial',
       color: '#ffffff',
     });
     this.timerText.setOrigin(0.5, 0);
 
-    this.roundText = this.add.text(width / 2, 50, '', {
+    this.roundText = this.add.text(width / 2, 70, '', {
       font: '24px Arial',
       color: '#ffffff',
     });
