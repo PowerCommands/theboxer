@@ -221,6 +221,19 @@ export class MatchScene extends Phaser.Scene {
     if (round >= this.maxRounds) {
       this.determineWinnerByPoints();
     } else {
+      const shift = round === this.maxRounds - 1 ? 3 : 1;
+      if (
+        this.hits.p1 < this.hits.p2 &&
+        typeof this.player1.controller.shiftLevel === 'function'
+      ) {
+        this.player1.controller.shiftLevel(shift);
+      }
+      if (
+        this.hits.p2 < this.hits.p1 &&
+        typeof this.player2.controller.shiftLevel === 'function'
+      ) {
+        this.player2.controller.shiftLevel(shift);
+      }
       this.resetBoxers();
       this.recoverBoxer(this.player1);
       this.recoverBoxer(this.player2);
