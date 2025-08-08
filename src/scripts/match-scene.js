@@ -9,6 +9,7 @@ import { HitManager } from './hit-manager.js';
 import { BOXER_PREFIXES, animKey } from './helpers.js';
 import { RuleManager } from './rule-manager.js';
 import { CommentManager } from './comment-manager.js';
+import { showComment } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
 
 export class MatchScene extends Phaser.Scene {
@@ -17,8 +18,7 @@ export class MatchScene extends Phaser.Scene {
   }
 
   create(data) {
-    console.log('MatchScene: create started');
-
+    console.log('MatchScene: create started');    
     this.hitLimit = 280; // max distance for a hit to register
 
     const width = this.sys.game.config.width;
@@ -427,6 +427,7 @@ export class MatchScene extends Phaser.Scene {
       this.startButton.setVisible(false);
       this.roundTimer.start(this.roundLength, 1);
       this.paused = false;
+      showComment('Round one have started.', 5);
     });
   }
 

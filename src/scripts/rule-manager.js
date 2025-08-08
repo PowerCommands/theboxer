@@ -1,4 +1,5 @@
 import { STRATEGIES_P1, STRATEGIES_P2 } from './ai-strategies.js';
+import { showComment } from './comment-manager.js';
 
 export class RuleManager {
   constructor(boxer1, boxer2) {
@@ -69,22 +70,23 @@ export class RuleManager {
       const a1 = getActions(this.b1);
       const a2 = getActions(this.b2);
 
-      if (dist < 50) {
+      if (dist < 152) {
+        showComment('Boxers are in clinch with each other, this is boring.', 5)
         const h1 = this.b1.health / this.b1.maxHealth;
         const h2 = this.b2.health / this.b2.maxHealth;
         if (h1 === h2) {
-          const seq = [{ back: true }, { back: true }, { back: true }];
+          const seq = [{ back: true }, { none: true }];
           if (a1) this.fill(a1, currentSecond, seq);
           if (a2) this.fill(a2, currentSecond, seq);
         } else if (h1 < h2) {
-          if (a1) this.fill(a1, currentSecond, [{ back: true }, { back: true }, { back: true }]);
-          if (a2) this.fill(a2, currentSecond, [{ back: true }, { none: true }, { none: true }]);
+          if (a1) this.fill(a1, currentSecond, [{ back: true }, { back: true }]);
+          if (a2) this.fill(a2, currentSecond, [{ none: true }]);
         } else {
-          if (a2) this.fill(a2, currentSecond, [{ back: true }, { back: true }, { back: true }]);
-          if (a1) this.fill(a1, currentSecond, [{ none: true }, { none: true }, { back: true }]);
+          if (a2) this.fill(a2, currentSecond, [{ back: true }, { back: true }]);
+          if (a1) this.fill(a1, currentSecond, [{ none: true }]);
         }
         this.activeRule = 'close-distance';
-        this.activeUntil = currentSecond + 3;
+        this.activeUntil = currentSecond + 15;
         this.boxerRules.p1 = 'close-distance';
         this.boxerRules.p2 = 'close-distance';
       }
@@ -92,6 +94,7 @@ export class RuleManager {
       const staggered1 = this.b1.isStaggered === true;
       const staggered2 = this.b2.isStaggered === true;
       if (staggered1) {
+        showComment(this.b1.nickName + ' is hurt and is trying to escape...', 5)
         this.fill(a1, currentSecond, [
           { back: true },
           { back: true },
@@ -105,6 +108,7 @@ export class RuleManager {
       }
 
       if (staggered2) {
+        showComment(this.b2.stats.nickName + ' is hurt and is trying to escape...', 5)
         this.fill(a2, currentSecond, [
           { back: true },
           { back: true },
@@ -125,6 +129,7 @@ export class RuleManager {
       }
 
       if (dist > 450) {
+        showComment('The boxer is passive and holds a great distance to each other.', 5)
         const h1 = this.b1.health / this.b1.maxHealth;
         const h2 = this.b2.health / this.b2.maxHealth;
         if (h1 === h2) {
@@ -146,6 +151,7 @@ export class RuleManager {
       }
 
       if (tired1 && tired2) {
+        showComment('The boxers looks tired, the crows is booing.', 5)
         const seq = [{ back: true }, { back: true }, { back: true }];
         if (a1) this.fill(a1, currentSecond, seq);
         if (a2) this.fill(a2, currentSecond, seq);
@@ -157,6 +163,7 @@ export class RuleManager {
       }
 
       if (tired1 && !tired2) {
+        showComment(this.b1.nickName + ' looks really tired.', 5)
         if (
           typeof this.b1.controller.shiftLevel === 'function' &&
           this.canShift('p1', currentSecond)
@@ -189,6 +196,7 @@ export class RuleManager {
       }
 
       if (!tired1 && tired2) {
+        showComment(this.b2.nickName + ' looks really tired.', 5)
         if (
           typeof this.b2.controller.shiftLevel === 'function' &&
           this.canShift('p2', currentSecond)
