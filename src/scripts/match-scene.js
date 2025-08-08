@@ -273,6 +273,7 @@ export class MatchScene extends Phaser.Scene {
     if (this.matchOver) return;
     this.ruleManager.resetStrategyChanges();
     this.paused = true;
+    this.resetBoxers();
     if (round >= this.maxRounds) {
       this.determineWinnerByPoints();
     } else {
@@ -295,7 +296,6 @@ export class MatchScene extends Phaser.Scene {
 
   startNextRound() {
     if (this.matchOver || !this.pendingRound) return;
-    this.resetBoxers();
     this.recoverBoxer(this.player1);
     this.recoverBoxer(this.player2);
     this.roundTimer.start(this.roundLength, this.pendingRound);
