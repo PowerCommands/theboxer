@@ -70,8 +70,7 @@ export class RuleManager {
       const a1 = getActions(this.b1);
       const a2 = getActions(this.b2);
 
-      if (dist < 152) {
-        showComment('Boxers are in clinch with each other, this is boring.', 5)
+      if (dist < 152) {        
         const h1 = this.b1.health / this.b1.maxHealth;
         const h2 = this.b2.health / this.b2.maxHealth;
         if (h1 === h2) {
@@ -94,7 +93,7 @@ export class RuleManager {
       const staggered1 = this.b1.isStaggered === true;
       const staggered2 = this.b2.isStaggered === true;
       if (staggered1) {
-        showComment(this.b1.nickName + ' is hurt and is trying to escape...', 5)
+        showComment(this.b1.stats.nickName + ' is hurt and is trying to escape...', 5)
         this.fill(a1, currentSecond, [
           { back: true },
           { back: true },
