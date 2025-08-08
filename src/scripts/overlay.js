@@ -6,6 +6,7 @@ export class OverlayUI extends Phaser.Scene {
     super('OverlayUI');
     this.pendingNames = ['', ''];
     this.newMatchText = null;
+    this.rankingText = null;
   }
 
   create() {
@@ -148,13 +149,15 @@ export class OverlayUI extends Phaser.Scene {
     if (this.roundText) {
       if (method === 'KO') {
         this.roundText.setText(`${name} wins by KO in round ${round}!`);
+      } else if (method === 'Draw') {
+        this.roundText.setText('Match ends in a draw!');
       } else {
         this.roundText.setText(`${name} wins on points!`);
       }
     }
+    const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
     if (!this.newMatchText) {
-      const width = this.sys.game.config.width;
-      const height = this.sys.game.config.height;
       this.newMatchText = this.add
         .text(width / 2, height / 2, 'Start New Match', {
           font: '32px Arial',
@@ -168,6 +171,22 @@ export class OverlayUI extends Phaser.Scene {
       });
     } else {
       this.newMatchText.setVisible(true);
+    }
+
+    if (!this.rankingText) {
+      this.rankingText = this.add
+        .text(width / 2, height / 2 + 40, 'Show ranking', {
+          font: '32px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true });
+      this.rankingText.on('pointerup', () => {
+        this.scene.stop('Match');
+        this.scene.start('Ranking');
+      });
+    } else {
+      this.rankingText.setVisible(true);
     }
   }
 }

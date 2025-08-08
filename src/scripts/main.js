@@ -1,6 +1,7 @@
 import { MatchScene } from './match-scene.js';
 import { SelectBoxerScene } from './select-boxer-scene.js';
 import { OverlayUI } from './overlay.js';
+import { RankingScene } from './ranking-scene.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -81,8 +82,8 @@ class BootScene extends Phaser.Scene {
   }
 
   create() {
-    console.log('BootScene: preload complete, switching to SelectBoxer');
-    this.scene.start('SelectBoxer');
+    console.log('BootScene: preload complete, switching to Ranking');
+    this.scene.start('Ranking');
   }
 }
 
@@ -92,7 +93,7 @@ const config = {
   width: 1024,
   height: 768,
   backgroundColor: '#2d2d2d',
-  scene: [BootScene, SelectBoxerScene, MatchScene, OverlayUI]
+  scene: [BootScene, RankingScene, SelectBoxerScene, MatchScene, OverlayUI]
 };
 
 window.addEventListener('load', () => {
