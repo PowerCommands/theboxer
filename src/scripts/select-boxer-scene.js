@@ -1,5 +1,6 @@
 import { getRankings } from './boxer-stats.js';
 import { getTestMode } from './config.js';
+import { SoundManager } from './sound-manager.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -128,6 +129,7 @@ export class SelectBoxerScene extends Phaser.Scene {
   }
 
   selectBoxer(boxer) {
+    SoundManager.playClick();
     this.choice.push(boxer);
     if (this.step === 1) {
       this.humanBox.disableInteractive();
@@ -160,6 +162,7 @@ export class SelectBoxerScene extends Phaser.Scene {
   }
 
   selectStrategy(level) {
+    SoundManager.playClick();
     if (this.step === 2) {
       this.selectedStrategy1 = level;
       this.input.once('pointerup', () => {
@@ -284,6 +287,8 @@ export class SelectBoxerScene extends Phaser.Scene {
       ? null
       : this.selectedStrategy1 ?? 'default';
     const aiLevel2 = this.selectedStrategy2 ?? 'default';
+    SoundManager.stopMenuLoop();
+    SoundManager.playIntro();
     this.scene.launch('OverlayUI');
     this.scene.start('Match', {
       boxer1,

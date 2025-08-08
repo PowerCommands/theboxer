@@ -1,5 +1,6 @@
 import { eventBus } from './event-bus.js';
 import { animKey } from './helpers.js';
+import { SoundManager } from './sound-manager.js';
 
 export class HitManager {
   constructor(healthManager, hitLimit, hits) {
@@ -60,7 +61,12 @@ export class HitManager {
     }
 
     this.healthManager.damage(defenderKey, damage);
-    if (!blocked) {
+    if (blocked) {
+      SoundManager.playBlock();
+    } else {
+      if (punch === 'jabLeft') SoundManager.playLeftJab();
+      else if (punch === 'jabRight') SoundManager.playRightJab();
+      else if (punch === 'uppercut') SoundManager.playUppercut();
       const attackerKey = defenderKey === 'p1' ? 'p2' : 'p1';
       this.hits[attackerKey] += 1;
       eventBus.emit('hit-update', { p1: this.hits.p1, p2: this.hits.p2 });

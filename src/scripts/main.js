@@ -2,6 +2,7 @@ import { MatchScene } from './match-scene.js';
 import { SelectBoxerScene } from './select-boxer-scene.js';
 import { OverlayUI } from './overlay.js';
 import { RankingScene } from './ranking-scene.js';
+import { SoundManager } from './sound-manager.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -11,6 +12,16 @@ class BootScene extends Phaser.Scene {
   preload() {
     console.log('BootScene: preload started');
     this.load.image('ring', 'assets/ring.png');
+    this.load.audio('loop-menu', 'assets/sounds/loop-menu.mp3');
+    this.load.audio('click-menu', 'assets/sounds/click-menu.mp3');
+    this.load.audio('intro', 'assets/sounds/intro.mp3');
+    this.load.audio('bell-signals', 'assets/sounds/bell-signals.mp3');
+    this.load.audio('fight', 'assets/sounds/fight.mp3');
+    this.load.audio('crowd-noise-01', 'assets/sounds/crowd-noise-01.mp3');
+    this.load.audio('block', 'assets/sounds/block.mp3');
+    this.load.audio('left-jab', 'assets/sounds/left-jab.mp3');
+    this.load.audio('right-jab', 'assets/sounds/right-jab.mp3');
+    this.load.audio('uppercut', 'assets/sounds/uppercut.mp3');
     // Load idle animation frames for the boxers
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
@@ -83,6 +94,8 @@ class BootScene extends Phaser.Scene {
 
   create() {
     console.log('BootScene: preload complete, switching to Ranking');
+    SoundManager.init(this);
+    SoundManager.playMenuLoop();
     this.scene.start('Ranking');
   }
 }

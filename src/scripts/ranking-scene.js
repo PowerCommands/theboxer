@@ -1,5 +1,6 @@
 import { getRankings } from './boxer-stats.js';
 import { getTestMode, setTestMode } from './config.js';
+import { SoundManager } from './sound-manager.js';
 
 export class RankingScene extends Phaser.Scene {
   constructor() {
@@ -9,6 +10,7 @@ export class RankingScene extends Phaser.Scene {
   create() {
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
+    SoundManager.playMenuLoop();
     this.add
       .text(width / 2, 20, 'Ranking', {
         font: '32px Arial',
