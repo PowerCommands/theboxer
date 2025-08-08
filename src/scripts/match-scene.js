@@ -185,6 +185,32 @@ export class MatchScene extends Phaser.Scene {
     const currentSecond = this.roundLength - this.roundTimer.remaining;
     if (currentSecond !== this.lastSecond && currentSecond < this.roundLength) {
       this.ruleManager.evaluate(currentSecond);
+      // If one minute remains in the final round, force the boxer who is
+      // trailing on points to switch to the most aggressive strategy. The
+      // existing rule limiting strategy changes still applies.
+      if (
+        this.roundTimer.round === this.maxRounds &&
+        this.roundTimer.remaining === 60
+      ) {
+        let behind = null;
+        if (this.hits.p1 === this.hits.p2) {
+          if (this.player1.health < this.player2.health) behind = this.player1;
+          else if (this.player2.health < this.player1.health)
+            behind = this.player2;
+        } else {
+          behind = this.hits.p1 < this.hits.p2 ? this.player1 : this.player2;
+        }
+        if (behind) {
+          const key = behind === this.player1 ? 'p1' : 'p2';
+          const ctrl = behind.controller;
+          if (
+            typeof ctrl.setLevel === 'function' &&
+            this.ruleManager.canShift(key, currentSecond)
+          ) {
+            ctrl.setLevel(10);
+          }
+        }
+      }
       this.lastSecond = currentSecond;
     }
 
