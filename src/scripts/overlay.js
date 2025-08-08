@@ -11,7 +11,7 @@ export class OverlayUI extends Phaser.Scene {
 
   create() {
     const width = this.sys.game.config.width;
-    const infoY = 40;
+    const infoY = 0;
     const infoHeight = 120;
     this.add
       .rectangle(width / 2, infoY, width, infoHeight, 0x808080, 0.5)
