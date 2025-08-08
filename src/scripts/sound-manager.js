@@ -76,7 +76,10 @@ export class SoundManager {
   }
 
   static playBellStart() {
-    this.sounds?.bell?.play({ seek: 0, duration: 3, volume: 0.8 });
+    const soundId = this.sounds?.bell?.play({ seek: 0, volume: 0.8 });
+    if (soundId != null) {
+      setTimeout(() => this.sounds?.bell?.stop(soundId), 3000);
+    }
   }
 
   static playBellEnd() {

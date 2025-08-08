@@ -157,6 +157,13 @@ export class Boxer {
 
     const prevX = this.sprite.x;
     const prevY = this.sprite.y;
+    
+    const distance = Phaser.Math.Distance.Between(
+        this.sprite.x,
+        this.sprite.y,
+        opponent.sprite.x,
+        opponent.sprite.y
+      );
 
     let actions = this.controller.getActions(this, opponent, currentSecond);
 
@@ -191,13 +198,30 @@ export class Boxer {
       return;
     }
 
+    const noHitDistance = 400;
+
     if (state !== States.ATTACK && state !== States.INJURED) {
       if (actions.jabRight) {
-        this.playAction('jabRight');
+        if(distance > noHitDistance){
+          this.playAction('block');        
+        }
+        else{
+          this.playAction('jabRight');
+        }        
       } else if (actions.jabLeft) {
-        this.playAction('jabLeft');
+        if(distance > noHitDistance){
+          this.playAction('block');        
+        }
+        else{
+          this.playAction('jabLeft');
+        }        
       } else if (actions.uppercut) {
-        this.playAction('uppercut');
+        if(distance > noHitDistance){
+          this.playAction('block');        
+        }
+        else{
+          this.playAction('uppercut');
+        }        
       } else if (actions.moveLeft || actions.moveRight) {
         this.moveHorizontal(actions, move);
       } else if (actions.block) {
