@@ -1,4 +1,5 @@
 import { eventBus } from './event-bus.js';
+import { showComment } from './comment-manager.js';
 
 export class RoundTimer {
   constructor(scene) {
@@ -35,6 +36,28 @@ export class RoundTimer {
     }
     this.remaining = 0;
     eventBus.emit('timer-tick', this.remaining);
+    
+    const match = this.scene.scene.get('Match');
+    if (match) {
+      const p1 = match.player1;
+      const p2 = match.player2;
+      const p1Hits = match.hits?.p1 ?? 0;
+      const p2Hits = match.hits?.p2 ?? 0;
+
+      let leaderText = '';
+      if (p1Hits > p2Hits) {
+        leaderText = `${p1.stats.nickName} is in the lead`;
+      } else if (p2Hits > p1Hits) {
+        leaderText = `${p2.stats.nickName} is in the lead`;
+      } else {
+        leaderText = 'It\'s a draw so far';
+      }
+
+      const comment = `Round over. Score: ${p1Hits} to ${p2Hits}. ${leaderText}`;
+      if(p1Hits + p2Hits > 0){
+        showComment(comment, 6, true);
+      }      
+    }
   }
 
   pause() {

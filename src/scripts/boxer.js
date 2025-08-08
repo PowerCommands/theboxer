@@ -1,5 +1,6 @@
 import { BOXER_PREFIXES, animKey } from './helpers.js';
 import { eventBus } from './event-bus.js';
+import { showComment } from './comment-manager.js';
 
 export const States = {
   ATTACK: 'attack',
@@ -71,6 +72,12 @@ export class Boxer {
     if (!cfg) return;
     const key = animKey(this.prefix, cfg.key);
     this.lastAction = action;
+    if(action === 'hurt1' || action === 'hurt2'){
+      showComment(this.stats.name + ' is hurt really bad!')
+    }
+    if(action === 'dizzy'){
+      showComment('Watch out!' + this.stats.name + ' is dizzy!')
+    }
     if (action === 'block') {
       if (this.isBlocking()) return;
       this.sprite.play(key);
@@ -141,6 +148,7 @@ export class Boxer {
   }
 
   triggerKO() {
+    showComment('That´s it! ' + this.stats.name + ' has won on knockout!', true)
     this.sprite.removeAllListeners('animationcomplete');
     this.sprite.play(animKey(this.prefix, 'ko'));
     this.isKO = true;
@@ -148,6 +156,7 @@ export class Boxer {
   }
 
   triggerWin() {
+    showComment('This game is over! ' + this.stats.name + ' has won!', true)
     this.sprite.anims.play(animKey(this.prefix, 'win'), true);
     this.isWinner = true;
   }

@@ -101,4 +101,8 @@ export class SoundManager {
   static playUppercut() {
     this.sounds?.uppercut?.play();
   }
+
+  static playCheering() {
+    this.sounds?.cheer?.play();
+  }
 }

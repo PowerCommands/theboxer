@@ -76,7 +76,8 @@ export class HitManager {
       }
       else if (punch === 'uppercut') {
         SoundManager.playUppercut();
-        showComment('WOW what an uppercut by ' + attacker.stats.nickName + defender.stats.nickName + ' is hurt!', 5)
+        SoundManager.playCheering();
+        showComment('WOW what an uppercut by ' + attacker.stats.nickName + '\n' + defender.stats.nickName + ' is hurt!', 3)
       }
       const attackerKey = defenderKey === 'p1' ? 'p2' : 'p1';
       this.hits[attackerKey] += 1;
