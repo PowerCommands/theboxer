@@ -108,8 +108,6 @@ export class MatchScene extends Phaser.Scene {
       p2: data?.boxer2?.name || '',
     });
     eventBus.emit('hit-update', { p1: 0, p2: 0 });
-    this.roundTimer.start(180, 1);
-
     this.events.on('boxer-ko', (b) => this.handleKO(b));
     this.matchOver = false;
 
@@ -124,7 +122,8 @@ export class MatchScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setVisible(false);
 
-    this.paused = false;
+    this.paused = true;
+    this.showIntro(data.boxer1, data.boxer2);
     this.debugText = {
       p1: this.add
         .text(20, height - 100, '', {
@@ -354,6 +353,68 @@ export class MatchScene extends Phaser.Scene {
   setPlayerStrategy(player, level) {
     const ctrl = player === 1 ? this.player1.controller : this.player2.controller;
     if (ctrl && ctrl.setLevel) ctrl.setLevel(level);
+  }
+
+  showIntro(boxer1, boxer2) {
+    const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
+    const b1 = boxer1 || {};
+    const b2 = boxer2 || {};
+    const lines1 = [
+      `Name: ${b1.name || ''}`,
+      `Country: ${b1.country || ''}`,
+      `Ranking: ${b1.ranking ?? ''}`,
+      `Age: ${b1.age ?? ''}`,
+      `Record: ${b1.wins || 0}-${b1.losses || 0}-${b1.draws || 0}`,
+      `KO: ${b1.winsByKO || 0}`,
+      `Stamina: ${b1.stamina || 0}`,
+      `Power: ${b1.power || 0}`,
+      `Health: ${b1.health || 0}`,
+      `Speed: ${b1.speed || 0}`,
+    ];
+    const lines2 = [
+      `Name: ${b2.name || ''}`,
+      `Country: ${b2.country || ''}`,
+      `Ranking: ${b2.ranking ?? ''}`,
+      `Age: ${b2.age ?? ''}`,
+      `Record: ${b2.wins || 0}-${b2.losses || 0}-${b2.draws || 0}`,
+      `KO: ${b2.winsByKO || 0}`,
+      `Stamina: ${b2.stamina || 0}`,
+      `Power: ${b2.power || 0}`,
+      `Health: ${b2.health || 0}`,
+      `Speed: ${b2.speed || 0}`,
+    ];
+
+    this.introPanels = {
+      p1: this.add.text(40, height / 2 - 120, lines1.join('\n'), {
+        font: '20px Arial',
+        color: '#ffffff',
+        align: 'left',
+      }),
+      p2: this.add
+        .text(width - 40, height / 2 - 120, lines2.join('\n'), {
+          font: '20px Arial',
+          color: '#ffffff',
+          align: 'right',
+        })
+        .setOrigin(1, 0),
+    };
+
+    this.startButton = this.add
+      .text(width / 2, height / 2 + 140, 'Start match', {
+        font: '32px Arial',
+        color: '#00ff00',
+      })
+      .setOrigin(0.5)
+      .setInteractive({ useHandCursor: true });
+
+    this.startButton.on('pointerup', () => {
+      this.introPanels.p1.setVisible(false);
+      this.introPanels.p2.setVisible(false);
+      this.startButton.setVisible(false);
+      this.roundTimer.start(this.roundLength, 1);
+      this.paused = false;
+    });
   }
 
   showBreak() {
