@@ -7,11 +7,12 @@ export const BOXERS = [
     health: 1.0,
     speed: 1.0,
     ranking: 10,
-    matches: 0,
+    matches: 11,
     wins: 0,
-    losses: 0,
-    draws: 0,
-    winsByKO: 0
+    losses: 10,
+    draws: 1,
+    winsByKO: 0,
+    age: 29
   },
   {
     name: 'Von Kaiser',
@@ -21,11 +22,12 @@ export const BOXERS = [
     health: 1.0,
     speed: 1.0,
     ranking: 9,
-    matches: 0,
-    wins: 0,
-    losses: 0,
-    draws: 0,
-    winsByKO: 0
+    matches: 25,
+    wins: 3,
+    losses: 17,
+    draws: 5,
+    winsByKO: 0,
+    age: 36
   },
   {
     name: 'Piston Honda',
@@ -35,11 +37,12 @@ export const BOXERS = [
     health: 1.2,
     speed: 1.0,
     ranking: 8,
-    matches: 0,
-    wins: 0,
-    losses: 0,
-    draws: 0,
-    winsByKO: 0
+    matches: 11,
+    wins: 5,
+    losses: 5,
+    draws: 1,
+    winsByKO: 2,
+    age: 23
   },
   {
     name: 'Don Flamenco',
@@ -49,11 +52,12 @@ export const BOXERS = [
     health: 1.0,
     speed: 1.2,
     ranking: 7,
-    matches: 0,
-    wins: 0,
-    losses: 0,
+    matches: 16,
+    wins: 6,
+    losses: 10,
     draws: 0,
-    winsByKO: 0
+    winsByKO: 2,
+    age: 27
   },
   {
     name: 'King Hippo',
@@ -63,11 +67,12 @@ export const BOXERS = [
     health: 1.8,
     speed: 1.0,
     ranking: 6,
-    matches: 0,
-    wins: 0,
-    losses: 0,
+    matches: 5,
+    wins: 3,
+    losses: 2,
     draws: 0,
-    winsByKO: 0
+    winsByKO: 3,
+    age: 21
   },
   {
     name: 'Great Tiger',
@@ -77,11 +82,12 @@ export const BOXERS = [
     health: 1.0,
     speed: 1.5,
     ranking: 5,
-    matches: 0,
-    wins: 0,
-    losses: 0,
-    draws: 0,
-    winsByKO: 0
+    matches: 33,
+    wins: 18,
+    losses: 12,
+    draws: 3,
+    winsByKO: 8,
+    age: 32
   },
   {
     name: 'Bald Bull',
@@ -91,11 +97,12 @@ export const BOXERS = [
     health: 2.0,
     speed: 1.2,
     ranking: 4,
-    matches: 0,
-    wins: 0,
-    losses: 0,
+    matches: 40,
+    wins: 30,
+    losses: 10,
     draws: 0,
-    winsByKO: 0
+    winsByKO: 12,
+    age: 27
   },
   {
     name: 'Soda Popinski',
@@ -105,11 +112,12 @@ export const BOXERS = [
     health: 1.5,
     speed: 2.0,
     ranking: 3,
-    matches: 0,
-    wins: 0,
-    losses: 0,
-    draws: 0,
-    winsByKO: 0
+    matches: 42,
+    wins: 32,
+    losses: 8,
+    draws: 2,
+    winsByKO: 20,
+    age: 37
   },
   {
     name: 'Mr. Sandman',
@@ -119,11 +127,12 @@ export const BOXERS = [
     health: 2.0,
     speed: 2.0,
     ranking: 2,
-    matches: 0,
-    wins: 0,
-    losses: 0,
+    matches: 35,
+    wins: 30,
+    losses: 5,
     draws: 0,
-    winsByKO: 0
+    winsByKO: 29,
+    age: 30
   },
   {
     name: 'Mike Tyson',
@@ -133,10 +142,11 @@ export const BOXERS = [
     health: 2.2,
     speed: 2.5,
     ranking: 1,
-    matches: 0,
-    wins: 0,
+    matches: 37,
+    wins: 37,
     losses: 0,
     draws: 0,
-    winsByKO: 0
+    winsByKO: 33,
+    age: 23
   },
 ];
