@@ -1,4 +1,5 @@
 import { getRankings } from './boxer-stats.js';
+import { getTestMode, setTestMode } from './config.js';
 
 export class RankingScene extends Phaser.Scene {
   constructor() {
@@ -38,8 +39,8 @@ export class RankingScene extends Phaser.Scene {
       });
     });
 
-    this.add
-      .text(width / 2, height - 60, 'New game', {
+    const startBtn = this.add
+      .text(width / 2, height - 60, 'Start new game', {
         font: '24px Arial',
         color: '#00ff00',
       })
@@ -48,6 +49,31 @@ export class RankingScene extends Phaser.Scene {
       .on('pointerup', () => {
         this.scene.start('SelectBoxer');
       });
+
+    const cbX = width / 2 + 180;
+    const cbY = height - 65;
+    const testBox = this.add
+      .rectangle(cbX, cbY, 20, 20, 0xffffff)
+      .setOrigin(0, 0)
+      .setInteractive({ useHandCursor: true });
+    const testCheck = this.add
+      .text(cbX + 10, cbY, 'X', {
+        font: '20px Arial',
+        color: '#000000',
+      })
+      .setOrigin(0.5, 0)
+      .setVisible(getTestMode());
+    this.add
+      .text(cbX + 30, cbY - 5, 'Test mode', {
+        font: '20px Arial',
+        color: '#ffffff',
+      })
+      .setOrigin(0, 0);
+    testBox.on('pointerdown', () => {
+      const newVal = !getTestMode();
+      setTestMode(newVal);
+      testCheck.setVisible(newVal);
+    });
   }
 }
 

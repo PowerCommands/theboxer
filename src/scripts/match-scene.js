@@ -31,7 +31,12 @@ export class MatchScene extends Phaser.Scene {
 
     // Player 1 may be human or AI controlled; player 2 always AI
     const controller1 = data?.aiLevel1
-      ? new StrategyAIController(data.aiLevel1, 1)
+      ? new StrategyAIController(
+          data.aiLevel1 === 'default'
+            ? data.boxer1?.defaultStrategy || 1
+            : data.aiLevel1,
+          1
+        )
       : new KeyboardController(this, {
           block: 'S',
           jabRight: 'E',
@@ -46,7 +51,12 @@ export class MatchScene extends Phaser.Scene {
           left: 'A',
           right: 'D',
         });
-    const controller2 = new StrategyAIController(data?.aiLevel2 || 1, 2);
+    const controller2 = new StrategyAIController(
+      data?.aiLevel2 === 'default'
+        ? data.boxer2?.defaultStrategy || 1
+        : data?.aiLevel2 || 1,
+      2
+    );
 
     const centerX = width / 2;
     const centerY = height / 2;
