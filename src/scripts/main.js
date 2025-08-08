@@ -18,6 +18,8 @@ class BootScene extends Phaser.Scene {
     this.load.audio('bell-signals', 'assets/sounds/bell-signals.mp3');
     this.load.audio('fight', 'assets/sounds/fight.mp3');
     this.load.audio('crowd-noise-01', 'assets/sounds/crowd-noise-01.mp3');
+    this.load.audio('crowd-cheering', 'assets/sounds/crowd-cheering.mp3');
+    this.load.audio('crowd-cheering-ko', 'assets/sounds/crowd-cheering-ko.mp3');
     this.load.audio('block', 'assets/sounds/block.mp3');
     this.load.audio('left-jab', 'assets/sounds/left-jab.mp3');
     this.load.audio('right-jab', 'assets/sounds/right-jab.mp3');
