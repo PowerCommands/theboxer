@@ -1,3 +1,9 @@
+function defaultStrategyForRanking(ranking) {
+  const max = Math.min(7, 11 - ranking);
+  const min = Math.max(1, max - 2);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 export const BOXERS = [
   {
     name: 'Glass Joe',
@@ -12,7 +18,8 @@ export const BOXERS = [
     losses: 10,
     draws: 1,
     winsByKO: 0,
-    age: 29
+    age: 29,
+    defaultStrategy: defaultStrategyForRanking(10),
   },
   {
     name: 'Von Kaiser',
@@ -27,7 +34,8 @@ export const BOXERS = [
     losses: 17,
     draws: 5,
     winsByKO: 0,
-    age: 36
+    age: 36,
+    defaultStrategy: defaultStrategyForRanking(9),
   },
   {
     name: 'Piston Honda',
@@ -42,7 +50,8 @@ export const BOXERS = [
     losses: 5,
     draws: 1,
     winsByKO: 2,
-    age: 23
+    age: 23,
+    defaultStrategy: defaultStrategyForRanking(8),
   },
   {
     name: 'Don Flamenco',
@@ -57,7 +66,8 @@ export const BOXERS = [
     losses: 10,
     draws: 0,
     winsByKO: 2,
-    age: 27
+    age: 27,
+    defaultStrategy: defaultStrategyForRanking(7),
   },
   {
     name: 'King Hippo',
@@ -72,7 +82,8 @@ export const BOXERS = [
     losses: 2,
     draws: 0,
     winsByKO: 3,
-    age: 21
+    age: 21,
+    defaultStrategy: defaultStrategyForRanking(6),
   },
   {
     name: 'Great Tiger',
@@ -87,7 +98,8 @@ export const BOXERS = [
     losses: 12,
     draws: 3,
     winsByKO: 8,
-    age: 32
+    age: 32,
+    defaultStrategy: defaultStrategyForRanking(5),
   },
   {
     name: 'Bald Bull',
@@ -102,7 +114,8 @@ export const BOXERS = [
     losses: 10,
     draws: 0,
     winsByKO: 12,
-    age: 27
+    age: 27,
+    defaultStrategy: defaultStrategyForRanking(4),
   },
   {
     name: 'Soda Popinski',
@@ -117,7 +130,8 @@ export const BOXERS = [
     losses: 8,
     draws: 2,
     winsByKO: 20,
-    age: 37
+    age: 37,
+    defaultStrategy: defaultStrategyForRanking(3),
   },
   {
     name: 'Mr. Sandman',
@@ -132,7 +146,8 @@ export const BOXERS = [
     losses: 5,
     draws: 0,
     winsByKO: 29,
-    age: 30
+    age: 30,
+    defaultStrategy: defaultStrategyForRanking(2),
   },
   {
     name: 'Mike Tyson',
@@ -147,6 +162,7 @@ export const BOXERS = [
     losses: 0,
     draws: 0,
     winsByKO: 33,
-    age: 23
+    age: 23,
+    defaultStrategy: defaultStrategyForRanking(1),
   },
 ];

@@ -1,4 +1,5 @@
 import { getRankings } from './boxer-stats.js';
+import { getTestMode } from './config.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -83,8 +84,16 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   showStrategyOptions() {
     this.clearOptions();
+    let y = 60;
+    const defTxt = this.add.text(50, y, `Default`, {
+      font: '20px Arial',
+      color: '#ffffff',
+    });
+    defTxt.setInteractive({ useHandCursor: true });
+    defTxt.on('pointerdown', () => this.selectStrategy('default'));
+    this.options.push(defTxt);
     for (let i = 1; i <= 10; i++) {
-      const y = 60 + i * 30;
+      y += 30;
       const txt = this.add.text(50, y, `Strategy ${i}`, {
         font: '20px Arial',
         color: '#ffffff',
@@ -112,14 +121,27 @@ export class SelectBoxerScene extends Phaser.Scene {
         this.step = 3;
         this.instruction.setText('Choose your opponent');
       } else {
-        this.step = 2;
-        this.instruction.setText('Choose Player 1 strategy');
-        this.showStrategyOptions();
+        if (getTestMode()) {
+          this.step = 2;
+          this.instruction.setText('Choose Player 1 strategy');
+          this.showStrategyOptions();
+        } else {
+          this.selectedStrategy1 = 'default';
+          this.step = 3;
+          this.instruction.setText('Choose your opponent');
+        }
       }
     } else if (this.step === 3) {
-      this.step = 4;
-      this.instruction.setText("Choose the opponent's strategy");
-      this.showStrategyOptions();
+      if (getTestMode()) {
+        this.step = 4;
+        this.instruction.setText("Choose the opponent's strategy");
+        this.showStrategyOptions();
+      } else {
+        this.selectedStrategy2 = 'default';
+        this.step = 5;
+        this.instruction.setText('Choose number of rounds (1-13)');
+        this.showRoundOptions();
+      }
     }
   }
 
@@ -170,9 +192,17 @@ export class SelectBoxerScene extends Phaser.Scene {
       `Player 1: ${player.name}`,
       this.isBoxer1Human
         ? 'Human controlled'
-        : `Strategy: ${this.selectedStrategy1}`,
+        : `Strategy: ${
+            this.selectedStrategy1 === 'default'
+              ? 'Default'
+              : this.selectedStrategy1
+          }`,
       `Player 2: ${opponent.name}`,
-      `Strategy: ${this.selectedStrategy2}`,
+      `Strategy: ${
+        this.selectedStrategy2 === 'default'
+          ? 'Default'
+          : this.selectedStrategy2
+      }`,
       `Rounds: ${this.selectedRounds}`,
     ];
     const summaryText = summaryLines.join('\n');
@@ -236,8 +266,10 @@ export class SelectBoxerScene extends Phaser.Scene {
   startMatch() {
     const [boxer1, boxer2] = this.choice;
     const rounds = this.selectedRounds ?? 1;
-    const aiLevel1 = this.isBoxer1Human ? null : this.selectedStrategy1 ?? 1;
-    const aiLevel2 = this.selectedStrategy2 ?? 1;
+    const aiLevel1 = this.isBoxer1Human
+      ? null
+      : this.selectedStrategy1 ?? 'default';
+    const aiLevel2 = this.selectedStrategy2 ?? 'default';
     this.scene.launch('OverlayUI');
     this.scene.start('Match', {
       boxer1,
