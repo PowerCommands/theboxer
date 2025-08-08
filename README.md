@@ -15,16 +15,16 @@ is controlled by the AI and has no keyboard controls.
 
 | Action | Player |
 |-------|-------|
-| Move left | Left Arrow |
-| Move right | Right Arrow |
+| Move left | `A` |
+| Move right | `D` |
 | Move up | Up Arrow |
 | Move down | Down Arrow |
-| Turn left | `Shift` + Left Arrow |
-| Turn right | `Shift` + Right Arrow |
-| Block | Numpad 5 |
-| Jab right | Page Down |
-| Jab left | Delete |
-| Uppercut | Numpad 0 |
+| Turn left | `Shift` + `A` |
+| Turn right | `Shift` + `D` |
+| Block | `S` |
+| Jab right | `E` |
+| Jab left | `Q` |
+| Uppercut | `W` |
 | Hurt 1 | `1` |
 | Hurt 2 | `2` |
 | Dizzy | `3` |
