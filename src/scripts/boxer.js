@@ -35,8 +35,7 @@ export class Boxer {
     this.sprite.play(animKey(prefix, 'idle'));
     this.prefix = prefix;
     this.controller = controller;
-    this.stats = stats;
-    this.boxerData = stats;
+    this.stats = stats;    
     this.speed = 100 * (stats.speed || 1);
     this.power = stats.power || 1;
     this.maxPower = this.power;
