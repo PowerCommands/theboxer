@@ -53,6 +53,20 @@ export class OverlayUI extends Phaser.Scene {
       }),
     };
 
+    // create bars for player1 and player2
+    this.bars = {
+      p1: {
+        stamina: this.createBar(20, infoY + 20, 150, 15, 0x00aa00),
+        power: this.createBar(20, infoY + 40, 150, 15, 0x0000aa),
+        health: this.createBar(20, infoY + 60, 150, 15, 0xaa0000),
+      },
+      p2: {
+        stamina: this.createBar(width - 170, infoY + 20, 150, 15, 0x00aa00),
+        power: this.createBar(width - 170, infoY + 40, 150, 15, 0x0000aa),
+        health: this.createBar(width - 170, infoY + 60, 150, 15, 0xaa0000),
+      },
+    };
+
     this.hitText = {
       p1: this.add.text(20, infoY + 90, 'Hits: 0', {
         font: '16px Arial',
@@ -64,9 +78,26 @@ export class OverlayUI extends Phaser.Scene {
       }),
     };
 
+    // initialize full bars
+    this.setBarValue(this.bars.p1.stamina, 1);
+    this.setBarValue(this.bars.p1.power, 1);
+    this.setBarValue(this.bars.p1.health, 1);
+    this.setBarValue(this.bars.p2.stamina, 1);
+    this.setBarValue(this.bars.p2.power, 1);
+    this.setBarValue(this.bars.p2.health, 1);
+
     eventBus.on('timer-tick', (seconds) => this.updateTimerText(seconds));
     eventBus.on('round-started', (round) => this.showRound(round));
     eventBus.on('set-names', ({ p1, p2 }) => this.setNames(p1, p2));
+    eventBus.on('health-changed', ({ player, value }) => {
+      this.setBarValue(this.bars[player].health, value);
+    });
+    eventBus.on('stamina-changed', ({ player, value }) => {
+      this.setBarValue(this.bars[player].stamina, value);
+    });
+    eventBus.on('power-changed', ({ player, value }) => {
+      this.setBarValue(this.bars[player].power, value);
+    });
     eventBus.on('match-winner', (data) => this.announceWinner(data));
     eventBus.on('hit-update', ({ p1, p2 }) => {
       this.hitText.p1.setText(`Hits: ${p1}`);
@@ -77,9 +108,25 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('timer-tick');
       eventBus.off('round-started');
       eventBus.off('set-names');
+      eventBus.off('health-changed');
+      eventBus.off('stamina-changed');
+      eventBus.off('power-changed');
       eventBus.off('match-winner');
       eventBus.off('hit-update');
     });
+  }
+
+  createBar(x, y, width, height, color) {
+    const bg = this.add.rectangle(x, y, width, height, 0x444444).setOrigin(0, 0);
+    const fill = this.add
+      .rectangle(x + 1, y + 1, width - 2, height - 2, color)
+      .setOrigin(0, 0);
+    return { bg, fill, width: width - 2 };
+    }
+
+  setBarValue(bar, value) {
+    const w = Phaser.Math.Clamp(value, 0, 1) * bar.width;
+    bar.fill.width = w;
   }
 
   updateTimerText(seconds) {
