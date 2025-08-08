@@ -355,7 +355,7 @@ export class MatchScene extends Phaser.Scene {
     const b1 = boxer1 || {};
     const b2 = boxer2 || {};
     const lines1 = [
-      `Name: ${b1.name || ''}`,
+      `Nickname: ${b1.nickName || ''}`,
       `Country: ${b1.country || ''}`,
       `Ranking: ${b1.ranking ?? ''}`,
       `Age: ${b1.age ?? ''}`,
@@ -363,7 +363,7 @@ export class MatchScene extends Phaser.Scene {
       `KO: ${b1.winsByKO || 0}`,
     ];
     const lines2 = [
-      `Name: ${b2.name || ''}`,
+      `Nickname: ${b2.nickName || ''}`,
       `Country: ${b2.country || ''}`,
       `Ranking: ${b2.ranking ?? ''}`,
       `Age: ${b2.age ?? ''}`,
