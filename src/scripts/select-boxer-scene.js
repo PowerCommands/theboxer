@@ -9,7 +9,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.options = [];
     this.selectedStrategy1 = null;
     this.selectedStrategy2 = null;
-    this.isBoxer1Human = true;
+    this.isBoxer1Human = false;
     this.selectedRounds = null;
   }
 
@@ -33,7 +33,8 @@ export class SelectBoxerScene extends Phaser.Scene {
         font: '20px Arial',
         color: '#000000',
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(0.5, 0)
+      .setVisible(this.isBoxer1Human);
     this.add
       .text(cbX + 30, 20, 'Human Controlled', {
         font: '20px Arial',
@@ -54,6 +55,14 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   showBoxerOptions() {
     this.clearOptions();
+    const width = this.sys.game.config.width;
+    const rectWidth = width - 160;
+    const rowHeight = 24;
+    this.options.push(
+      this.add
+        .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, 0.5)
+        .setOrigin(0.5, 0)
+    );
     const headers = `${'Rank'.padEnd(5)}${'Name'.padEnd(15)}${'Age'.padEnd(5)}${'M'.padEnd(5)}${'W'.padEnd(5)}${'L'.padEnd(5)}${'D'.padEnd(5)}${'KO'.padEnd(5)}`;
     const headerText = this.add.text(80, 60, headers, {
       font: '20px monospace',
@@ -62,6 +71,12 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.options.push(headerText);
     const boxers = getRankings();
     boxers.forEach((b, i) => {
+      const y = 80 + i * 24;
+      this.options.push(
+        this.add
+          .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
+          .setOrigin(0.5, 0)
+      );
       const line = `${b.ranking.toString().padEnd(5)}${b.name.padEnd(15)}${b.age
         .toString()
         .padEnd(5)}${b.matches
@@ -71,7 +86,6 @@ export class SelectBoxerScene extends Phaser.Scene {
         .padEnd(5)}${b.draws
         .toString()
         .padEnd(5)}${b.winsByKO.toString().padEnd(5)}`;
-      const y = 80 + i * 24;
       const txt = this.add.text(80, y, line, {
         font: '20px monospace',
         color: '#ffffff',
@@ -256,8 +270,8 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.selectedStrategy1 = null;
     this.selectedStrategy2 = null;
     this.selectedRounds = null;
-    this.isBoxer1Human = true;
-    if (this.humanCheck) this.humanCheck.setVisible(true);
+    this.isBoxer1Human = false;
+    if (this.humanCheck) this.humanCheck.setVisible(false);
     if (this.humanBox) this.humanBox.setInteractive({ useHandCursor: true });
     this.instruction.setText('Choose your boxer');
     this.showBoxerOptions();
