@@ -370,21 +370,44 @@ export class MatchScene extends Phaser.Scene {
       `Record: ${b2.wins || 0}-${b2.losses || 0}-${b2.draws || 0}`,
       `KO: ${b2.winsByKO || 0}`,
     ];
-
-    this.introPanels = {
-      p1: this.add.text(40, height / 2 - 120, lines1.join('\n'), {
+    const panelPadding = 10;
+    const p1Text = this.add.text(40, height / 2 - 120, lines1.join('\n'), {
+      font: '20px Arial',
+      color: '#ffffff',
+      align: 'left',
+    });
+    const p2Text = this.add
+      .text(width - 40, height / 2 - 120, lines2.join('\n'), {
         font: '20px Arial',
         color: '#ffffff',
-        align: 'left',
-      }),
-      p2: this.add
-        .text(width - 40, height / 2 - 120, lines2.join('\n'), {
-          font: '20px Arial',
-          color: '#ffffff',
-          align: 'right',
-        })
-        .setOrigin(1, 0),
-    };
+        align: 'right',
+      })
+      .setOrigin(1, 0);
+
+    const p1Bg = this.add
+      .rectangle(
+        40 - panelPadding,
+        height / 2 - 120 - panelPadding,
+        p1Text.width + panelPadding * 2,
+        p1Text.height + panelPadding * 2,
+        0x808080,
+        0.5
+      )
+      .setOrigin(0, 0);
+    const p2Bg = this.add
+      .rectangle(
+        width - 40 + panelPadding,
+        height / 2 - 120 - panelPadding,
+        p2Text.width + panelPadding * 2,
+        p2Text.height + panelPadding * 2,
+        0x808080,
+        0.5
+      )
+      .setOrigin(1, 0);
+    p1Text.setDepth(1);
+    p2Text.setDepth(1);
+
+    this.introPanels = { p1: p1Text, p1Bg, p2: p2Text, p2Bg };
 
     this.startButton = this.add
       .text(width / 2, height / 2 + 140, 'Start match', {
@@ -396,7 +419,9 @@ export class MatchScene extends Phaser.Scene {
 
     this.startButton.on('pointerup', () => {
       this.introPanels.p1.setVisible(false);
+      this.introPanels.p1Bg.setVisible(false);
       this.introPanels.p2.setVisible(false);
+      this.introPanels.p2Bg.setVisible(false);
       this.startButton.setVisible(false);
       this.roundTimer.start(this.roundLength, 1);
       this.paused = false;
