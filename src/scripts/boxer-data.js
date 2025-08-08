@@ -7,6 +7,7 @@ function defaultStrategyForRanking(ranking) {
 export const BOXERS = [
   {
     name: 'Glass Joe',
+    nickName: 'Joe',
     country: 'France',
     stamina: 1.0,
     power: 1.0,
@@ -23,6 +24,7 @@ export const BOXERS = [
   },
   {
     name: 'Von Kaiser',
+    nickName: 'The Kaiser',
     country: 'Germany',
     stamina: 1.2,
     power: 1.2,
@@ -39,6 +41,7 @@ export const BOXERS = [
   },
   {
     name: 'Piston Honda',
+    nickName: 'Honda',
     country: 'Japan',
     stamina: 1.3,
     power: 1.3,
@@ -55,6 +58,7 @@ export const BOXERS = [
   },
   {
     name: 'Don Flamenco',
+    nickName: 'Flam',
     country: 'Spain',
     stamina: 1.3,
     power: 1.5,
@@ -71,6 +75,7 @@ export const BOXERS = [
   },
   {
     name: 'King Hippo',
+    nickName: 'Hippo',
     country: 'Hippo Island',
     stamina: 1.0,
     power: 1.6,
@@ -87,6 +92,7 @@ export const BOXERS = [
   },
   {
     name: 'Great Tiger',
+    nickName: 'Tiger',
     country: 'India',
     stamina: 1.4,
     power: 1.0,
@@ -103,6 +109,7 @@ export const BOXERS = [
   },
   {
     name: 'Bald Bull',
+    nickName: 'The Bull',
     country: 'Turkey',
     stamina: 1.5,
     power: 2.0,
@@ -119,6 +126,7 @@ export const BOXERS = [
   },
   {
     name: 'Soda Popinski',
+    nickName: 'Soda the drunkie',
     country: 'Russia',
     stamina: 1.0,
     power: 2.0,
@@ -135,6 +143,7 @@ export const BOXERS = [
   },
   {
     name: 'Mr. Sandman',
+    nickName: 'Sandman',
     country: 'USA',
     stamina: 2.0,
     power: 2.0,
@@ -151,6 +160,7 @@ export const BOXERS = [
   },
   {
     name: 'Mike Tyson',
+    nickName: 'Iron Mike',
     country: 'USA',
     stamina: 2.5,
     power: 2.5,
