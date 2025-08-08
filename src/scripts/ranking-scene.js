@@ -15,11 +15,25 @@ export class RankingScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
+    const headers = `${'Rank'.padEnd(5)}${'Name'.padEnd(15)}${'Age'.padEnd(5)}${'M'.padEnd(5)}${'W'.padEnd(5)}${'L'.padEnd(5)}${'D'.padEnd(5)}${'KO'.padEnd(5)}`;
+    this.add.text(80, 60, headers, {
+      font: '20px monospace',
+      color: '#ffff00',
+    });
+
     const boxers = getRankings();
     boxers.forEach((b, i) => {
-      const line = `${b.ranking}. ${b.name} - M:${b.matches} W:${b.wins} L:${b.losses} D:${b.draws} KO:${b.winsByKO}`;
+      const line = `${b.ranking.toString().padEnd(5)}${b.name.padEnd(15)}${b.age
+        .toString()
+        .padEnd(5)}${b.matches
+        .toString()
+        .padEnd(5)}${b.wins.toString().padEnd(5)}${b.losses
+        .toString()
+        .padEnd(5)}${b.draws
+        .toString()
+        .padEnd(5)}${b.winsByKO.toString().padEnd(5)}`;
       this.add.text(80, 80 + i * 24, line, {
-        font: '20px Arial',
+        font: '20px monospace',
         color: '#ffffff',
       });
     });
