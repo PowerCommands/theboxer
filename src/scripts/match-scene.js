@@ -104,8 +104,10 @@ export class MatchScene extends Phaser.Scene {
     this.hitManager = new HitManager(this.healthManager, this.hitLimit, this.hits);
     this.maxRounds = Phaser.Math.Clamp(data?.rounds || 1, 1, 13);
     eventBus.on('round-ended', (round) => this.endRound(round));
+    eventBus.on('next-round', () => this.startNextRound());
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       eventBus.off('round-ended');
+      eventBus.off('next-round');
     });
 
     eventBus.emit('set-names', {
@@ -115,6 +117,7 @@ export class MatchScene extends Phaser.Scene {
     eventBus.emit('hit-update', { p1: 0, p2: 0 });
     this.events.on('boxer-ko', (b) => this.handleKO(b));
     this.matchOver = false;
+    this.pendingRound = null;
 
     this.breaking = false;
     this.closeTime = null;
@@ -269,6 +272,7 @@ export class MatchScene extends Phaser.Scene {
   endRound(round) {
     if (this.matchOver) return;
     this.ruleManager.resetStrategyChanges();
+    this.paused = true;
     if (round >= this.maxRounds) {
       this.determineWinnerByPoints();
     } else {
@@ -285,11 +289,18 @@ export class MatchScene extends Phaser.Scene {
       ) {
         this.player2.controller.shiftLevel(shift);
       }
-      this.resetBoxers();
-      this.recoverBoxer(this.player1);
-      this.recoverBoxer(this.player2);
-      this.roundTimer.start(180, round + 1);
+      this.pendingRound = round + 1;
     }
+  }
+
+  startNextRound() {
+    if (this.matchOver || !this.pendingRound) return;
+    this.resetBoxers();
+    this.recoverBoxer(this.player1);
+    this.recoverBoxer(this.player2);
+    this.roundTimer.start(this.roundLength, this.pendingRound);
+    this.pendingRound = null;
+    this.paused = false;
   }
 
   handleKO(loser) {

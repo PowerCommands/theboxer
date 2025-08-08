@@ -7,6 +7,8 @@ export class OverlayUI extends Phaser.Scene {
     this.pendingNames = ['', ''];
     this.newMatchText = null;
     this.rankingText = null;
+    this.nextRoundText = null;
+    this.matchOver = false;
   }
 
   create() {
@@ -87,7 +89,10 @@ export class OverlayUI extends Phaser.Scene {
     this.setBarValue(this.bars.p2.health, 1);
 
     eventBus.on('timer-tick', (seconds) => this.updateTimerText(seconds));
-    eventBus.on('round-started', (round) => this.showRound(round));
+    eventBus.on('round-started', (round) => {
+      this.hideNextRoundButton();
+      this.showRound(round);
+    });
     eventBus.on('set-names', ({ p1, p2 }) => this.setNames(p1, p2));
     eventBus.on('health-changed', ({ player, value }) => {
       this.setBarValue(this.bars[player].health, value);
@@ -98,7 +103,12 @@ export class OverlayUI extends Phaser.Scene {
     eventBus.on('power-changed', ({ player, value }) => {
       this.setBarValue(this.bars[player].power, value);
     });
-    eventBus.on('match-winner', (data) => this.announceWinner(data));
+    eventBus.on('round-ended', () => this.showNextRoundButton());
+    eventBus.on('match-winner', (data) => {
+      this.matchOver = true;
+      this.hideNextRoundButton();
+      this.announceWinner(data);
+    });
     eventBus.on('hit-update', ({ p1, p2 }) => {
       this.hitText.p1.setText(`Hits: ${p1}`);
       this.hitText.p2.setText(`Hits: ${p2}`);
@@ -111,6 +121,7 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('health-changed');
       eventBus.off('stamina-changed');
       eventBus.off('power-changed');
+      eventBus.off('round-ended');
       eventBus.off('match-winner');
       eventBus.off('hit-update');
     });
@@ -196,5 +207,30 @@ export class OverlayUI extends Phaser.Scene {
     } else {
       this.rankingText.setVisible(true);
     }
+  }
+
+  showNextRoundButton() {
+    if (this.matchOver) return;
+    const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
+    if (!this.nextRoundText) {
+      this.nextRoundText = this.add
+        .text(width / 2, height / 2, 'Next round', {
+          font: '32px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(0.5)
+        .setInteractive({ useHandCursor: true });
+      this.nextRoundText.on('pointerup', () => {
+        this.nextRoundText.setVisible(false);
+        eventBus.emit('next-round');
+      });
+    } else {
+      this.nextRoundText.setVisible(true);
+    }
+  }
+
+  hideNextRoundButton() {
+    if (this.nextRoundText) this.nextRoundText.setVisible(false);
   }
 }

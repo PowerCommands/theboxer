@@ -5,17 +5,20 @@ export class SoundManager {
     if (this.initialized) return;
     this.initialized = true;
     this.scene = scene;
+    const vol = { volume: 0.8 };
     this.sounds = {
-      menuLoop: scene.sound.add('loop-menu', { loop: true }),
-      click: scene.sound.add('click-menu'),
-      intro: scene.sound.add('intro'),
-      bell: scene.sound.add('bell-signals'),
-      fight: scene.sound.add('fight'),
-      crowd: scene.sound.add('crowd-noise-01', { loop: true }),
-      block: scene.sound.add('block'),
-      leftJab: scene.sound.add('left-jab'),
-      rightJab: scene.sound.add('right-jab'),
-      uppercut: scene.sound.add('uppercut'),
+      menuLoop: scene.sound.add('loop-menu', { loop: true, ...vol }),
+      click: scene.sound.add('click-menu', vol),
+      intro: scene.sound.add('intro', vol),
+      bell: scene.sound.add('bell-signals', vol),
+      fight: scene.sound.add('fight', vol),
+      crowd: scene.sound.add('crowd-noise-01', { loop: true, ...vol }),
+      block: scene.sound.add('block', vol),
+      leftJab: scene.sound.add('left-jab', vol),
+      rightJab: scene.sound.add('right-jab', vol),
+      uppercut: scene.sound.add('uppercut', vol),
+      cheer: scene.sound.add('crowd-cheering', vol),
+      cheerKO: scene.sound.add('crowd-cheering-ko', vol),
     };
 
     eventBus.on('round-started', () => {
@@ -38,9 +41,16 @@ export class SoundManager {
       }
     });
 
-    eventBus.on('match-winner', () => {
+    eventBus.on('boxer-staggered', () => {
+      this.sounds?.cheer?.play();
+    });
+
+    eventBus.on('match-winner', ({ method }) => {
       if (this.sounds.crowd && this.sounds.crowd.isPlaying) {
         this.sounds.crowd.stop();
+      }
+      if (method === 'KO' || method === 'Points') {
+        this.sounds?.cheerKO?.play();
       }
     });
   }
@@ -66,11 +76,11 @@ export class SoundManager {
   }
 
   static playBellStart() {
-    this.sounds?.bell?.play({ seek: 0, duration: 3 });
+    this.sounds?.bell?.play({ seek: 0, duration: 3, volume: 0.8 });
   }
 
   static playBellEnd() {
-    this.sounds?.bell?.play({ seek: 17, duration: 3 });
+    this.sounds?.bell?.play({ seek: 17, duration: 3, volume: 0.8 });
   }
 
   static playBlock() {

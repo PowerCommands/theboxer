@@ -277,9 +277,10 @@ export class Boxer {
 
   takeDamage(amount) {
     this.adjustHealth(-amount);
-    if(amount > 0.12){
+    if (amount > 0.12) {
       this.isStaggered = true;
-    }    
+      eventBus.emit('boxer-staggered');
+    }
 
     if (this.health === 0) {
       this.sprite.removeAllListeners('animationcomplete');
