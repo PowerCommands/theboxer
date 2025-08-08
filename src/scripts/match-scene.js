@@ -215,6 +215,7 @@ export class MatchScene extends Phaser.Scene {
             typeof ctrl.setLevel === 'function' &&
             this.ruleManager.canShift(key, currentSecond)
           ) {
+            showComment(behind.stats.name + ' knows he is losing and is now pushing desperately.', true);
             ctrl.setLevel(10);
           }
         }
