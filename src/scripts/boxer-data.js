@@ -6,6 +6,7 @@ export const BOXERS = [
     power: 1.0,
     health: 1.0,
     speed: 1.0,
+    ranking: 10
   },
   {
     name: 'Von Kaiser',
@@ -14,6 +15,7 @@ export const BOXERS = [
     power: 1.2,
     health: 1.0,
     speed: 1.0,
+    ranking: 9
   },
   {
     name: 'Piston Honda',
@@ -22,6 +24,7 @@ export const BOXERS = [
     power: 1.3,
     health: 1.2,
     speed: 1.0,
+    ranking: 8
   },
   {
     name: 'Don Flamenco',
@@ -30,6 +33,7 @@ export const BOXERS = [
     power: 1.5,
     health: 1.0,
     speed: 1.2,
+    ranking: 7
   },
   {
     name: 'King Hippo',
@@ -38,6 +42,7 @@ export const BOXERS = [
     power: 1.6,
     health: 1.8,
     speed: 1.0,
+    ranking: 6
   },
   {
     name: 'Great Tiger',
@@ -46,6 +51,7 @@ export const BOXERS = [
     power: 1.0,
     health: 1.0,
     speed: 1.5,
+    ranking: 5
   },
   {
     name: 'Bald Bull',
@@ -54,6 +60,7 @@ export const BOXERS = [
     power: 2.0,
     health: 2.0,
     speed: 1.2,
+    ranking: 4
   },
   {
     name: 'Soda Popinski',
@@ -62,6 +69,7 @@ export const BOXERS = [
     power: 2.0,
     health: 1.5,
     speed: 2.0,
+    ranking: 3
   },
   {
     name: 'Mr. Sandman',
@@ -70,6 +78,7 @@ export const BOXERS = [
     power: 2.0,
     health: 2.0,
     speed: 2.0,
+    ranking: 2
   },
   {
     name: 'Mike Tyson',
@@ -78,5 +87,6 @@ export const BOXERS = [
     power: 2.5,
     health: 2.2,
     speed: 2.5,
+    ranking: 1
   },
 ];
