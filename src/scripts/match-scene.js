@@ -8,6 +8,7 @@ import { HealthManager } from './health-manager.js';
 import { HitManager } from './hit-manager.js';
 import { BOXER_PREFIXES, animKey } from './helpers.js';
 import { RuleManager } from './rule-manager.js';
+import { CommentManager } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
 
 export class MatchScene extends Phaser.Scene {
@@ -151,6 +152,7 @@ export class MatchScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0),
     };
+    this.commentManager = new CommentManager(this);
     this.input.keyboard.on('keydown-P', (event) => {
       if (event.shiftKey) {
         this.togglePause();
