@@ -1,4 +1,4 @@
-import { BOXERS } from './boxer-data.js';
+import { getRankings } from './boxer-stats.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -53,14 +53,30 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   showBoxerOptions() {
     this.clearOptions();
-    BOXERS.forEach((b, i) => {
-      const y = 60 + i * 30;
-      const txt = this.add.text(50, y, `${b.name} (${b.country})`, {
-        font: '20px Arial',
+    const headers = `${'Rank'.padEnd(5)}${'Name'.padEnd(15)}${'Age'.padEnd(5)}${'M'.padEnd(5)}${'W'.padEnd(5)}${'L'.padEnd(5)}${'D'.padEnd(5)}${'KO'.padEnd(5)}`;
+    const headerText = this.add.text(80, 60, headers, {
+      font: '20px monospace',
+      color: '#ffff00',
+    });
+    this.options.push(headerText);
+    const boxers = getRankings();
+    boxers.forEach((b, i) => {
+      const line = `${b.ranking.toString().padEnd(5)}${b.name.padEnd(15)}${b.age
+        .toString()
+        .padEnd(5)}${b.matches
+        .toString()
+        .padEnd(5)}${b.wins.toString().padEnd(5)}${b.losses
+        .toString()
+        .padEnd(5)}${b.draws
+        .toString()
+        .padEnd(5)}${b.winsByKO.toString().padEnd(5)}`;
+      const y = 80 + i * 24;
+      const txt = this.add.text(80, y, line, {
+        font: '20px monospace',
         color: '#ffffff',
       });
       txt.setInteractive({ useHandCursor: true });
-      txt.on('pointerdown', () => this.selectBoxer(i));
+      txt.on('pointerdown', () => this.selectBoxer(b));
       this.options.push(txt);
     });
   }
@@ -88,8 +104,8 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.options = [];
   }
 
-  selectBoxer(index) {
-    this.choice.push(BOXERS[index]);
+  selectBoxer(boxer) {
+    this.choice.push(boxer);
     if (this.step === 1) {
       this.humanBox.disableInteractive();
       if (this.isBoxer1Human) {
