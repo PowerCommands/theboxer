@@ -8,6 +8,7 @@ import { HealthManager } from './health-manager.js';
 import { HitManager } from './hit-manager.js';
 import { BOXER_PREFIXES, animKey } from './helpers.js';
 import { RuleManager } from './rule-manager.js';
+import { recordResult, recordDraw } from './boxer-stats.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -274,14 +275,30 @@ export class MatchScene extends Phaser.Scene {
       method: 'KO',
       round: this.roundTimer.round,
     });
+    recordResult(winner.stats, loser.stats, 'KO');
   }
 
   determineWinnerByPoints() {
     if (this.matchOver) return;
     this.matchOver = true;
+    if (
+      this.hits.p1 === this.hits.p2 &&
+      this.player1.health === this.player2.health
+    ) {
+      this.roundTimer.pause();
+      eventBus.emit('match-winner', {
+        name: 'Draw',
+        method: 'Draw',
+        round: this.roundTimer.round,
+      });
+      recordDraw(this.player1.stats, this.player2.stats);
+      return;
+    }
+
     let winner;
     if (this.hits.p1 === this.hits.p2) {
-      winner = this.player1.health > this.player2.health ? this.player1 : this.player2;
+      winner =
+        this.player1.health > this.player2.health ? this.player1 : this.player2;
     } else {
       winner = this.hits.p1 > this.hits.p2 ? this.player1 : this.player2;
     }
@@ -295,6 +312,7 @@ export class MatchScene extends Phaser.Scene {
       method: 'Points',
       round: this.roundTimer.round,
     });
+    recordResult(winner.stats, loser.stats, 'Points');
   }
 
   setPlayerStrategy(player, level) {

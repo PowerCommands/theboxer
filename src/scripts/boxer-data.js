@@ -6,7 +6,12 @@ export const BOXERS = [
     power: 1.0,
     health: 1.0,
     speed: 1.0,
-    ranking: 10
+    ranking: 10,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Von Kaiser',
@@ -15,7 +20,12 @@ export const BOXERS = [
     power: 1.2,
     health: 1.0,
     speed: 1.0,
-    ranking: 9
+    ranking: 9,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Piston Honda',
@@ -24,7 +34,12 @@ export const BOXERS = [
     power: 1.3,
     health: 1.2,
     speed: 1.0,
-    ranking: 8
+    ranking: 8,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Don Flamenco',
@@ -33,7 +48,12 @@ export const BOXERS = [
     power: 1.5,
     health: 1.0,
     speed: 1.2,
-    ranking: 7
+    ranking: 7,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'King Hippo',
@@ -42,7 +62,12 @@ export const BOXERS = [
     power: 1.6,
     health: 1.8,
     speed: 1.0,
-    ranking: 6
+    ranking: 6,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Great Tiger',
@@ -51,7 +76,12 @@ export const BOXERS = [
     power: 1.0,
     health: 1.0,
     speed: 1.5,
-    ranking: 5
+    ranking: 5,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Bald Bull',
@@ -60,7 +90,12 @@ export const BOXERS = [
     power: 2.0,
     health: 2.0,
     speed: 1.2,
-    ranking: 4
+    ranking: 4,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Soda Popinski',
@@ -69,7 +104,12 @@ export const BOXERS = [
     power: 2.0,
     health: 1.5,
     speed: 2.0,
-    ranking: 3
+    ranking: 3,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Mr. Sandman',
@@ -78,7 +118,12 @@ export const BOXERS = [
     power: 2.0,
     health: 2.0,
     speed: 2.0,
-    ranking: 2
+    ranking: 2,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
   {
     name: 'Mike Tyson',
@@ -87,6 +132,11 @@ export const BOXERS = [
     power: 2.5,
     health: 2.2,
     speed: 2.5,
-    ranking: 1
+    ranking: 1,
+    matches: 0,
+    wins: 0,
+    losses: 0,
+    draws: 0,
+    winsByKO: 0
   },
 ];
