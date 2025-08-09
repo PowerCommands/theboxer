@@ -1,6 +1,6 @@
 export const appConfig = {
-  name: 'The boxer',
-  version: '0.0.001'
+  name: 'The Boxer',
+  version: '0.0.1'
 };
 
 // Start the game in non-test mode by default.  The ranking screen
