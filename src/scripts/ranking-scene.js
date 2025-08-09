@@ -1,5 +1,6 @@
 import { getRankings } from './boxer-stats.js';
 import { getTestMode, setTestMode } from './config.js';
+import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
 
 export class RankingScene extends Phaser.Scene {
@@ -53,15 +54,27 @@ export class RankingScene extends Phaser.Scene {
       });
     });
 
+    const hasPlayer = !!getPlayerBoxer();
+    const btnLabel = getTestMode()
+      ? 'Start new game'
+      : hasPlayer
+      ? 'Start next match'
+      : 'Start new game';
     const startBtn = this.add
-      .text(tableLeft, tableBottom + 10, 'Start new game', {
+      .text(tableLeft, tableBottom + 10, btnLabel, {
         font: '24px Arial',
         color: '#00ff00',
       })
       .setOrigin(0, 0)
       .setInteractive({ useHandCursor: true })
       .on('pointerup', () => {
-        this.scene.start('SelectBoxer');
+        if (getTestMode()) {
+          this.scene.start('SelectBoxer');
+        } else if (hasPlayer) {
+          this.scene.start('SelectBoxer');
+        } else {
+          this.scene.start('CreateBoxer');
+        }
       });
 
     const cbX = tableLeft;

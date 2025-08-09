@@ -3,7 +3,9 @@ export const appConfig = {
   version: '0.0.001'
 };
 
-let testMode = true;
+// Start the game in non-test mode by default.  The ranking screen
+// provides a checkbox that can enable test mode if needed.
+let testMode = false;
 
 export function setTestMode(value) {
   testMode = value;

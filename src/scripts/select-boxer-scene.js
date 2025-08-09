@@ -1,5 +1,6 @@
 import { getRankings } from './boxer-stats.js';
 import { getTestMode } from './config.js';
+import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
@@ -23,29 +24,31 @@ export class SelectBoxerScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
-    // checkbox to toggle human control for boxer1
-    const cbX = width - 250;
-    this.humanBox = this.add
-      .rectangle(cbX, 25, 20, 20, 0xffffff)
-      .setOrigin(0, 0)
-      .setInteractive({ useHandCursor: true });
-    this.humanCheck = this.add
-      .text(cbX + 10, 25, 'X', {
-        font: '20px Arial',
-        color: '#000000',
-      })
-      .setOrigin(0.5, 0)
-      .setVisible(this.isBoxer1Human);
-    this.add
-      .text(cbX + 30, 20, 'Human Controlled', {
-        font: '20px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0, 0);
-    this.humanBox.on('pointerdown', () => {
-      this.isBoxer1Human = !this.isBoxer1Human;
-      this.humanCheck.setVisible(this.isBoxer1Human);
-    });
+    if (getTestMode()) {
+      // checkbox to toggle human control for boxer1 in test mode
+      const cbX = width - 250;
+      this.humanBox = this.add
+        .rectangle(cbX, 25, 20, 20, 0xffffff)
+        .setOrigin(0, 0)
+        .setInteractive({ useHandCursor: true });
+      this.humanCheck = this.add
+        .text(cbX + 10, 25, 'X', {
+          font: '20px Arial',
+          color: '#000000',
+        })
+        .setOrigin(0.5, 0)
+        .setVisible(this.isBoxer1Human);
+      this.add
+        .text(cbX + 30, 20, 'Human Controlled', {
+          font: '20px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(0, 0);
+      this.humanBox.on('pointerdown', () => {
+        this.isBoxer1Human = !this.isBoxer1Human;
+        this.humanCheck.setVisible(this.isBoxer1Human);
+      });
+    }
 
     // When returning to this scene (e.g. after a match) the previous
     // selection state may still linger because the scene instance is
@@ -119,6 +122,91 @@ export class SelectBoxerScene extends Phaser.Scene {
     }
   }
 
+  showControlOptions() {
+    this.clearOptions();
+    const width = this.sys.game.config.width;
+    const keyboard = this.add.text(width / 2, 60, 'Keyboard', {
+      font: '20px Arial',
+      color: '#ffffff',
+    });
+    keyboard.setOrigin(0.5, 0);
+    keyboard.setInteractive({ useHandCursor: true });
+    keyboard.on('pointerdown', () => this.selectControl('human'));
+    const ai = this.add.text(width / 2, 100, 'AI', {
+      font: '20px Arial',
+      color: '#ffffff',
+    });
+    ai.setOrigin(0.5, 0);
+    ai.setInteractive({ useHandCursor: true });
+    ai.on('pointerdown', () => this.selectControl('ai'));
+    this.options.push(keyboard, ai);
+  }
+
+  showOpponentOptions() {
+    this.clearOptions();
+    const width = this.sys.game.config.width;
+    const rectWidth = width - 160;
+    const rowHeight = 24;
+    this.options.push(
+      this.add
+        .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, 0.5)
+        .setOrigin(0.5, 0)
+    );
+    const headers = `${'Rank'.padEnd(5)}${'Name'.padEnd(15)}${'Age'.padEnd(5)}${'M'.padEnd(5)}${'W'.padEnd(5)}${'L'.padEnd(5)}${
+      'D'.padEnd(5)}${'KO'.padEnd(5)}`;
+    const headerText = this.add.text(80, 60, headers, {
+      font: '20px monospace',
+      color: '#ffff00',
+    });
+    this.options.push(headerText);
+    const player = getPlayerBoxer();
+    const boxers = getRankings().filter(
+      (b) =>
+        b !== player &&
+        b.ranking < player.ranking &&
+        b.ranking >= player.ranking - 3
+    );
+    boxers.forEach((b, i) => {
+      const y = 80 + i * 24;
+      this.options.push(
+        this.add
+          .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
+          .setOrigin(0.5, 0)
+      );
+      const line = `${b.ranking.toString().padEnd(5)}${b.name.padEnd(15)}${b.age
+        .toString()
+        .padEnd(5)}${b.matches
+        .toString()
+        .padEnd(5)}${b.wins.toString().padEnd(5)}${b.losses
+        .toString()
+        .padEnd(5)}${b.draws
+        .toString()
+        .padEnd(5)}${b.winsByKO.toString().padEnd(5)}`;
+      const txt = this.add.text(80, y, line, {
+        font: '20px monospace',
+        color: '#ffffff',
+      });
+      txt.setInteractive({ useHandCursor: true });
+      txt.on('pointerdown', () => this.selectBoxer(b));
+      this.options.push(txt);
+    });
+  }
+
+  selectControl(mode) {
+    SoundManager.playClick();
+    this.isBoxer1Human = mode === 'human';
+    if (this.isBoxer1Human) {
+      this.selectedStrategy1 = 'default';
+      this.step = 2;
+      this.instruction.setText('Choose your opponent');
+      this.showOpponentOptions();
+    } else {
+      this.step = 1;
+      this.instruction.setText('Choose Player 1 strategy');
+      this.showStrategyOptions();
+    }
+  }
+
   clearOptions() {
     this.options.forEach((o) => {
       if (o && !o.destroyed) {
@@ -130,9 +218,18 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   selectBoxer(boxer) {
     SoundManager.playClick();
+    if (!getTestMode() && this.step === 2) {
+      this.choice.push(boxer);
+      this.selectedStrategy2 = 'default';
+      this.step = 3;
+      this.instruction.setText('Choose number of rounds (1-13)');
+      this.showRoundOptions();
+      return;
+    }
+
     this.choice.push(boxer);
     if (this.step === 1) {
-      this.humanBox.disableInteractive();
+      if (this.humanBox) this.humanBox.disableInteractive();
       if (this.isBoxer1Human) {
         this.step = 3;
         this.instruction.setText('Choose your opponent');
@@ -143,8 +240,9 @@ export class SelectBoxerScene extends Phaser.Scene {
           this.showStrategyOptions();
         } else {
           this.selectedStrategy1 = 'default';
-          this.step = 3;
+          this.step = 2;
           this.instruction.setText('Choose your opponent');
+          this.showOpponentOptions();
         }
       }
     } else if (this.step === 3) {
@@ -163,7 +261,16 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   selectStrategy(level) {
     SoundManager.playClick();
-    if (this.step === 2) {
+    if (this.step === 1) {
+      // non-test mode: player strategy selection
+      this.selectedStrategy1 = level;
+      this.input.once('pointerup', () => {
+        this.step = 2;
+        this.instruction.setText('Choose your opponent');
+        this.showOpponentOptions();
+      });
+    } else if (this.step === 2) {
+      // test mode: player strategy selection
       this.selectedStrategy1 = level;
       this.input.once('pointerup', () => {
         this.step = 3;
@@ -171,6 +278,7 @@ export class SelectBoxerScene extends Phaser.Scene {
         this.showBoxerOptions();
       });
     } else if (this.step === 4) {
+      // test mode: opponent strategy selection
       this.selectedStrategy2 = level;
       this.input.once('pointerup', () => {
         this.step = 5;
@@ -269,15 +377,22 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   resetSelection() {
     this.choice = [];
-    this.step = 1;
     this.selectedStrategy1 = null;
     this.selectedStrategy2 = null;
     this.selectedRounds = null;
     this.isBoxer1Human = false;
-    if (this.humanCheck) this.humanCheck.setVisible(false);
-    if (this.humanBox) this.humanBox.setInteractive({ useHandCursor: true });
-    this.instruction.setText('Choose your boxer');
-    this.showBoxerOptions();
+    if (!getTestMode() && getPlayerBoxer()) {
+      this.choice = [getPlayerBoxer()];
+      this.step = 0;
+      this.instruction.setText('Choose control method');
+      this.showControlOptions();
+    } else {
+      this.step = 1;
+      if (this.humanCheck) this.humanCheck.setVisible(false);
+      if (this.humanBox) this.humanBox.setInteractive({ useHandCursor: true });
+      this.instruction.setText('Choose your boxer');
+      this.showBoxerOptions();
+    }
   }
 
   startMatch() {

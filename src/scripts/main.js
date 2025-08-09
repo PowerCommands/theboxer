@@ -3,6 +3,7 @@ import { SelectBoxerScene } from './select-boxer-scene.js';
 import { OverlayUI } from './overlay.js';
 import { RankingScene } from './ranking-scene.js';
 import { SoundManager } from './sound-manager.js';
+import { CreateBoxerScene } from './create-boxer-scene.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -108,7 +109,15 @@ const config = {
   width: 1024,
   height: 768,
   backgroundColor: '#2d2d2d',
-  scene: [BootScene, RankingScene, SelectBoxerScene, MatchScene, OverlayUI]
+  dom: { createContainer: true },
+  scene: [
+    BootScene,
+    RankingScene,
+    CreateBoxerScene,
+    SelectBoxerScene,
+    MatchScene,
+    OverlayUI,
+  ],
 };
 
 window.addEventListener('load', () => {
