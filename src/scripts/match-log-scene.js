@@ -23,11 +23,13 @@ export class MatchLogScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
-    const log = getMatchLog();
-    let y = 80;
-    if (!log.length) {
+    this.log = getMatchLog();
+    this.expandedRows = new Set();
+    this.colX = [20, 90, 170, 330, 630, 720, 800, 880];
+    const headerY = 80;
+    if (!this.log.length) {
       this.add
-        .text(width / 2, y, 'No matches recorded', {
+        .text(width / 2, headerY, 'No matches recorded', {
           font: '24px Arial',
           color: '#ffffff',
         })
@@ -43,30 +45,14 @@ export class MatchLogScene extends Phaser.Scene {
         'Round',
         'Time',
       ];
-      const x = [20, 80, 150, 220, 420, 500, 580, 660];
       headers.forEach((h, i) => {
-        this.add.text(x[i], y, h, { font: '24px Arial', color: '#ffffff' });
-      });
-      y += 30;
-      log.forEach((entry) => {
-        const row = [
-          entry.year,
-          entry.date,
-          entry.rank,
-          `${entry.opponent} (rank ${entry.opponentRank})`,
-          entry.result,
-          entry.method === 'KO' ? 'KO' : entry.score,
-          entry.round,
-          entry.method === 'KO' ? entry.time : '-',
-        ];
-        row.forEach((text, i) => {
-          this.add.text(x[i], y, String(text), {
-            font: '20px Arial',
-            color: '#ffffff',
-          });
+        this.add.text(this.colX[i], headerY, h, {
+          font: '24px Arial',
+          color: '#ffffff',
         });
-        y += 24;
       });
+      this.startY = headerY + 30;
+      this.renderRows();
     }
 
     this.add
@@ -78,5 +64,62 @@ export class MatchLogScene extends Phaser.Scene {
       .on('pointerup', () => {
         this.scene.start('Ranking');
       });
+  }
+
+  renderRows() {
+    if (this.rowObjs) {
+      this.rowObjs.forEach((obj) => obj.destroy());
+    }
+    this.rowObjs = [];
+    let y = this.startY;
+    this.log.forEach((entry, index) => {
+      const toggle = this.add
+        .text(5, y, this.expandedRows.has(index) ? '-' : '+', {
+          font: '20px Arial',
+          color: '#00ff00',
+        })
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          if (this.expandedRows.has(index)) {
+            this.expandedRows.delete(index);
+          } else {
+            this.expandedRows.add(index);
+          }
+          this.renderRows();
+        });
+      this.rowObjs.push(toggle);
+
+      const row = [
+        entry.year,
+        entry.date,
+        entry.rank,
+        `${entry.opponent} (rank ${entry.opponentRank})`,
+        entry.result,
+        entry.method === 'KO' ? 'KO' : entry.score,
+        entry.round,
+        entry.method === 'KO' ? entry.time : '-',
+      ];
+      row.forEach((text, i) => {
+        const obj = this.add.text(this.colX[i], y, String(text), {
+          font: '20px Arial',
+          color: '#ffffff',
+        });
+        this.rowObjs.push(obj);
+      });
+      y += 24;
+
+      if (this.expandedRows.has(index) && Array.isArray(entry.roundDetails)) {
+        entry.roundDetails.forEach((rd) => {
+          const detail = this.add.text(
+            this.colX[3],
+            y,
+            `R${rd.round}: ${rd.userScore}-${rd.oppScore} (${rd.totalUser}-${rd.totalOpp})`,
+            { font: '18px Arial', color: '#cccccc' }
+          );
+          this.rowObjs.push(detail);
+          y += 20;
+        });
+      }
+    });
   }
 }
