@@ -162,6 +162,11 @@ export class MatchScene extends Phaser.Scene {
       }
     });
 
+    // Ensure the overlay UI is rendered above the match so that any
+    // interactive elements like the post-match buttons are not obscured
+    // by the boxers.
+    this.scene.bringToTop('OverlayUI');
+
     console.log('MatchScene: create complete');
   }
 
