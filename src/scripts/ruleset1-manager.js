@@ -43,8 +43,64 @@ export class RuleSet1Manager {
     return this.activeRule;
   }
 
+  getActions() {
+    const ctrl = this.self.controller;
+    if (typeof ctrl.getLevel === 'function') {
+      const strategies = ctrl.boxerId === 2 ? STRATEGIES_P2 : STRATEGIES_P1;
+      return strategies[ctrl.getLevel() - 1].actions;
+    }
+    return null;
+  }
+
+  checkLastMinute(currentSecond, aSelf) {
+    const scene = this.self.scene;
+    if (
+      scene.roundTimer.round === scene.maxRounds &&
+      scene.roundTimer.remaining === 60
+    ) {
+      const hits = scene.hits;
+      let behind = null;
+      if (hits.p1 === hits.p2) {
+        if (scene.player1.health < scene.player2.health) behind = scene.player1;
+        else if (scene.player2.health < scene.player1.health)
+          behind = scene.player2;
+      } else {
+        behind = hits.p1 < hits.p2 ? scene.player1 : scene.player2;
+      }
+      const leading = behind === scene.player1 ? scene.player2 : scene.player1;
+      if (this.self === behind) {
+        const ctrl = this.self.controller;
+        if (
+          typeof ctrl.setLevel === 'function' &&
+          this.canShift(currentSecond)
+        ) {
+          showComment(
+            this.self.stats.name +
+              ' knows he is losing and is now pushing desperately.',
+            true
+          );
+          if (ctrl.getLevel() < 7) {
+            ctrl.setLevel(7);
+          }
+        }
+      } else if (this.self === leading) {
+        if (aSelf)
+          this.fill(aSelf, currentSecond, [
+            { back: true },
+            { back: true },
+            { block: true },
+            { block: true },
+          ]);
+        this.activeRule = 'protect-lead';
+        this.activeUntil = currentSecond + 5;
+      }
+    }
+  }
+
   evaluate(currentSecond) {
     try {
+      const aSelf = this.getActions();
+      this.checkLastMinute(currentSecond, aSelf);
       if (this.activeRule && currentSecond < this.activeUntil) {
         return;
       }
@@ -57,61 +113,6 @@ export class RuleSet1Manager {
       const tiredSelf = this.self.stamina / this.self.maxStamina < 0.3;
       const tiredOpp = this.opp.stamina / this.opp.maxStamina < 0.3;
       const dist = Math.abs(this.self.sprite.x - this.opp.sprite.x);
-
-      const getActions = () => {
-        const ctrl = this.self.controller;
-        if (typeof ctrl.getLevel === 'function') {
-          const strategies = ctrl.boxerId === 2 ? STRATEGIES_P2 : STRATEGIES_P1;
-          return strategies[ctrl.getLevel() - 1].actions;
-        }
-        return null;
-      };
-
-      const aSelf = getActions();
-
-      const scene = this.self.scene;
-      if (
-        scene.roundTimer.round === scene.maxRounds &&
-        scene.roundTimer.remaining === 60
-      ) {
-        const hits = scene.hits;
-        let behind = null;
-        if (hits.p1 === hits.p2) {
-          if (scene.player1.health < scene.player2.health) behind = scene.player1;
-          else if (scene.player2.health < scene.player1.health)
-            behind = scene.player2;
-        } else {
-          behind = hits.p1 < hits.p2 ? scene.player1 : scene.player2;
-        }
-        const leading = behind === scene.player1 ? scene.player2 : scene.player1;
-        if (this.self === behind) {
-          const ctrl = this.self.controller;
-          if (
-            typeof ctrl.setLevel === 'function' &&
-            this.canShift(currentSecond)
-          ) {
-            showComment(
-              this.self.stats.name +
-                ' knows he is losing and is now pushing desperately.',
-              true
-            );
-            if(ctrl.getLevel() < 7){
-              ctrl.setLevel(7);
-            }            
-          }
-        } else if (this.self === leading) {
-          if (aSelf)
-            this.fill(aSelf, currentSecond, [
-              { back: true },
-              { back: true },
-              { block: true },
-              { block: true }
-            ]);
-          this.activeRule = 'protect-lead';
-          this.activeUntil = currentSecond + 5;
-          return;
-        }
-      }
 
       if (dist < 152) {
         const hSelf = this.self.health / this.self.maxHealth;
