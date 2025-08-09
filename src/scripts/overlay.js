@@ -10,6 +10,8 @@ export class OverlayUI extends Phaser.Scene {
     this.nextRoundText = null;
     this.matchOver = false;
     this.strategyOptions = [];
+    this.enterHandler = null;
+    this.clickHandler = null;
   }
 
   create() {
@@ -91,6 +93,8 @@ export class OverlayUI extends Phaser.Scene {
 
     this.onTimerTick = (seconds) => this.updateTimerText(seconds);
     this.onRoundStarted = (round) => {
+      // Ensure the overlay is always rendered above the match scene.
+      this.scene.bringToTop();
       // When a new match begins, reset match-over state and hide any
       // post-match buttons so the normal round flow works again.
       this.matchOver = false;
@@ -98,6 +102,15 @@ export class OverlayUI extends Phaser.Scene {
       this.rankingText?.setVisible(false);
       this.hideNextRoundButton();
       this.showRound(round);
+      // Remove any pending fallback handlers from the previous match.
+      if (this.enterHandler) {
+        this.input.keyboard.off('keydown-ENTER', this.enterHandler);
+        this.enterHandler = null;
+      }
+      if (this.clickHandler) {
+        this.input.off('pointerup', this.clickHandler);
+        this.clickHandler = null;
+      }
     };
     this.onSetNames = ({ p1, p2 }) => this.setNames(p1, p2);
     this.onHealthChanged = ({ player, value }) => {
@@ -231,6 +244,23 @@ export class OverlayUI extends Phaser.Scene {
         .setVisible(true)
         .setPosition(width / 2, startY + 40);
     }
+
+    // As a fallback, allow pressing Enter or clicking anywhere else on
+    // the screen to return to the ranking list. This helps when the
+    // post-match buttons fail to appear or when playing on devices
+    // without a keyboard.
+    const goToRanking = () => {
+      this.scene.stop('Match');
+      this.scene.start('Ranking');
+    };
+    this.enterHandler = goToRanking;
+    this.clickHandler = (pointer, gameObjects) => {
+      if (gameObjects.length === 0) {
+        goToRanking();
+      }
+    };
+    this.input.keyboard.once('keydown-ENTER', this.enterHandler);
+    this.input.once('pointerup', this.clickHandler);
   }
 
   showNextRoundButton() {
