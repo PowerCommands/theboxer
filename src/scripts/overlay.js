@@ -194,9 +194,10 @@ export class OverlayUI extends Phaser.Scene {
     this.scene.bringToTop();
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
+    const startY = height - 60;
     if (!this.newMatchText) {
       this.newMatchText = this.add
-        .text(width / 2, height / 2, 'Start New Match', {
+        .text(width / 2, startY, 'Start New Match', {
           font: '32px Arial',
           color: '#ffffff',
         })
@@ -208,12 +209,12 @@ export class OverlayUI extends Phaser.Scene {
         this.scene.start('SelectBoxer');
       });
     } else {
-      this.newMatchText.setVisible(true);
+      this.newMatchText.setVisible(true).setPosition(width / 2, startY);
     }
 
     if (!this.rankingText) {
       this.rankingText = this.add
-        .text(width / 2, height / 2 + 40, 'Show ranking', {
+        .text(width / 2, startY + 40, 'Show ranking', {
           font: '32px Arial',
           color: '#ffffff',
         })
@@ -225,7 +226,9 @@ export class OverlayUI extends Phaser.Scene {
         this.scene.start('Ranking');
       });
     } else {
-      this.rankingText.setVisible(true);
+      this.rankingText
+        .setVisible(true)
+        .setPosition(width / 2, startY + 40);
     }
   }
 
