@@ -54,6 +54,7 @@ export class MatchScene extends Phaser.Scene {
           left: 'A',
           right: 'D',
         });
+    this.isP1AI = !!data?.aiLevel1;
     const controller2 = new StrategyAIController(
       data?.aiLevel2 === 'default'
         ? data.boxer2?.defaultStrategy || 1

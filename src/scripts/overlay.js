@@ -9,6 +9,7 @@ export class OverlayUI extends Phaser.Scene {
     this.rankingText = null;
     this.nextRoundText = null;
     this.matchOver = false;
+    this.strategyOptions = [];
   }
 
   create() {
@@ -247,14 +248,61 @@ export class OverlayUI extends Phaser.Scene {
         .setDepth(1);
       this.nextRoundText.on('pointerup', () => {
         this.nextRoundText.setVisible(false);
+        this.hideStrategyOptions();
         eventBus.emit('next-round');
       });
     } else {
       this.nextRoundText.setVisible(true);
     }
+    const match = this.scene.get('Match');
+    if (match?.isP1AI) {
+      this.showStrategyOptions();
+    }
   }
 
   hideNextRoundButton() {
     if (this.nextRoundText) this.nextRoundText.setVisible(false);
+    this.hideStrategyOptions();
+  }
+
+  showStrategyOptions() {
+    const match = this.scene.get('Match');
+    if (!match) return;
+    const controller = match.player1?.controller;
+    if (!controller || typeof controller.getLevel !== 'function') return;
+    const defaultLevel = match.player1.stats?.defaultStrategy || 1;
+    const current = controller.getLevel();
+    const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
+    let y = height / 2 + 40;
+    this.strategyOptions.forEach((o) => o.destroy());
+    this.strategyOptions = [];
+    const levels = ['default', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    levels.forEach((lvl, i) => {
+      const label = lvl === 'default' ? 'Default' : `Strategy ${lvl}`;
+      const txt = this.add
+        .text(width / 2, y + i * 24, label, {
+          font: '20px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(0.5, 0)
+        .setInteractive({ useHandCursor: true })
+        .setDepth(1);
+      const levelValue = lvl === 'default' ? defaultLevel : lvl;
+      if (levelValue === current) {
+        txt.setColor('#ffff00');
+      }
+      txt.on('pointerup', () => {
+        controller.setLevel(levelValue);
+        this.strategyOptions.forEach((o) => o.setColor('#ffffff'));
+        txt.setColor('#ffff00');
+      });
+      this.strategyOptions.push(txt);
+    });
+  }
+
+  hideStrategyOptions() {
+    this.strategyOptions.forEach((o) => o.destroy());
+    this.strategyOptions = [];
   }
 }
