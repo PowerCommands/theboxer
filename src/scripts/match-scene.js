@@ -15,7 +15,7 @@ import { showComment } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
 import { BOXERS } from './boxer-data.js';
 import { saveGameState } from './save-system.js';
-import { addMatchLog } from './match-log.js';
+import { addMatchLog, getMatchLog } from './match-log.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -100,6 +100,46 @@ export class MatchScene extends Phaser.Scene {
     };
 
     this.resetBoxers();
+
+    // Prepare metadata for the match such as scheduled date and ranks.
+    const user = this.player1.stats.userCreated
+      ? this.player1.stats
+      : this.player2.stats.userCreated
+      ? this.player2.stats
+      : null;
+    if (user) {
+      const opponent =
+        user === this.player1.stats ? this.player2.stats : this.player1.stats;
+      const logCount = getMatchLog().length;
+      const baseDate = new Date(2025, 2, 5); // March 5, 2025
+      const matchDate = new Date(baseDate);
+      matchDate.setDate(baseDate.getDate() + logCount * 20);
+      const year = matchDate.getFullYear();
+      const dateStr = matchDate.toLocaleDateString('sv-SE', {
+        day: 'numeric',
+        month: 'long',
+      });
+      const [day, month] = dateStr.split(' ');
+      const formattedDate = `${day} ${month.charAt(0).toUpperCase()}${month.slice(1)}`;
+      const hour = Phaser.Math.Between(0, 23);
+      const minute = Phaser.Math.Between(0, 59);
+      const timeDisplay = `${hour.toString().padStart(2, '0')}:${minute
+        .toString()
+        .padStart(2, '0')}`;
+      this.matchMeta = {
+        year,
+        date: formattedDate,
+        rank: user.ranking,
+        opponentRank: opponent.ranking,
+      };
+      eventBus.emit('match-date', {
+        date: formattedDate,
+        year,
+        time: timeDisplay,
+      });
+    } else {
+      this.matchMeta = null;
+    }
 
     this.healthManager = new HealthManager(this.player1, this.player2);
     this.roundTimer = new RoundTimer(this);
@@ -354,7 +394,7 @@ export class MatchScene extends Phaser.Scene {
     const timeSec = this.roundLength - this.roundTimer.remaining;
     const minutes = Math.floor(timeSec / 60);
     const seconds = Math.floor(timeSec % 60);
-    const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    const timeStr = `${minutes} min ${seconds} sec.`;
     const user = this.player1.stats.userCreated
       ? this.player1.stats
       : this.player2.stats.userCreated
@@ -372,7 +412,11 @@ export class MatchScene extends Phaser.Scene {
         totalOpp: user === this.player1.stats ? r.totalP2 : r.totalP1,
       }));
       addMatchLog({
+        year: this.matchMeta?.year,
+        date: this.matchMeta?.date,
+        rank: this.matchMeta?.rank,
         opponent: opponent.name,
+        opponentRank: this.matchMeta?.opponentRank,
         result: userIsWinner ? 'Win' : 'Loss',
         method: 'KO',
         round: this.roundTimer.round,
@@ -413,10 +457,15 @@ export class MatchScene extends Phaser.Scene {
           totalOpp: userIsP1 ? r.totalP2 : r.totalP1,
         }));
         addMatchLog({
+          year: this.matchMeta?.year,
+          date: this.matchMeta?.date,
+          rank: this.matchMeta?.rank,
           opponent: opponent.name,
+          opponentRank: this.matchMeta?.opponentRank,
           result: 'Draw',
           method: 'Points',
-          rounds: this.roundTimer.round,
+          round: this.roundTimer.round,
+          time: '-',
           score: `${userScore}-${oppScore}`,
           roundDetails,
         });
@@ -447,10 +496,15 @@ export class MatchScene extends Phaser.Scene {
         totalOpp: userIsP1 ? r.totalP2 : r.totalP1,
       }));
       addMatchLog({
+        year: this.matchMeta?.year,
+        date: this.matchMeta?.date,
+        rank: this.matchMeta?.rank,
         opponent: opponent.name,
+        opponentRank: this.matchMeta?.opponentRank,
         result: winner.stats === user ? 'Win' : 'Loss',
         method: 'Points',
-        rounds: this.roundTimer.round,
+        round: this.roundTimer.round,
+        time: '-',
         score: `${userScore}-${oppScore}`,
         roundDetails,
       });
