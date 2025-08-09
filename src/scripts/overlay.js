@@ -88,42 +88,57 @@ export class OverlayUI extends Phaser.Scene {
     this.setBarValue(this.bars.p2.power, 1);
     this.setBarValue(this.bars.p2.health, 1);
 
-    eventBus.on('timer-tick', (seconds) => this.updateTimerText(seconds));
-    eventBus.on('round-started', (round) => {
+    this.onTimerTick = (seconds) => this.updateTimerText(seconds);
+    this.onRoundStarted = (round) => {
+      // When a new match begins, reset match-over state and hide any
+      // post-match buttons so the normal round flow works again.
+      this.matchOver = false;
+      this.newMatchText?.setVisible(false);
+      this.rankingText?.setVisible(false);
       this.hideNextRoundButton();
       this.showRound(round);
-    });
-    eventBus.on('set-names', ({ p1, p2 }) => this.setNames(p1, p2));
-    eventBus.on('health-changed', ({ player, value }) => {
+    };
+    this.onSetNames = ({ p1, p2 }) => this.setNames(p1, p2);
+    this.onHealthChanged = ({ player, value }) => {
       this.setBarValue(this.bars[player].health, value);
-    });
-    eventBus.on('stamina-changed', ({ player, value }) => {
+    };
+    this.onStaminaChanged = ({ player, value }) => {
       this.setBarValue(this.bars[player].stamina, value);
-    });
-    eventBus.on('power-changed', ({ player, value }) => {
+    };
+    this.onPowerChanged = ({ player, value }) => {
       this.setBarValue(this.bars[player].power, value);
-    });
-    eventBus.on('round-ended', () => this.showNextRoundButton());
-    eventBus.on('match-winner', (data) => {
+    };
+    this.onRoundEnded = () => this.showNextRoundButton();
+    this.onMatchWinner = (data) => {
       this.matchOver = true;
       this.hideNextRoundButton();
       this.announceWinner(data);
-    });
-    eventBus.on('hit-update', ({ p1, p2 }) => {
+    };
+    this.onHitUpdate = ({ p1, p2 }) => {
       this.hitText.p1.setText(`Hits: ${p1}`);
       this.hitText.p2.setText(`Hits: ${p2}`);
-    });
+    };
+
+    eventBus.on('timer-tick', this.onTimerTick);
+    eventBus.on('round-started', this.onRoundStarted);
+    eventBus.on('set-names', this.onSetNames);
+    eventBus.on('health-changed', this.onHealthChanged);
+    eventBus.on('stamina-changed', this.onStaminaChanged);
+    eventBus.on('power-changed', this.onPowerChanged);
+    eventBus.on('round-ended', this.onRoundEnded);
+    eventBus.on('match-winner', this.onMatchWinner);
+    eventBus.on('hit-update', this.onHitUpdate);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
-      eventBus.off('timer-tick');
-      eventBus.off('round-started');
-      eventBus.off('set-names');
-      eventBus.off('health-changed');
-      eventBus.off('stamina-changed');
-      eventBus.off('power-changed');
-      eventBus.off('round-ended');
-      eventBus.off('match-winner');
-      eventBus.off('hit-update');
+      eventBus.off('timer-tick', this.onTimerTick);
+      eventBus.off('round-started', this.onRoundStarted);
+      eventBus.off('set-names', this.onSetNames);
+      eventBus.off('health-changed', this.onHealthChanged);
+      eventBus.off('stamina-changed', this.onStaminaChanged);
+      eventBus.off('power-changed', this.onPowerChanged);
+      eventBus.off('round-ended', this.onRoundEnded);
+      eventBus.off('match-winner', this.onMatchWinner);
+      eventBus.off('hit-update', this.onHitUpdate);
     });
   }
 
