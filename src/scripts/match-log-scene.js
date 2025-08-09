@@ -1,5 +1,6 @@
 import { getMatchLog } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
+import { getPlayerBoxer } from './player-boxer.js';
 
 export class MatchLogScene extends Phaser.Scene {
   constructor() {
@@ -9,8 +10,14 @@ export class MatchLogScene extends Phaser.Scene {
   create() {
     const width = this.sys.game.config.width;
     SoundManager.playMenuLoop();
+    const player = getPlayerBoxer();
+    const header = player
+      ? `${player.name} (${player.wins || 0} Win ${player.losses || 0} Loss ${
+          player.winsByKO || 0
+        } KO)`
+      : 'Match log';
     this.add
-      .text(width / 2, 20, 'Match log', {
+      .text(width / 2, 20, header, {
         font: '32px Arial',
         color: '#ffffff',
       })
@@ -26,37 +33,39 @@ export class MatchLogScene extends Phaser.Scene {
         })
         .setOrigin(0.5, 0);
     } else {
+      const headers = [
+        'Year',
+        'Date',
+        'Rank',
+        'Opponent',
+        'Result',
+        'How',
+        'Round',
+        'Time',
+      ];
+      const x = [20, 80, 150, 220, 420, 500, 580, 660];
+      headers.forEach((h, i) => {
+        this.add.text(x[i], y, h, { font: '24px Arial', color: '#ffffff' });
+      });
+      y += 30;
       log.forEach((entry) => {
-        const summaryParts = [];
-        summaryParts.push(`vs ${entry.opponent}`);
-        summaryParts.push(entry.result);
-        summaryParts.push(`by ${entry.method}`);
-        if (entry.method === 'KO') {
-          summaryParts.push(`R${entry.round} ${entry.time}`);
-        } else if (entry.method === 'Points') {
-          summaryParts.push(`${entry.rounds}R ${entry.score}`);
-        }
-        const summary = summaryParts.join(' - ');
-        const sumText = this.add
-          .text(20, y, summary, { font: '20px Arial', color: '#ffffff' })
-          .setInteractive({ useHandCursor: true });
-        let detailsLines = [];
-        if (entry.roundDetails) {
-          detailsLines = entry.roundDetails.map(
-            (r) =>
-              `R${r.round}: ${r.userScore}-${r.oppScore} (${r.totalUser}-${r.totalOpp})`
-          );
-        }
-        const detText = this.add
-          .text(40, y + 24, detailsLines.join('\n'), {
-            font: '18px Arial',
-            color: '#dddddd',
-          })
-          .setVisible(false);
-        sumText.on('pointerup', () => {
-          detText.setVisible(!detText.visible);
+        const row = [
+          entry.year,
+          entry.date,
+          entry.rank,
+          `${entry.opponent} (rank ${entry.opponentRank})`,
+          entry.result,
+          entry.method === 'KO' ? 'KO' : entry.score,
+          entry.round,
+          entry.method === 'KO' ? entry.time : '-',
+        ];
+        row.forEach((text, i) => {
+          this.add.text(x[i], y, String(text), {
+            font: '20px Arial',
+            color: '#ffffff',
+          });
         });
-        y += sumText.height + detText.height + 10;
+        y += 24;
       });
     }
 

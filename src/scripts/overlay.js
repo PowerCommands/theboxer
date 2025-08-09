@@ -41,7 +41,14 @@ export class OverlayUI extends Phaser.Scene {
     });
     this.timerText.setOrigin(0.5, 0);
 
-    this.roundText = this.add.text(width / 2, infoY + 70, '', {
+    // match date and time displayed under the timer
+    this.dateText = this.add.text(width / 2, infoY + 66, '', {
+      font: '18px Arial',
+      color: '#ffffff',
+    });
+    this.dateText.setOrigin(0.5, 0);
+
+    this.roundText = this.add.text(width / 2, infoY + 90, '', {
       font: '24px Arial',
       color: '#ffffff',
     });
@@ -133,6 +140,12 @@ export class OverlayUI extends Phaser.Scene {
       this.hitText.p2.setText(`Hits: ${p2}`);
     };
 
+    this.onMatchDate = ({ date, year, time }) => {
+      if (this.dateText) {
+        this.dateText.setText(`${date} ${year} ${time}`);
+      }
+    };
+
     eventBus.on('timer-tick', this.onTimerTick);
     eventBus.on('round-started', this.onRoundStarted);
     eventBus.on('set-names', this.onSetNames);
@@ -142,6 +155,7 @@ export class OverlayUI extends Phaser.Scene {
     eventBus.on('round-ended', this.onRoundEnded);
     eventBus.on('match-winner', this.onMatchWinner);
     eventBus.on('hit-update', this.onHitUpdate);
+    eventBus.on('match-date', this.onMatchDate);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       eventBus.off('timer-tick', this.onTimerTick);
@@ -153,6 +167,7 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('round-ended', this.onRoundEnded);
       eventBus.off('match-winner', this.onMatchWinner);
       eventBus.off('hit-update', this.onHitUpdate);
+      eventBus.off('match-date', this.onMatchDate);
     });
   }
 
