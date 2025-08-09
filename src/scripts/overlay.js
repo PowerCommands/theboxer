@@ -12,12 +12,13 @@ export class OverlayUI extends Phaser.Scene {
     this.strategyOptions = [];
     this.enterHandler = null;
     this.clickHandler = null;
+    this.locationText = null;
   }
 
   create() {
     const width = this.sys.game.config.width;
     const infoY = 0;
-    const infoHeight = 120;
+    const infoHeight = 140;
     this.add
       .rectangle(width / 2, infoY, width, infoHeight, 0x808080, 0.5)
       .setOrigin(0.5, 0);
@@ -48,7 +49,14 @@ export class OverlayUI extends Phaser.Scene {
     });
     this.dateText.setOrigin(0.5, 0);
 
-    this.roundText = this.add.text(width / 2, infoY + 90, '', {
+    // arena location displayed under the date
+    this.locationText = this.add.text(width / 2, infoY + 86, '', {
+      font: '18px Arial',
+      color: '#ffffff',
+    });
+    this.locationText.setOrigin(0.5, 0);
+
+    this.roundText = this.add.text(width / 2, infoY + 110, '', {
       font: '24px Arial',
       color: '#ffffff',
     });
@@ -140,9 +148,13 @@ export class OverlayUI extends Phaser.Scene {
       this.hitText.p2.setText(`Hits: ${p2}`);
     };
 
-    this.onMatchDate = ({ date, year, time }) => {
+    this.onMatchDate = ({ date, year, time, arena, city, country }) => {
       if (this.dateText) {
         this.dateText.setText(`${date} ${year} ${time}`);
+      }
+      if (this.locationText) {
+        const parts = [arena, city, country].filter((v) => v).join(', ');
+        this.locationText.setText(parts);
       }
     };
 
