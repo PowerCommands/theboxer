@@ -1,4 +1,4 @@
-import { BOXERS, resetBoxers } from './boxer-data.js';
+import { BOXERS, resetBoxers, addBoxer } from './boxer-data.js';
 import { setPlayerBoxer } from './player-boxer.js';
 
 const SAVE_KEY = 'theBoxer.save.v1';
@@ -28,15 +28,33 @@ export function saveGameState(boxers) {
     const payload = {
       version: VERSION,
       lastUpdatedUtc: new Date().toISOString(),
-      boxers: boxers.map((b) => ({
-        id: b.name,
-        ranking: b.ranking,
-        matches: b.matches,
-        wins: b.wins,
-        losses: b.losses,
-        draws: b.draws,
-        winsByKO: b.winsByKO,
-      })),
+      boxers: boxers.map((b) => {
+        const base = {
+          id: b.name,
+          ranking: b.ranking,
+          matches: b.matches,
+          wins: b.wins,
+          losses: b.losses,
+          draws: b.draws,
+          winsByKO: b.winsByKO,
+        };
+        if (b.userCreated) {
+          return {
+            ...base,
+            userCreated: true,
+            nickName: b.nickName,
+            country: b.country,
+            age: b.age,
+            stamina: b.stamina,
+            power: b.power,
+            health: b.health,
+            speed: b.speed,
+            defaultStrategy: b.defaultStrategy,
+            ruleset: b.ruleset,
+          };
+        }
+        return base;
+      }),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
   } catch (err) {
@@ -47,8 +65,35 @@ export function saveGameState(boxers) {
 // Apply loaded state to the in-memory boxer registry.
 export function applyLoadedState(state) {
   if (!state || !Array.isArray(state.boxers)) return;
+  setPlayerBoxer(null);
   state.boxers.forEach((saved) => {
-    const boxer = BOXERS.find((b) => b.name === saved.id);
+    let boxer = BOXERS.find((b) => b.name === saved.id);
+    if (!boxer && saved.userCreated) {
+      boxer = {
+        name: saved.id,
+        nickName: saved.nickName || '',
+        country: saved.country || '',
+        age: saved.age || 18,
+        stamina: saved.stamina ?? 1,
+        power: saved.power ?? 1,
+        health: saved.health ?? 1,
+        speed: saved.speed ?? 1,
+        ranking:
+          saved.ranking ??
+          BOXERS.reduce((m, b) => Math.max(m, b.ranking), 0) + 1,
+        matches: saved.matches ?? 0,
+        wins: saved.wins ?? 0,
+        losses: saved.losses ?? 0,
+        draws: saved.draws ?? 0,
+        winsByKO: saved.winsByKO ?? 0,
+        defaultStrategy: saved.defaultStrategy ?? 1,
+        ruleset: saved.ruleset ?? 1,
+        userCreated: true,
+      };
+      addBoxer(boxer);
+      setPlayerBoxer(boxer);
+      return;
+    }
     if (!boxer) return;
     boxer.ranking = saved.ranking ?? boxer.ranking;
     boxer.matches = saved.matches ?? boxer.matches;
@@ -56,6 +101,20 @@ export function applyLoadedState(state) {
     boxer.losses = saved.losses ?? boxer.losses;
     boxer.draws = saved.draws ?? boxer.draws;
     boxer.winsByKO = saved.winsByKO ?? boxer.winsByKO;
+    if (saved.userCreated) {
+      boxer.userCreated = true;
+      boxer.nickName = saved.nickName ?? boxer.nickName;
+      boxer.country = saved.country ?? boxer.country;
+      boxer.age = saved.age ?? boxer.age;
+      boxer.stamina = saved.stamina ?? boxer.stamina;
+      boxer.power = saved.power ?? boxer.power;
+      boxer.health = saved.health ?? boxer.health;
+      boxer.speed = saved.speed ?? boxer.speed;
+      boxer.defaultStrategy =
+        saved.defaultStrategy ?? boxer.defaultStrategy;
+      boxer.ruleset = saved.ruleset ?? boxer.ruleset;
+      setPlayerBoxer(boxer);
+    }
   });
 }
 
