@@ -99,7 +99,7 @@ export class RankingScene extends Phaser.Scene {
       });
 
     // Button to reset saved rankings and stats.
-    this.add
+    const resetBtn = this.add
       .text(tableLeft, startBtn.y + 40, 'Reset data', {
         font: '20px Arial',
         color: '#ff0000',
@@ -109,12 +109,23 @@ export class RankingScene extends Phaser.Scene {
       .on('pointerup', () => {
         if (
           window.confirm(
-            'This will erase saved rankings and stats. Continue?'
+            'This will erase saved rankings, stats, and match log. Continue?'
           )
         ) {
           resetSavedData();
           this.scene.restart();
         }
+      });
+
+    this.add
+      .text(tableLeft, resetBtn.y + 40, 'Match log', {
+        font: '20px Arial',
+        color: '#ffffff',
+      })
+      .setOrigin(0, 0)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerup', () => {
+        this.scene.start('MatchLog');
       });
 
     // Place the test mode checkbox on the same row as the start button

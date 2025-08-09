@@ -4,6 +4,7 @@ import { OverlayUI } from './overlay.js';
 import { RankingScene } from './ranking-scene.js';
 import { SoundManager } from './sound-manager.js';
 import { CreateBoxerScene } from './create-boxer-scene.js';
+import { MatchLogScene } from './match-log-scene.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -114,6 +115,7 @@ const config = {
   scene: [
     BootScene,
     RankingScene,
+    MatchLogScene,
     CreateBoxerScene,
     SelectBoxerScene,
     MatchScene,

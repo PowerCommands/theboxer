@@ -15,6 +15,7 @@ import { showComment } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
 import { BOXERS } from './boxer-data.js';
 import { saveGameState } from './save-system.js';
+import { addMatchLog } from './match-log.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -118,7 +119,15 @@ export class MatchScene extends Phaser.Scene {
     this.roundLength = 180;
     this.lastSecond = -1;
     this.hits = { p1: 0, p2: 0 };
-    this.hitManager = new HitManager(this.healthManager, this.hitLimit, this.hits);
+    this.roundHits = { p1: 0, p2: 0 };
+    this.score = { p1: 0, p2: 0 };
+    this.roundLog = [];
+    this.hitManager = new HitManager(
+      this.healthManager,
+      this.hitLimit,
+      this.hits,
+      this.roundHits
+    );
     this.maxRounds = Phaser.Math.Clamp(data?.rounds || 1, 1, 13);
     eventBus.on('round-ended', (round) => this.endRound(round));
     eventBus.on('next-round', () => this.startNextRound());
@@ -272,6 +281,29 @@ export class MatchScene extends Phaser.Scene {
 
   endRound(round) {
     if (this.matchOver) return;
+    const p1RoundScore =
+      this.roundHits.p1 === this.roundHits.p2
+        ? 10
+        : this.roundHits.p1 > this.roundHits.p2
+        ? 10
+        : 9;
+    const p2RoundScore =
+      this.roundHits.p1 === this.roundHits.p2
+        ? 10
+        : this.roundHits.p1 > this.roundHits.p2
+        ? 9
+        : 10;
+    this.score.p1 += p1RoundScore;
+    this.score.p2 += p2RoundScore;
+    this.roundLog.push({
+      round,
+      p1Score: p1RoundScore,
+      p2Score: p2RoundScore,
+      totalP1: this.score.p1,
+      totalP2: this.score.p2,
+    });
+    this.roundHits.p1 = 0;
+    this.roundHits.p2 = 0;
     this.ruleManager1.resetStrategyChanges();
     this.ruleManager2.resetStrategyChanges();
     this.paused = true;
@@ -319,6 +351,35 @@ export class MatchScene extends Phaser.Scene {
       method: 'KO',
       round: this.roundTimer.round,
     });
+    const timeSec = this.roundLength - this.roundTimer.remaining;
+    const minutes = Math.floor(timeSec / 60);
+    const seconds = Math.floor(timeSec % 60);
+    const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+    const user = this.player1.stats.userCreated
+      ? this.player1.stats
+      : this.player2.stats.userCreated
+      ? this.player2.stats
+      : null;
+    if (user) {
+      const opponent =
+        user === this.player1.stats ? this.player2.stats : this.player1.stats;
+      const userIsWinner = winner.stats === user;
+      const roundDetails = this.roundLog.map((r) => ({
+        round: r.round,
+        userScore: user === this.player1.stats ? r.p1Score : r.p2Score,
+        oppScore: user === this.player1.stats ? r.p2Score : r.p1Score,
+        totalUser: user === this.player1.stats ? r.totalP1 : r.totalP2,
+        totalOpp: user === this.player1.stats ? r.totalP2 : r.totalP1,
+      }));
+      addMatchLog({
+        opponent: opponent.name,
+        result: userIsWinner ? 'Win' : 'Loss',
+        method: 'KO',
+        round: this.roundTimer.round,
+        time: timeStr,
+        roundDetails,
+      });
+    }
     recordResult(winner.stats, loser.stats, 'KO');
     saveGameState(BOXERS);
   }
@@ -326,10 +387,15 @@ export class MatchScene extends Phaser.Scene {
   determineWinnerByPoints() {
     if (this.matchOver) return;
     this.matchOver = true;
-    if (
-      this.hits.p1 === this.hits.p2 &&
-      this.player1.health === this.player2.health
-    ) {
+    const user = this.player1.stats.userCreated
+      ? this.player1.stats
+      : this.player2.stats.userCreated
+      ? this.player2.stats
+      : null;
+    const userIsP1 = user === this.player1.stats;
+    const userScore = userIsP1 ? this.score.p1 : this.score.p2;
+    const oppScore = userIsP1 ? this.score.p2 : this.score.p1;
+    if (this.score.p1 === this.score.p2) {
       this.roundTimer.pause();
       eventBus.emit('match-winner', {
         name: 'Draw',
@@ -337,17 +403,29 @@ export class MatchScene extends Phaser.Scene {
         round: this.roundTimer.round,
       });
       recordDraw(this.player1.stats, this.player2.stats);
+      if (user) {
+        const opponent = userIsP1 ? this.player2.stats : this.player1.stats;
+        const roundDetails = this.roundLog.map((r) => ({
+          round: r.round,
+          userScore: userIsP1 ? r.p1Score : r.p2Score,
+          oppScore: userIsP1 ? r.p2Score : r.p1Score,
+          totalUser: userIsP1 ? r.totalP1 : r.totalP2,
+          totalOpp: userIsP1 ? r.totalP2 : r.totalP1,
+        }));
+        addMatchLog({
+          opponent: opponent.name,
+          result: 'Draw',
+          method: 'Points',
+          rounds: this.roundTimer.round,
+          score: `${userScore}-${oppScore}`,
+          roundDetails,
+        });
+      }
       saveGameState(BOXERS);
       return;
     }
 
-    let winner;
-    if (this.hits.p1 === this.hits.p2) {
-      winner =
-        this.player1.health > this.player2.health ? this.player1 : this.player2;
-    } else {
-      winner = this.hits.p1 > this.hits.p2 ? this.player1 : this.player2;
-    }
+    let winner = this.score.p1 > this.score.p2 ? this.player1 : this.player2;
     const loser = winner === this.player1 ? this.player2 : this.player1;
     winner.isWinner = true;
     winner.sprite.play(animKey(winner.prefix, 'win'));
@@ -359,6 +437,24 @@ export class MatchScene extends Phaser.Scene {
       round: this.roundTimer.round,
     });
     recordResult(winner.stats, loser.stats, 'Points');
+    if (user) {
+      const opponent = userIsP1 ? this.player2.stats : this.player1.stats;
+      const roundDetails = this.roundLog.map((r) => ({
+        round: r.round,
+        userScore: userIsP1 ? r.p1Score : r.p2Score,
+        oppScore: userIsP1 ? r.p2Score : r.p1Score,
+        totalUser: userIsP1 ? r.totalP1 : r.totalP2,
+        totalOpp: userIsP1 ? r.totalP2 : r.totalP1,
+      }));
+      addMatchLog({
+        opponent: opponent.name,
+        result: winner.stats === user ? 'Win' : 'Loss',
+        method: 'Points',
+        rounds: this.roundTimer.round,
+        score: `${userScore}-${oppScore}`,
+        roundDetails,
+      });
+    }
     saveGameState(BOXERS);
   }
 

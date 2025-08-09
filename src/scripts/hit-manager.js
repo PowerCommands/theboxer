@@ -4,10 +4,11 @@ import { SoundManager } from './sound-manager.js';
 import { showComment } from './comment-manager.js';
 
 export class HitManager {
-  constructor(healthManager, hitLimit, hits) {
+  constructor(healthManager, hitLimit, hits, roundHits) {
     this.healthManager = healthManager;
     this.hitLimit = hitLimit;
     this.hits = hits;
+    this.roundHits = roundHits;
   }
 
   isFacingCorrectly(attacker, defender) {
@@ -81,6 +82,9 @@ export class HitManager {
       }
       const attackerKey = defenderKey === 'p1' ? 'p2' : 'p1';
       this.hits[attackerKey] += 1;
+      if (this.roundHits) {
+        this.roundHits[attackerKey] += 1;
+      }
       eventBus.emit('hit-update', { p1: this.hits.p1, p2: this.hits.p2 });
     }
   }
