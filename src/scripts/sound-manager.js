@@ -9,7 +9,7 @@ export class SoundManager {
     const volLow = { volume: 0.4 };
     this.sounds = {
       menuLoop: scene.sound.add('loop-menu', { loop: true, ...vol }),
-      click: scene.sound.add('click-menu', volLow),
+      click: scene.sound.add('click-menu', vol+2),
       intro: scene.sound.add('intro', volLow),
       bell: scene.sound.add('bell-signals', vol),
       fight: scene.sound.add('fight', vol),
