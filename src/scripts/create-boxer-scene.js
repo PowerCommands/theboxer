@@ -107,7 +107,8 @@ export class CreateBoxerScene extends Phaser.Scene {
       const curr = parseFloat(s.value);
       const total = allowedPoints();
       const spent = sliders.reduce((sum, el) => sum + parseFloat(el.value), 0);
-      if (spent > total && curr > prev) {
+      const epsilon = 0.001;
+      if (spent - total > epsilon && curr > prev) {
         s.value = prev;
       } else {
         lastValues.set(s, s.value);
