@@ -127,7 +127,7 @@ export class RankingScene extends Phaser.Scene {
       const btnLabel = getTestMode()
         ? 'Start new game'
         : hasPlayer
-        ? 'Start next match'
+        ? 'Setup next fight'
         : 'Start new game';
       const tableRight = tableLeft + rectWidth;
       const startBtn = this.add
