@@ -2,6 +2,12 @@ import { getRankings } from './boxer-stats.js';
 import { appConfig, getTestMode, setTestMode } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
+import {
+  loadGameState,
+  applyLoadedState,
+  migrateIfNeeded,
+  resetSavedData,
+} from './save-system.js';
 
 export class RankingScene extends Phaser.Scene {
   constructor() {
@@ -11,6 +17,12 @@ export class RankingScene extends Phaser.Scene {
   create() {
     const width = this.sys.game.config.width;
     SoundManager.playMenuLoop();
+
+    // Load any saved boxer stats before rendering the list.
+    const loaded = loadGameState();
+    if (loaded) {
+      applyLoadedState(migrateIfNeeded(loaded));
+    }
 
     // Show application name and version at the top
     const infoY = 20;
@@ -83,6 +95,25 @@ export class RankingScene extends Phaser.Scene {
           this.scene.start('SelectBoxer');
         } else {
           this.scene.start('CreateBoxer');
+        }
+      });
+
+    // Button to reset saved rankings and stats.
+    this.add
+      .text(tableLeft, startBtn.y + 40, 'Reset data', {
+        font: '20px Arial',
+        color: '#ff0000',
+      })
+      .setOrigin(0, 0)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerup', () => {
+        if (
+          window.confirm(
+            'This will erase saved rankings and stats. Continue?'
+          )
+        ) {
+          resetSavedData();
+          this.scene.restart();
         }
       });
 
