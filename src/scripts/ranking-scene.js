@@ -1,5 +1,5 @@
 import { getRankings } from './boxer-stats.js';
-import { getTestMode, setTestMode } from './config.js';
+import { appConfig, getTestMode, setTestMode } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
 
@@ -10,10 +10,21 @@ export class RankingScene extends Phaser.Scene {
 
   create() {
     const width = this.sys.game.config.width;
-    const height = this.sys.game.config.height;
     SoundManager.playMenuLoop();
+
+    // Show application name and version at the top
+    const infoY = 20;
     this.add
-      .text(width / 2, 20, 'Ranking', {
+      .text(width / 2, infoY, `${appConfig.name} v${appConfig.version}`, {
+        font: '20px Arial',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5, 0);
+
+    // Position the ranking title below the app info
+    const headerY = infoY + 40;
+    this.add
+      .text(width / 2, headerY, 'Ranking', {
         font: '32px Arial',
         color: '#ffffff',
       })
@@ -27,7 +38,7 @@ export class RankingScene extends Phaser.Scene {
     const charWidth = 12;
     const rectWidth = totalChars * charWidth;
     const rowHeight = 24;
-    const tableTop = 60;
+    const tableTop = headerY + 40;
     const tableLeft = (width - rectWidth) / 2;
     this.add
       .rectangle(width / 2, tableTop, rectWidth, rowHeight, 0x808080, 0.5)
@@ -57,6 +68,7 @@ export class RankingScene extends Phaser.Scene {
       : hasPlayer
       ? 'Start next match'
       : 'Start new game';
+    const tableRight = tableLeft + rectWidth;
     const startBtn = this.add
       .text(tableLeft, tableBottom + 10, btnLabel, {
         font: '24px Arial',
@@ -74,8 +86,15 @@ export class RankingScene extends Phaser.Scene {
         }
       });
 
-    const cbX = tableLeft;
-    const cbY = tableTop - 40;
+    // Place the test mode checkbox on the same row as the start button
+    const testLabel = this.add
+      .text(tableRight, startBtn.y, 'Test mode', {
+        font: '20px Arial',
+        color: '#ffffff',
+      })
+      .setOrigin(1, 0);
+    const cbX = testLabel.x - testLabel.width - 30;
+    const cbY = startBtn.y;
     const testBox = this.add
       .rectangle(cbX, cbY, 20, 20, 0xffffff)
       .setOrigin(0, 0)
@@ -87,12 +106,6 @@ export class RankingScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0)
       .setVisible(getTestMode());
-    this.add
-      .text(cbX + 30, cbY - 5, 'Test mode', {
-        font: '20px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0, 0);
     testBox.on('pointerdown', () => {
       const newVal = !getTestMode();
       setTestMode(newVal);
