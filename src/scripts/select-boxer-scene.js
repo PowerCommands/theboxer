@@ -2,6 +2,7 @@ import { getRankings } from './boxer-stats.js';
 import { getTestMode } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
+import { scheduleMatch } from './next-match.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -305,75 +306,14 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   selectRounds(num) {
     this.selectedRounds = num;
-    this.input.once('pointerup', () => this.showSummary());
-  }
-
-  showSummary() {
-    this.clearOptions();
-    const width = this.sys.game.config.width;
-    const [player, opponent] = this.choice;
-    this.instruction.setText('Summary');
-
-    const summaryLines = [
-      `Player 1: ${player.name}`,
-      this.isBoxer1Human
-        ? 'Human controlled'
-        : `Strategy: ${
-            this.selectedStrategy1 === 'default'
-              ? 'Default'
-              : this.selectedStrategy1
-          }`,
-      `Player 2: ${opponent.name}`,
-      `Strategy: ${
-        this.selectedStrategy2 === 'default'
-          ? 'Default'
-          : this.selectedStrategy2
-      }`,
-      `Rounds: ${this.selectedRounds}`,
-    ];
-    const summaryText = summaryLines.join('\n');
-    const summary = this.add
-      .text(width / 2, 80, summaryText, {
-        font: '20px Arial',
-        color: '#ffffff',
-        align: 'center',
-      })
-      .setOrigin(0.5, 0);
-    this.options.push(summary);
-
-    const okBtn = this.add
-      .text(width / 2 - 60, 200, 'OK', {
-        font: '20px Arial',
-        color: '#00ff00',
-      })
-      .setOrigin(0.5, 0)
-      .setInteractive({ useHandCursor: true });
-    // Use the button's own pointerup event to start the match.
-    // Listening on the scene's global input and waiting for a
-    // subsequent pointerup could miss the event if the pointer is
-    // released outside the game canvas. By reacting directly to the
-    // button's pointerup event we ensure the match always starts when
-    // the player confirms their selection, while still waiting until
-    // the click interaction has fully completed.
-    okBtn.on('pointerup', () => {
-      this.startMatch();
-    });
-
-    const cancelBtn = this.add
-      .text(width / 2 + 60, 200, 'Cancel', {
-        font: '20px Arial',
-        color: '#ff0000',
-      })
-      .setOrigin(0.5, 0)
-      .setInteractive({ useHandCursor: true });
-    // Likewise, handle cancel on pointerup so that destroying and
-    // recreating the option elements does not interfere with the
-    // current pointerdown processing.
-    cancelBtn.on('pointerup', () => {
-      this.resetSelection();
-    });
-
-    this.options.push(okBtn, cancelBtn);
+    const [boxer1, boxer2] = this.choice;
+    const rounds = this.selectedRounds ?? 1;
+    const aiLevel1 = this.isBoxer1Human
+      ? null
+      : this.selectedStrategy1 ?? 'default';
+    const aiLevel2 = this.selectedStrategy2 ?? 'default';
+    scheduleMatch({ boxer1, boxer2, aiLevel1, aiLevel2, rounds });
+    this.scene.start('Ranking');
   }
 
   resetSelection() {
@@ -396,22 +336,4 @@ export class SelectBoxerScene extends Phaser.Scene {
     }
   }
 
-  startMatch() {
-    const [boxer1, boxer2] = this.choice;
-    const rounds = this.selectedRounds ?? 1;
-    const aiLevel1 = this.isBoxer1Human
-      ? null
-      : this.selectedStrategy1 ?? 'default';
-    const aiLevel2 = this.selectedStrategy2 ?? 'default';
-    SoundManager.stopMenuLoop();
-    SoundManager.playIntro();
-    this.scene.launch('OverlayUI');
-    this.scene.start('Match', {
-      boxer1,
-      boxer2,
-      aiLevel1,
-      aiLevel2,
-      rounds,
-    });
-  }
 }

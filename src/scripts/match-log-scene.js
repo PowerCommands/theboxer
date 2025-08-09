@@ -25,7 +25,7 @@ export class MatchLogScene extends Phaser.Scene {
 
     this.log = getMatchLog();
     this.expandedRows = new Set();
-    this.colX = [20, 90, 170, 330, 630, 720, 800, 880];
+    this.colX = [20, 90, 170, 260, 430, 630, 720, 800, 880];
     const headerY = 80;
     if (!this.log.length) {
       this.add
@@ -38,6 +38,7 @@ export class MatchLogScene extends Phaser.Scene {
       const headers = [
         'Year',
         'Date',
+        'Arena',
         'Rank',
         'Opponent',
         'Result',
@@ -47,7 +48,7 @@ export class MatchLogScene extends Phaser.Scene {
       ];
       headers.forEach((h, i) => {
         this.add.text(this.colX[i], headerY, h, {
-          font: '24px Arial',
+          font: '20px Arial',
           color: '#ffffff',
         });
       });
@@ -92,6 +93,7 @@ export class MatchLogScene extends Phaser.Scene {
       const row = [
         entry.year,
         entry.date,
+        entry.arena || '',
         entry.rank,
         `${entry.opponent} (rank ${entry.opponentRank})`,
         entry.result,
@@ -101,7 +103,7 @@ export class MatchLogScene extends Phaser.Scene {
       ];
       row.forEach((text, i) => {
         const obj = this.add.text(this.colX[i], y, String(text), {
-          font: '20px Arial',
+          font: '18px Arial',
           color: '#ffffff',
         });
         this.rowObjs.push(obj);
