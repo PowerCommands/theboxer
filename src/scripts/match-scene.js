@@ -101,7 +101,7 @@ export class MatchScene extends Phaser.Scene {
 
     this.resetBoxers();
 
-    // Prepare metadata for the match such as scheduled date and ranks.
+    // Prepare metadata for the match such as scheduled date, arena and ranks.
     const user = this.player1.stats.userCreated
       ? this.player1.stats
       : this.player2.stats.userCreated
@@ -110,17 +110,21 @@ export class MatchScene extends Phaser.Scene {
     if (user) {
       const opponent =
         user === this.player1.stats ? this.player2.stats : this.player1.stats;
-      const logCount = getMatchLog().length;
-      const baseDate = new Date(2025, 2, 5); // March 5, 2025
-      const matchDate = new Date(baseDate);
-      matchDate.setDate(baseDate.getDate() + logCount * 20);
-      const year = matchDate.getFullYear();
-      const dateStr = matchDate.toLocaleDateString('sv-SE', {
-        day: 'numeric',
-        month: 'long',
-      });
-      const [day, month] = dateStr.split(' ');
-      const formattedDate = `${day} ${month.charAt(0).toUpperCase()}${month.slice(1)}`;
+      let year = data?.year;
+      let dateStr = data?.date;
+      if (!year || !dateStr) {
+        const logCount = getMatchLog().length;
+        const baseDate = new Date(2025, 2, 5); // March 5, 2025
+        const matchDate = new Date(baseDate);
+        matchDate.setDate(baseDate.getDate() + logCount * 20);
+        year = matchDate.getFullYear();
+        const ds = matchDate.toLocaleDateString('sv-SE', {
+          day: 'numeric',
+          month: 'long',
+        });
+        const [day, month] = ds.split(' ');
+        dateStr = `${day} ${month.charAt(0).toUpperCase()}${month.slice(1)}`;
+      }
       const hour = Phaser.Math.Between(0, 23);
       const minute = Phaser.Math.Between(0, 59);
       const timeDisplay = `${hour.toString().padStart(2, '0')}:${minute
@@ -128,12 +132,13 @@ export class MatchScene extends Phaser.Scene {
         .padStart(2, '0')}`;
       this.matchMeta = {
         year,
-        date: formattedDate,
+        date: dateStr,
         rank: user.ranking,
         opponentRank: opponent.ranking,
+        arena: data?.arena?.Name,
       };
       eventBus.emit('match-date', {
-        date: formattedDate,
+        date: dateStr,
         year,
         time: timeDisplay,
       });
@@ -414,6 +419,7 @@ export class MatchScene extends Phaser.Scene {
       addMatchLog({
         year: this.matchMeta?.year,
         date: this.matchMeta?.date,
+        arena: this.matchMeta?.arena,
         rank: this.matchMeta?.rank,
         opponent: opponent.name,
         opponentRank: this.matchMeta?.opponentRank,
@@ -459,6 +465,7 @@ export class MatchScene extends Phaser.Scene {
         addMatchLog({
           year: this.matchMeta?.year,
           date: this.matchMeta?.date,
+          arena: this.matchMeta?.arena,
           rank: this.matchMeta?.rank,
           opponent: opponent.name,
           opponentRank: this.matchMeta?.opponentRank,
@@ -498,6 +505,7 @@ export class MatchScene extends Phaser.Scene {
       addMatchLog({
         year: this.matchMeta?.year,
         date: this.matchMeta?.date,
+        arena: this.matchMeta?.arena,
         rank: this.matchMeta?.rank,
         opponent: opponent.name,
         opponentRank: this.matchMeta?.opponentRank,

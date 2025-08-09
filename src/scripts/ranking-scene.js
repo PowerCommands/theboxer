@@ -2,6 +2,7 @@ import { getRankings } from './boxer-stats.js';
 import { appConfig, getTestMode, setTestMode } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
+import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import {
   loadGameState,
   applyLoadedState,
@@ -74,85 +75,134 @@ export class RankingScene extends Phaser.Scene {
       });
     });
 
+    const pending = getPendingMatch();
     const hasPlayer = !!getPlayerBoxer();
-    const btnLabel = getTestMode()
-      ? 'Start new game'
-      : hasPlayer
-      ? 'Start next match'
-      : 'Start new game';
-    const tableRight = tableLeft + rectWidth;
-    const startBtn = this.add
-      .text(tableLeft, tableBottom + 10, btnLabel, {
-        font: '24px Arial',
-        color: '#00ff00',
-      })
-      .setOrigin(0, 0)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerup', () => {
-        if (getTestMode()) {
-          this.scene.start('SelectBoxer');
-        } else if (hasPlayer) {
-          this.scene.start('SelectBoxer');
-        } else {
-          this.scene.start('CreateBoxer');
-        }
-      });
+    if (pending) {
+      const infoY = tableBottom + 10;
+      this.add.text(
+        tableLeft,
+        infoY,
+        `Next fight ${pending.date} ${pending.boxer1.name} Vs ${pending.boxer2.name}`,
+        { font: '24px Arial', color: '#ffffff' }
+      );
+      this.add.text(
+        tableLeft,
+        infoY + 30,
+        `${pending.arena.Name}, ${pending.arena.City} (${pending.arena.Country})`,
+        { font: '20px Arial', color: '#ffffff' }
+      );
+      const targetRank = Math.min(pending.boxer1.ranking, pending.boxer2.ranking);
+      this.add.text(
+        tableLeft,
+        infoY + 60,
+        `Winner of this fight gets ranked as number ${targetRank}.`,
+        { font: '20px Arial', color: '#ffffff' }
+      );
+      this.add
+        .text(tableLeft, infoY + 100, 'Start fight!', {
+          font: '24px Arial',
+          color: '#00ff00',
+        })
+        .setOrigin(0, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          SoundManager.stopMenuLoop();
+          SoundManager.playIntro();
+          this.scene.launch('OverlayUI');
+          const { boxer1, boxer2, aiLevel1, aiLevel2, rounds, arena, year, date } =
+            pending;
+          clearPendingMatch();
+          this.scene.start('Match', {
+            boxer1,
+            boxer2,
+            aiLevel1,
+            aiLevel2,
+            rounds,
+            arena,
+            year,
+            date,
+          });
+        });
+    } else {
+      const btnLabel = getTestMode()
+        ? 'Start new game'
+        : hasPlayer
+        ? 'Start next match'
+        : 'Start new game';
+      const tableRight = tableLeft + rectWidth;
+      const startBtn = this.add
+        .text(tableLeft, tableBottom + 10, btnLabel, {
+          font: '24px Arial',
+          color: '#00ff00',
+        })
+        .setOrigin(0, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          if (getTestMode()) {
+            this.scene.start('SelectBoxer');
+          } else if (hasPlayer) {
+            this.scene.start('SelectBoxer');
+          } else {
+            this.scene.start('CreateBoxer');
+          }
+        });
 
-    // Button to reset saved rankings and stats.
-    const resetBtn = this.add
-      .text(tableLeft, startBtn.y + 40, 'Reset data', {
-        font: '20px Arial',
-        color: '#ff0000',
-      })
-      .setOrigin(0, 0)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerup', () => {
-        if (
-          window.confirm(
-            'This will erase saved rankings, stats, and match log. Continue?'
-          )
-        ) {
-          resetSavedData();
-          this.scene.restart();
-        }
-      });
+      // Button to reset saved rankings and stats.
+      const resetBtn = this.add
+        .text(tableLeft, startBtn.y + 40, 'Reset data', {
+          font: '20px Arial',
+          color: '#ff0000',
+        })
+        .setOrigin(0, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          if (
+            window.confirm(
+              'This will erase saved rankings, stats, and match log. Continue?'
+            )
+          ) {
+            resetSavedData();
+            this.scene.restart();
+          }
+        });
 
-    this.add
-      .text(tableLeft, resetBtn.y + 40, 'Match log', {
-        font: '20px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0, 0)
-      .setInteractive({ useHandCursor: true })
-      .on('pointerup', () => {
-        this.scene.start('MatchLog');
-      });
+      this.add
+        .text(tableLeft, resetBtn.y + 40, 'Match log', {
+          font: '20px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(0, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          this.scene.start('MatchLog');
+        });
 
-    // Place the test mode checkbox on the same row as the start button
-    const testLabel = this.add
-      .text(tableRight, startBtn.y, 'Test mode', {
-        font: '20px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(1, 0);
-    const cbX = testLabel.x - testLabel.width - 30;
-    const cbY = startBtn.y;
-    const testBox = this.add
-      .rectangle(cbX, cbY, 20, 20, 0xffffff)
-      .setOrigin(0, 0)
-      .setInteractive({ useHandCursor: true });
-    const testCheck = this.add
-      .text(cbX + 10, cbY, 'X', {
-        font: '20px Arial',
-        color: '#000000',
-      })
-      .setOrigin(0.5, 0)
-      .setVisible(getTestMode());
-    testBox.on('pointerdown', () => {
-      const newVal = !getTestMode();
-      setTestMode(newVal);
-      testCheck.setVisible(newVal);
-    });
+      // Place the test mode checkbox on the same row as the start button
+      const testLabel = this.add
+        .text(tableRight, startBtn.y, 'Test mode', {
+          font: '20px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(1, 0);
+      const cbX = testLabel.x - testLabel.width - 30;
+      const cbY = startBtn.y;
+      const testBox = this.add
+        .rectangle(cbX, cbY, 20, 20, 0xffffff)
+        .setOrigin(0, 0)
+        .setInteractive({ useHandCursor: true });
+      const testCheck = this.add
+        .text(cbX + 10, cbY, 'X', {
+          font: '20px Arial',
+          color: '#000000',
+        })
+        .setOrigin(0.5, 0)
+        .setVisible(getTestMode());
+      testBox.on('pointerdown', () => {
+        const newVal = !getTestMode();
+        setTestMode(newVal);
+        testCheck.setVisible(newVal);
+      });
+    }
   }
 }
 

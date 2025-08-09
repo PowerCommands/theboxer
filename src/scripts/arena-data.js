@@ -1,4 +1,4 @@
-[
+export const ARENAS = [
   { "Name": "Madison Square Garden", "City": "New York", "Country": "USA", "Prestige": 3 },
   { "Name": "MGM Grand Garden Arena", "City": "Las Vegas", "Country": "USA", "Prestige": 3 },
   { "Name": "Barclays Center", "City": "Brooklyn", "Country": "USA", "Prestige": 2 },
@@ -29,4 +29,4 @@
   { "Name": "Nordic Fight Forum", "City": "Stockholm", "Country": "Sweden", "Prestige": 2 },
   { "Name": "Arctic Boxing Hall", "City": "Reykjavik", "Country": "Iceland", "Prestige": 1 },
   { "Name": "Sahara Boxing Coliseum", "City": "Marrakech", "Country": "Morocco", "Prestige": 1 }
-]
+];
