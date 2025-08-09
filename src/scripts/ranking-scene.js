@@ -20,18 +20,21 @@ export class RankingScene extends Phaser.Scene {
 
     const rectWidth = width - 160;
     const rowHeight = 24;
+    const tableLeft = 80;
+    const tableTop = 60;
     this.add
-      .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, 0.5)
+      .rectangle(width / 2, tableTop, rectWidth, rowHeight, 0x808080, 0.5)
       .setOrigin(0.5, 0);
     const headers = `${'Rank'.padEnd(5)}${'Name'.padEnd(15)}${'Age'.padEnd(5)}${'M'.padEnd(5)}${'W'.padEnd(5)}${'L'.padEnd(5)}${'D'.padEnd(5)}${'KO'.padEnd(5)}`;
-    this.add.text(80, 60, headers, {
+    this.add.text(tableLeft, tableTop, headers, {
       font: '20px monospace',
       color: '#ffff00',
     });
 
     const boxers = getRankings();
+    const tableBottom = tableTop + 20 + boxers.length * rowHeight;
     boxers.forEach((b, i) => {
-      const y = 80 + i * 24;
+      const y = tableTop + 20 + i * rowHeight; // 20px offset from header
       this.add
         .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
         .setOrigin(0.5, 0);
@@ -44,25 +47,25 @@ export class RankingScene extends Phaser.Scene {
         .padEnd(5)}${b.draws
         .toString()
         .padEnd(5)}${b.winsByKO.toString().padEnd(5)}`;
-      this.add.text(80, y, line, {
+      this.add.text(tableLeft, y, line, {
         font: '20px monospace',
         color: '#ffffff',
       });
     });
 
     const startBtn = this.add
-      .text(width / 2, height - 60, 'Start new game', {
+      .text(tableLeft, tableBottom + 10, 'Start new game', {
         font: '24px Arial',
         color: '#00ff00',
       })
-      .setOrigin(0.5)
+      .setOrigin(0, 0)
       .setInteractive({ useHandCursor: true })
       .on('pointerup', () => {
         this.scene.start('SelectBoxer');
       });
 
-    const cbX = width / 2 + 180;
-    const cbY = height - 65;
+    const cbX = tableLeft;
+    const cbY = tableTop - 40;
     const testBox = this.add
       .rectangle(cbX, cbY, 20, 20, 0xffffff)
       .setOrigin(0, 0)
