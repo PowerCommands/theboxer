@@ -109,6 +109,7 @@ const config = {
   width: 1024,
   height: 768,
   backgroundColor: '#2d2d2d',
+  parent: 'game-container',
   dom: { createContainer: true },
   scene: [
     BootScene,
