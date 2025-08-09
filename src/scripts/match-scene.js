@@ -13,6 +13,8 @@ import { RuleSet3Manager } from './ruleset3-manager.js';
 import { CommentManager } from './comment-manager.js';
 import { showComment } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
+import { BOXERS } from './boxer-data.js';
+import { saveGameState } from './save-system.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -318,6 +320,7 @@ export class MatchScene extends Phaser.Scene {
       round: this.roundTimer.round,
     });
     recordResult(winner.stats, loser.stats, 'KO');
+    saveGameState(BOXERS);
   }
 
   determineWinnerByPoints() {
@@ -334,6 +337,7 @@ export class MatchScene extends Phaser.Scene {
         round: this.roundTimer.round,
       });
       recordDraw(this.player1.stats, this.player2.stats);
+      saveGameState(BOXERS);
       return;
     }
 
@@ -355,6 +359,7 @@ export class MatchScene extends Phaser.Scene {
       round: this.roundTimer.round,
     });
     recordResult(winner.stats, loser.stats, 'Points');
+    saveGameState(BOXERS);
   }
 
   setPlayerStrategy(player, level) {
