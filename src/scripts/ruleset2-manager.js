@@ -100,6 +100,9 @@ export class RuleSet2Manager {
 
   evaluate(currentSecond) {
     try {
+
+      this.recover(this.self);
+
       const aSelf = this.getActions();
       this.checkLastMinute(currentSecond, aSelf);
       if (this.activeRule && currentSecond < this.activeUntil) {
@@ -107,9 +110,7 @@ export class RuleSet2Manager {
       }
       if (this.activeRule && currentSecond >= this.activeUntil) {
         this.activeRule = null;
-      }
-
-      this.recover(this.self);
+      }     
 
       const tiredSelf = this.self.stamina / this.self.maxStamina < 0.3;
       const tiredOpp = this.opp.stamina / this.opp.maxStamina < 0.3;
