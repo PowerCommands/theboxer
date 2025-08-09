@@ -99,7 +99,7 @@ export const BOXERS = [
     name: 'Great Tiger',
     nickName: 'Tiger',
     country: 'India',
-    stamina: 1.4,
+    stamina: 1.6,
     power: 1.0,
     health: 1.0,
     speed: 1.5,

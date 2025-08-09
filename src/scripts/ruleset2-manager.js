@@ -95,17 +95,21 @@ export class RuleSet2Manager {
                 ' knows he is losing and is now pushing desperately.',
               true
             );
-            ctrl.setLevel(10);
+            if(ctrl.getLevel() < 8){
+              ctrl.setLevel(8);
+            }            
           }
         } else if (this.self === leading) {
           if (aSelf)
             this.fill(aSelf, currentSecond, [
               { back: true },
-              { none: true },
+              { back: true },
+              { back: true },
+              { block: true },
               { block: true },
             ]);
           this.activeRule = 'protect-lead';
-          this.activeUntil = currentSecond + 3;
+          this.activeUntil = currentSecond + 5;
           return;
         }
       }

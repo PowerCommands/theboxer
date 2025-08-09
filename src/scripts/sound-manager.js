@@ -5,11 +5,12 @@ export class SoundManager {
     if (this.initialized) return;
     this.initialized = true;
     this.scene = scene;
-    const vol = { volume: 0.8 };
+    const vol = { volume: 0.7 };
+    const volLow = { volume: 0.4 };
     this.sounds = {
       menuLoop: scene.sound.add('loop-menu', { loop: true, ...vol }),
-      click: scene.sound.add('click-menu', vol),
-      intro: scene.sound.add('intro', vol),
+      click: scene.sound.add('click-menu', volLow),
+      intro: scene.sound.add('intro', volLow),
       bell: scene.sound.add('bell-signals', vol),
       fight: scene.sound.add('fight', vol),
       crowd: scene.sound.add('crowd-noise-01', { loop: true, ...vol }),

@@ -91,8 +91,7 @@ export class RuleSet3Manager {
             this.canShift(currentSecond)
           ) {
             showComment(
-              this.self.stats.name +
-                ' knows he is losing and is now pushing desperately.',
+              this.self.stats.name + ' knows he is losing and is now pushing desperately.',
               true
             );
             ctrl.setLevel(10);
@@ -101,11 +100,15 @@ export class RuleSet3Manager {
           if (aSelf)
             this.fill(aSelf, currentSecond, [
               { back: true },
+              { back: true },
+              { back: true },
+              { block: true },
+              { block: true },
               { block: true },
               { block: true },
             ]);
           this.activeRule = 'protect-lead';
-          this.activeUntil = currentSecond + 3;
+          this.activeUntil = currentSecond + 7;
           return;
         }
       }
