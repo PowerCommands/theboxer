@@ -7,7 +7,9 @@ import { RoundTimer } from './round-timer.js';
 import { HealthManager } from './health-manager.js';
 import { HitManager } from './hit-manager.js';
 import { BOXER_PREFIXES, animKey } from './helpers.js';
-import { RuleManager } from './rule-manager.js';
+import { RuleSet1Manager } from './ruleset1-manager.js';
+import { RuleSet2Manager } from './ruleset2-manager.js';
+import { RuleSet3Manager } from './ruleset3-manager.js';
 import { CommentManager } from './comment-manager.js';
 import { showComment } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
@@ -97,7 +99,19 @@ export class MatchScene extends Phaser.Scene {
 
     this.healthManager = new HealthManager(this.player1, this.player2);
     this.roundTimer = new RoundTimer(this);
-    this.ruleManager = new RuleManager(this.player1, this.player2);
+    const makeMgr = (me, opp) => {
+      switch (me.stats.ruleset) {
+        case 1:
+          return new RuleSet1Manager(me, opp);
+        case 2:
+          return new RuleSet2Manager(me, opp);
+        default:
+          return new RuleSet3Manager(me, opp);
+      }
+    };
+    this.ruleManager1 = makeMgr(this.player1, this.player2);
+    this.ruleManager2 = makeMgr(this.player2, this.player1);
+    this.rulesetId = { p1: this.player1.stats.ruleset, p2: this.player2.stats.ruleset };
     this.roundLength = 180;
     this.lastSecond = -1;
     this.hits = { p1: 0, p2: 0 };
@@ -197,7 +211,8 @@ export class MatchScene extends Phaser.Scene {
 
     const currentSecond = this.roundLength - this.roundTimer.remaining;
     if (currentSecond !== this.lastSecond && currentSecond < this.roundLength) {
-      this.ruleManager.evaluate(currentSecond);
+      this.ruleManager1.evaluate(currentSecond);
+      this.ruleManager2.evaluate(currentSecond);
       // If one minute remains in the final round, force the boxer who is
       // trailing on points to switch to the most aggressive strategy. The
       // existing rule limiting strategy changes still applies.
@@ -214,13 +229,17 @@ export class MatchScene extends Phaser.Scene {
           behind = this.hits.p1 < this.hits.p2 ? this.player1 : this.player2;
         }
         if (behind) {
-          const key = behind === this.player1 ? 'p1' : 'p2';
+          const mgr = behind === this.player1 ? this.ruleManager1 : this.ruleManager2;
           const ctrl = behind.controller;
           if (
             typeof ctrl.setLevel === 'function' &&
-            this.ruleManager.canShift(key, currentSecond)
+            mgr.canShift(currentSecond)
           ) {
-            showComment(behind.stats.name + ' knows he is losing and is now pushing desperately.', true);
+            showComment(
+              behind.stats.name +
+                ' knows he is losing and is now pushing desperately.',
+              true
+            );
             ctrl.setLevel(10);
           }
         }
@@ -237,8 +256,12 @@ export class MatchScene extends Phaser.Scene {
       typeof this.player2.controller.getLevel === 'function'
         ? `Strategy: ${this.player2.controller.getLevel()}`
         : 'Human controlled boxer';
-    const rule1 = `Rule: ${this.ruleManager.boxerRules.p1 || 'none'}`;
-    const rule2 = `Rule: ${this.ruleManager.boxerRules.p2 || 'none'}`;
+    const rule1 = `Ruleset: ruleset${this.rulesetId.p1} | ${
+      this.ruleManager1.currentRule() || 'none'
+    }`;
+    const rule2 = `Ruleset: ruleset${this.rulesetId.p2} | ${
+      this.ruleManager2.currentRule() || 'none'
+    }`;
     this.debugText.p1.setText(`${strat1}\n${rule1}`);
     this.debugText.p2.setText(`${strat2}\n${rule2}`);
 
@@ -277,7 +300,8 @@ export class MatchScene extends Phaser.Scene {
 
   endRound(round) {
     if (this.matchOver) return;
-    this.ruleManager.resetStrategyChanges();
+    this.ruleManager1.resetStrategyChanges();
+    this.ruleManager2.resetStrategyChanges();
     this.paused = true;
     this.resetBoxers();
     if (round >= this.maxRounds) {
