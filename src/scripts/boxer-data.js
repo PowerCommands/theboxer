@@ -1,4 +1,4 @@
-function defaultStrategyForRanking(ranking) {
+export function defaultStrategyForRanking(ranking) {
   const max = Math.min(7, 11 - ranking);
   const min = Math.max(1, max - 2);
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -186,3 +186,8 @@ export const BOXERS = [
     ruleset: 3,
   },
 ];
+
+// Allow dynamic addition of new boxers (e.g. player created ones).
+export function addBoxer(boxer) {
+  BOXERS.push(boxer);
+}
