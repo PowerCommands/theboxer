@@ -21,9 +21,9 @@ export class RuleSet3Manager {
   }
 
   recover(boxer) {
-    boxer.adjustHealth(0.02 * boxer.stamina);
-    boxer.adjustPower(0.02 * boxer.stamina);
-    boxer.adjustStamina(0.008);
+    boxer.adjustHealth(0.06 * boxer.stamina);
+    boxer.adjustPower(0.06 * boxer.stamina);
+    boxer.adjustStamina(0.012);
   }
 
   canShift(currentSecond) {
@@ -74,43 +74,34 @@ export class RuleSet3Manager {
         const hOpp = this.opp.health / this.opp.maxHealth;
         if (hSelf === hOpp) {
           if (aSelf)
-            this.fill(aSelf, currentSecond, [{ back: true }, { none: true }]);
+            this.fill(aSelf, currentSecond, [{ back: true }, { uppercut: true }]);
         } else if (hSelf < hOpp) {
           if (aSelf)
-            this.fill(aSelf, currentSecond, [{ back: true }, { back: true }]);
+            this.fill(aSelf, currentSecond, [{ back: true }, { none: true }]);
         } else {
-          if (aSelf) this.fill(aSelf, currentSecond, [{ none: true }]);
+          if (aSelf) this.fill(aSelf, currentSecond, [{ none: true }, { uppercut: true }]);
         }
         this.activeRule = 'close-distance';
-        this.activeUntil = currentSecond + 15;
+        this.activeUntil = currentSecond + 7;
       }
 
       const staggeredSelf = this.self.isStaggered === true;
       if (staggeredSelf) {
-        showComment(
-          this.self.stats.nickName + ' is hurt and is trying to escape...',
-          5
-        );
+        showComment(this.self.stats.nickName + ' is hurt and is trying to escape...', 5);
         if (aSelf)
           this.fill(aSelf, currentSecond, [
             { back: true },
-            { back: true },
-            { back: true },
+            { back: true },            
             { block: true },
+            { block: true }
           ]);
-        this.self.isStaggered = false;
-        if (tiredSelf && typeof this.self.controller.shiftLevel === 'function') {
-          this.self.controller.shiftLevel(-1);
-        }
+        this.recover(this.self);
+        this.self.isStaggered = false;        
         this.activeRule = 'staggered';
         this.activeUntil = currentSecond + 4;
       }
 
-      if (dist > 450) {
-        showComment(
-          'The boxer is passive and holds a great distance to each other.',
-          5
-        );
+      if (dist > 410) {        
         const hSelf = this.self.health / this.self.maxHealth;
         const hOpp = this.opp.health / this.opp.maxHealth;
         if (hSelf === hOpp) {
@@ -125,33 +116,21 @@ export class RuleSet3Manager {
             this.fill(aSelf, currentSecond, [
               { none: true },
               { none: true },
-              { none: true },
+              { block: true },
             ]);
         } else {
           if (aSelf)
             this.fill(aSelf, currentSecond, [
-              { none: true },
-              { none: true },
-              { back: true },
+              { forward: true },
+              { forward: true },
+              { forward: true },
+              { uppercut: true },
             ]);
         }
         this.activeRule = 'ranged-distance';
-        this.activeUntil = currentSecond + 3;
+        this.activeUntil = currentSecond + 4;
         return;
-      }
-
-      if (tiredSelf && tiredOpp) {
-        showComment('The boxers looks tired, the crows is booing.', 5);
-        if (aSelf)
-          this.fill(aSelf, currentSecond, [
-            { back: true },
-            { back: true },
-            { back: true },
-          ]);
-        this.activeRule = 'both-tired';
-        this.activeUntil = currentSecond + 3;
-        return;
-      }
+      }     
 
       if (tiredSelf && !tiredOpp) {
         showComment(this.self.stats.nickName + ' looks really tired.', 5);
@@ -167,6 +146,7 @@ export class RuleSet3Manager {
             { back: true },
             { block: true },
           ]);
+        this.recover(this.self);
         this.activeRule = 'self-tired';
         this.activeUntil = currentSecond + 3;
         return;
@@ -182,8 +162,8 @@ export class RuleSet3Manager {
         }
         if (aSelf)
           this.fill(aSelf, currentSecond, [
-            { none: true },
-            { none: true },
+            { forward: true },
+            { forward: true },
             { uppercut: true },
           ]);
         this.activeRule = 'opponent-tired';
@@ -198,4 +178,3 @@ export class RuleSet3Manager {
     }
   }
 }
-
