@@ -174,6 +174,9 @@ export class OverlayUI extends Phaser.Scene {
         this.roundText.setText(`${name} wins on points!`);
       }
     }
+    // Ensure this overlay scene is rendered above the match scene so
+    // that the post-match buttons are never hidden behind the boxers.
+    this.scene.bringToTop();
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
     if (!this.newMatchText) {
@@ -183,7 +186,8 @@ export class OverlayUI extends Phaser.Scene {
           color: '#ffffff',
         })
         .setOrigin(0.5)
-        .setInteractive({ useHandCursor: true });
+        .setInteractive({ useHandCursor: true })
+        .setDepth(1);
       this.newMatchText.on('pointerup', () => {
         this.scene.stop('Match');
         this.scene.start('SelectBoxer');
@@ -199,7 +203,8 @@ export class OverlayUI extends Phaser.Scene {
           color: '#ffffff',
         })
         .setOrigin(0.5)
-        .setInteractive({ useHandCursor: true });
+        .setInteractive({ useHandCursor: true })
+        .setDepth(1);
       this.rankingText.on('pointerup', () => {
         this.scene.stop('Match');
         this.scene.start('Ranking');
@@ -220,7 +225,8 @@ export class OverlayUI extends Phaser.Scene {
           color: '#ffffff',
         })
         .setOrigin(0.5)
-        .setInteractive({ useHandCursor: true });
+        .setInteractive({ useHandCursor: true })
+        .setDepth(1);
       this.nextRoundText.on('pointerup', () => {
         this.nextRoundText.setVisible(false);
         eventBus.emit('next-round');
