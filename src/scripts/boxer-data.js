@@ -21,6 +21,7 @@ export const BOXERS = [
     winsByKO: 0,
     age: 29,
     defaultStrategy: defaultStrategyForRanking(10),
+    ruleset: 1,
   },
   {
     name: 'Von Kaiser',
@@ -38,6 +39,7 @@ export const BOXERS = [
     winsByKO: 0,
     age: 36,
     defaultStrategy: defaultStrategyForRanking(9),
+    ruleset: 2,
   },
   {
     name: 'Piston Honda',
@@ -55,6 +57,7 @@ export const BOXERS = [
     winsByKO: 2,
     age: 23,
     defaultStrategy: defaultStrategyForRanking(8),
+    ruleset: 3,
   },
   {
     name: 'Don Flamenco',
@@ -72,6 +75,7 @@ export const BOXERS = [
     winsByKO: 2,
     age: 27,
     defaultStrategy: defaultStrategyForRanking(7),
+    ruleset: 1,
   },
   {
     name: 'King Hippo',
@@ -89,6 +93,7 @@ export const BOXERS = [
     winsByKO: 3,
     age: 21,
     defaultStrategy: defaultStrategyForRanking(6),
+    ruleset: 2,
   },
   {
     name: 'Great Tiger',
@@ -106,6 +111,7 @@ export const BOXERS = [
     winsByKO: 8,
     age: 32,
     defaultStrategy: defaultStrategyForRanking(5),
+    ruleset: 3,
   },
   {
     name: 'Bald Bull',
@@ -123,6 +129,7 @@ export const BOXERS = [
     winsByKO: 12,
     age: 27,
     defaultStrategy: defaultStrategyForRanking(4),
+    ruleset: 1,
   },
   {
     name: 'Soda Popinski',
@@ -140,6 +147,7 @@ export const BOXERS = [
     winsByKO: 20,
     age: 37,
     defaultStrategy: defaultStrategyForRanking(3),
+    ruleset: 2,
   },
   {
     name: 'Mr. Sandman',
@@ -157,6 +165,7 @@ export const BOXERS = [
     winsByKO: 29,
     age: 30,
     defaultStrategy: defaultStrategyForRanking(2),
+    ruleset: 3,
   },
   {
     name: 'Mike Tyson',
@@ -174,5 +183,6 @@ export const BOXERS = [
     winsByKO: 33,
     age: 23,
     defaultStrategy: defaultStrategyForRanking(1),
+    ruleset: 1,
   },
 ];
