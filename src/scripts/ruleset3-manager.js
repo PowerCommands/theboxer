@@ -107,6 +107,9 @@ export class RuleSet3Manager {
               { block: true },
               { block: true },
             ]);
+          if(ctrl.getLevel() > 4){
+              ctrl.setLevel(4);
+          }
           this.activeRule = 'protect-lead';
           this.activeUntil = currentSecond + 7;
           return;
