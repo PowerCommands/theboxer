@@ -48,3 +48,30 @@ Press `Shift` + `P` to pause the match.
 | Soda Popinski | Russia | 1.0 | 2.0 | 1.5 | 2.0 |
 | Mr. Sandman | USA | 2.0 | 2.0 | 2.0 | 2.0 |
 | Mike Tyson | USA | 2.5 | 2.5 | 2.2 | 2.5 |
+
+## Creating a Boxer
+
+Select **Start new game** on the ranking screen to build your own fighter.
+You will be presented with a form where you can customise the boxer:
+
+- **Identity** – Choose the name, nickname, country and age.
+- **Difficulty** – Easy, Normal and Hard determine how many attribute points you
+  can spend and which rulesets are available.
+- **Ruleset** – Pick the ruleset for your matches. Higher difficulties offer
+  fewer options.
+- **Attributes** – Distribute points among Health, Stamina, Power and Speed.
+  The total number of points depends on your chosen difficulty and age (older
+  fighters get a small bonus).
+
+After creating the boxer they are added to the rankings with the next available
+position and become your player character.
+
+## Rankings and Opponents
+
+Rankings shift as matches are played. If a lower‑ranked boxer defeats a higher
+one the two swap positions. You may challenge any boxer ranked below you, but
+when moving up you can only select opponents up to three places above your
+current rank. Winning fights moves you toward the top of the leaderboard.
+
+The ultimate goal is to climb the ladder and become the number one ranked
+boxer.
