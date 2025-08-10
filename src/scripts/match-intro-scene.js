@@ -127,7 +127,7 @@ export class MatchIntroScene extends Phaser.Scene {
       .setAlpha(0);
 
     // timeline
-    const timeline = this.tweens.createTimeline();
+    const timeline = this.tweens.timeline();
     this.timeline = timeline;
 
     timeline.add({
