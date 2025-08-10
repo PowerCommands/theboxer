@@ -89,15 +89,14 @@ export class MatchIntroScene extends Phaser.Scene {
       purseContainer.add(bonusText);
     }
 
-    const coins = this.add.particles('coin');
-    const emitter = coins.createEmitter({
+    const emitter = this.add.particles(0, 0, 'coin', {
       speed: { min: -300, max: 300 },
       angle: { min: 0, max: 360 },
       gravityY: 400,
       lifespan: 1500,
       quantity: 30,
       scale: { start: 0.5, end: 0 },
-      on: false,
+      emitting: false,
     });
 
     // belts setup
