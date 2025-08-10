@@ -1,5 +1,6 @@
 import { ArenaManager } from './arena-manager.js';
 import { getMatchLog } from './match-log.js';
+import { getMatchPreview } from './boxer-stats.js';
 
 let pendingMatch = null;
 
@@ -22,6 +23,10 @@ export function scheduleMatch({ boxer1, boxer2, aiLevel1, aiLevel2, rounds }) {
   const highestRank = Math.min(boxer1.ranking, boxer2.ranking);
   const arena = ArenaManager.getRandomArena(highestRank);
   const { year, date } = computeDate();
+  const { purse, winnerBonus, titlesOnTheLine } = getMatchPreview(
+    boxer1,
+    boxer2
+  );
   pendingMatch = {
     boxer1,
     boxer2,
@@ -31,6 +36,9 @@ export function scheduleMatch({ boxer1, boxer2, aiLevel1, aiLevel2, rounds }) {
     arena,
     year,
     date,
+    purse,
+    winnerBonus,
+    titlesOnTheLine,
   };
 }
 

@@ -6,6 +6,7 @@ import { SoundManager } from './sound-manager.js';
 import { CreateBoxerScene } from './create-boxer-scene.js';
 import { MatchLogScene } from './match-log-scene.js';
 import { BackdropManager } from './backdrop-manager.js';
+import { MatchIntroScene } from './match-intro-scene.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -130,6 +131,7 @@ const config = {
     MatchLogScene,
     CreateBoxerScene,
     SelectBoxerScene,
+    MatchIntroScene,
     MatchScene,
     OverlayUI,
   ],
