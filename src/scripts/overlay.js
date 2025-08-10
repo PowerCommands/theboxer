@@ -21,8 +21,9 @@ export class OverlayUI extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const infoY = 0;
     const infoHeight = 140;
+    // Slightly increased transparency for the overlay background
     this.add
-      .rectangle(width / 2, infoY, width, infoHeight, 0x808080, 0.5)
+      .rectangle(width / 2, infoY, width, infoHeight, 0x808080, 0.4)
       .setOrigin(0.5, 0);
 
     // show application name and version
@@ -207,12 +208,14 @@ export class OverlayUI extends Phaser.Scene {
   }
 
   createBar(x, y, width, height, color) {
-    const bg = this.add.rectangle(x, y, width, height, 0x444444).setOrigin(0, 0);
+    const bg = this.add
+      .rectangle(x, y, width, height, 0x444444, 0.9)
+      .setOrigin(0, 0);
     const fill = this.add
-      .rectangle(x + 1, y + 1, width - 2, height - 2, color)
+      .rectangle(x + 1, y + 1, width - 2, height - 2, color, 0.9)
       .setOrigin(0, 0);
     return { bg, fill, width: width - 2 };
-    }
+  }
 
   setBarValue(bar, value) {
     const w = Phaser.Math.Clamp(value, 0, 1) * bar.width;

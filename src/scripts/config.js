@@ -4,7 +4,8 @@ export const appConfig = {
 };
 
 // Default transparency for UI tables (1.0 = fully opaque)
-export const tableAlpha = 0.7;
+// Increased by 10% for more transparency
+export const tableAlpha = 0.6;
 
 // Start the game in non-test mode by default.  The ranking screen
 // provides a checkbox that can enable test mode if needed.

@@ -1,6 +1,7 @@
 import { getRankings } from './boxer-stats.js';
 import { appConfig, getTestMode, setTestMode, tableAlpha } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
+import { formatMoney } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import {
@@ -47,8 +48,12 @@ export class RankingScene extends Phaser.Scene {
     const player = getPlayerBoxer();
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const namePad = Math.max(15, maxNameLen + 1);
+    const maxPrizeLen = boxers.reduce(
+      (m, b) => Math.max(m, formatMoney(b.earnings || 0).length),
+      6
+    );
     const rectWidth = width * 0.9;
-    const baseColumnWidths = [5, namePad, 5, 5, 5, 5, 5, 5, 8];
+    const baseColumnWidths = [5, namePad, 5, 5, 5, 5, 5, 5, maxPrizeLen];
     const totalChars = Math.floor(rectWidth / 12);
     const baseWidth = baseColumnWidths.reduce((sum, w) => sum + w, 0);
     const titlePad = Math.max(totalChars - baseWidth, 35);
@@ -101,7 +106,7 @@ export class RankingScene extends Phaser.Scene {
         `${b.losses.toString().padEnd(columnWidths[5])}` +
         `${b.draws.toString().padEnd(columnWidths[6])}` +
         `${b.winsByKO.toString().padEnd(columnWidths[7])}` +
-        `${(b.earnings || 0).toString().padEnd(columnWidths[8])}` +
+        `${formatMoney(b.earnings || 0).padEnd(columnWidths[8])}` +
         `${(b.titles ? b.titles.map((t) => `${t}🏆`).join(' ') : '').padEnd(columnWidths[9])}`;
       const isPlayer = player && (b === player || b.name === player.name);
       const txt = this.add
