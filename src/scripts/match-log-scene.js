@@ -25,7 +25,25 @@ export class MatchLogScene extends Phaser.Scene {
 
     this.log = getMatchLog();
     this.expandedRows = new Set();
-    this.colX = [20, 90, 170, 260, 430, 630, 720, 800, 880];
+    const tableWidth = width * 0.95;
+    const startX = width * 0.025;
+    const colPercents = [
+      0.05,
+      0.09,
+      0.3,
+      0.08,
+      0.2,
+      0.09,
+      0.06,
+      0.06,
+      0.07,
+    ];
+    let accum = startX;
+    this.colX = colPercents.map((p) => {
+      const x = accum;
+      accum += p * tableWidth;
+      return x;
+    });
     const headerY = 80;
     if (!this.log.length) {
       this.add
@@ -90,10 +108,13 @@ export class MatchLogScene extends Phaser.Scene {
         });
       this.rowObjs.push(toggle);
 
+      const arenaText = [entry.arena?.Name, entry.arena?.City]
+        .filter(Boolean)
+        .join(', ');
       const row = [
         entry.year,
         entry.date,
-        entry.arena || '',
+        arenaText,
         entry.rank,
         `${entry.opponent} (rank ${entry.opponentRank})`,
         entry.result,
