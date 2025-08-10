@@ -73,7 +73,7 @@ export class MatchLogScene extends Phaser.Scene {
         'How',
         'Round',
         'Time',
-        'Prize',
+        'Prize money',
       ];
       headers.forEach((h, i) => {
         this.add.text(this.colX[i], headerY, h, {
