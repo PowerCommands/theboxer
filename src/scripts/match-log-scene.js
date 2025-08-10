@@ -1,6 +1,7 @@
 import { getMatchLog } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
 import { getPlayerBoxer } from './player-boxer.js';
+import { tableAlpha } from './config.js';
 
 export class MatchLogScene extends Phaser.Scene {
   constructor() {
@@ -27,6 +28,10 @@ export class MatchLogScene extends Phaser.Scene {
     this.expandedRows = new Set();
     const tableWidth = width * 0.95;
     const startX = width * 0.025;
+    const rowHeight = 24;
+    this.tableWidth = tableWidth;
+    this.rowHeight = rowHeight;
+    this.startX = startX;
     const colPercents = [
       0.05,
       0.09,
@@ -45,6 +50,9 @@ export class MatchLogScene extends Phaser.Scene {
       return x;
     });
     const headerY = 80;
+    this.add
+      .rectangle(width / 2, headerY, tableWidth, rowHeight, 0x808080, tableAlpha)
+      .setOrigin(0.5, 0);
     if (!this.log.length) {
       this.add
         .text(width / 2, headerY, 'No matches recorded', {
@@ -70,7 +78,7 @@ export class MatchLogScene extends Phaser.Scene {
           color: '#ffffff',
         });
       });
-      this.startY = headerY + 30;
+      this.startY = headerY + rowHeight + 6;
       this.renderRows();
     }
 
@@ -91,9 +99,16 @@ export class MatchLogScene extends Phaser.Scene {
     }
     this.rowObjs = [];
     let y = this.startY;
+    const width = this.sys.game.config.width;
+    const rowHeight = this.rowHeight;
     this.log.forEach((entry, index) => {
+      const rowRect = this.add
+        .rectangle(width / 2, y, this.tableWidth, rowHeight, 0x808080, tableAlpha)
+        .setOrigin(0.5, 0);
+      this.rowObjs.push(rowRect);
+
       const toggle = this.add
-        .text(5, y, this.expandedRows.has(index) ? '-' : '+', {
+        .text(this.startX - 15, y, this.expandedRows.has(index) ? '-' : '+', {
           font: '20px Arial',
           color: '#00ff00',
         })
@@ -129,7 +144,7 @@ export class MatchLogScene extends Phaser.Scene {
         });
         this.rowObjs.push(obj);
       });
-      y += 24;
+      y += rowHeight;
 
       if (this.expandedRows.has(index) && Array.isArray(entry.roundDetails)) {
         entry.roundDetails.forEach((rd) => {
