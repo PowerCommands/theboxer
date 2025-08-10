@@ -64,7 +64,7 @@ export class RankingScene extends Phaser.Scene {
     // Setup scrollable ranking list
     const headerHeight = rowHeight; // header bar height
     const viewportY = tableTop + headerHeight; // area below header
-    const viewportHeight = 420; // visible area height
+    const viewportHeight = Math.floor(this.sys.game.config.height * 0.6); // visible area height scales with game size
     const contentOffsetX = tableLeft;
     const contentOffsetY = viewportY; // unused but kept for clarity
 
@@ -104,7 +104,7 @@ export class RankingScene extends Phaser.Scene {
     const geoMask = maskShape.createGeometryMask();
     content.setMask(geoMask);
 
-    // Initial scroll position
+    // Initial scroll position and metrics
     content.y = 0;
     const contentHeight = boxers.length * rowHeight;
     const maxScroll = Math.max(0, contentHeight - viewportHeight);
@@ -163,8 +163,22 @@ export class RankingScene extends Phaser.Scene {
       setScroll(newScroll);
     });
 
-    // Initialize scrollbar position
-    setScroll(0);
+    // Initialize scrollbar position so the player's boxer is centered if possible
+    let initialScroll = 0;
+    const player = getPlayerBoxer();
+    if (player) {
+      const index = boxers.findIndex((b) => b === player || b.name === player.name);
+      if (index >= 0) {
+        const visibleRows = Math.floor(viewportHeight / rowHeight);
+        const targetIndex = Phaser.Math.Clamp(
+          index - Math.floor(visibleRows / 2),
+          0,
+          Math.max(0, boxers.length - visibleRows)
+        );
+        initialScroll = targetIndex * rowHeight;
+      }
+    }
+    setScroll(initialScroll);
 
     const tableBottom = viewportY + viewportHeight;
 
