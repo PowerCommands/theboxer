@@ -61,64 +61,112 @@ export class RankingScene extends Phaser.Scene {
       color: '#ffff00',
     });
 
-    const visibleRows = Math.min(20, boxers.length);
-    const listHeight = visibleRows * rowHeight;
-    const listContainer = this.add.container(tableLeft, tableTop + 20);
-    boxers.forEach((b, i) => {
-      const y = i * rowHeight;
-      const rowBg = this.add
-        .rectangle(0, 0, rectWidth, rowHeight, 0x808080, 0.5)
-        .setOrigin(0, 0);
-      listContainer.add(rowBg);
-      rowBg.setPosition(0, y);
+    // Setup scrollable ranking list
+    const headerHeight = rowHeight; // header bar height
+    const viewportY = tableTop + headerHeight; // area below header
+    const viewportHeight = 420; // visible area height
+    const contentOffsetX = tableLeft;
+    const contentOffsetY = viewportY; // unused but kept for clarity
 
-      const line = `${b.ranking
-        .toString()
-        .padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age
-        .toString()
-        .padEnd(columnWidths[2])}${b.matches
-        .toString()
-        .padEnd(columnWidths[3])}${b.wins
-        .toString()
-        .padEnd(columnWidths[4])}${b.losses
-        .toString()
-        .padEnd(columnWidths[5])}${b.draws
-        .toString()
-        .padEnd(columnWidths[6])}${b.winsByKO
-        .toString()
-        .padEnd(columnWidths[7])}`;
-      const rowText = this.add.text(0, 0, line, {
-        fontFamily: 'monospace',
-        fontSize: '20px',
-        color: '#ffffff',
-      });
-      listContainer.add(rowText);
-      rowText.setPosition(0, y);
+    // Container that holds all rows (children added in scene coords)
+    const content = this.add.container(0, 0);
+
+    const startY = viewportY + 0;
+    boxers.forEach((b, i) => {
+      const y = startY + i * rowHeight;
+      const rowRect = this.add
+        .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
+        .setOrigin(0.5, 0);
+      const line = `${b.ranking.toString().padEnd(columnWidths[0])}` +
+        `${b.name.padEnd(columnWidths[1])}` +
+        `${b.age.toString().padEnd(columnWidths[2])}` +
+        `${b.matches.toString().padEnd(columnWidths[3])}` +
+        `${b.wins.toString().padEnd(columnWidths[4])}` +
+        `${b.losses.toString().padEnd(columnWidths[5])}` +
+        `${b.draws.toString().padEnd(columnWidths[6])}` +
+        `${b.winsByKO.toString().padEnd(columnWidths[7])}`;
+      const txt = this.add
+        .text(contentOffsetX, y, line, {
+          font: '20px monospace',
+          color: '#ffffff',
+        })
+        .setOrigin(0, 0);
+
+      content.add(rowRect);
+      content.add(txt);
     });
+
+    // Mask rectangle defining visible viewport
     const maskShape = this.add
-      .rectangle(tableLeft, tableTop + 20, rectWidth, listHeight)
-      .setOrigin(0, 0)
+      .rectangle(width / 2, viewportY, rectWidth, viewportHeight, 0x000000, 0)
+      .setOrigin(0.5, 0)
       .setVisible(false);
-    listContainer.setMask(maskShape.createGeometryMask());
-    const barX = tableLeft + rectWidth + 10;
-    this.add.rectangle(barX, tableTop + 20 + listHeight / 2, 6, listHeight, 0xffffff, 0.2);
-    const thumbHeight = Math.max(20, (listHeight * listHeight) / (boxers.length * rowHeight));
-    const thumb = this.add
-      .rectangle(barX, tableTop + 20, 6, thumbHeight, 0xffffff, 0.8)
-      .setOrigin(0.5, 0);
-    let scroll = 0;
-    const maxScroll = Math.max(0, boxers.length * rowHeight - listHeight);
-    const updateScroll = () => {
-      listContainer.y = tableTop + 20 - scroll;
-      const t = maxScroll === 0 ? 0 : scroll / maxScroll;
-      thumb.y = tableTop + 20 + t * (listHeight - thumbHeight);
-    };
-    this.input.on('wheel', (_p, _g, _dx, dy) => {
-      scroll = Phaser.Math.Clamp(scroll + dy, 0, maxScroll);
-      updateScroll();
+    const geoMask = maskShape.createGeometryMask();
+    content.setMask(geoMask);
+
+    // Initial scroll position
+    content.y = 0;
+    const contentHeight = boxers.length * rowHeight;
+    const maxScroll = Math.max(0, contentHeight - viewportHeight);
+
+    function updateScrollbar(scrollY) {
+      if (maxScroll <= 0) {
+        thumb.setVisible(false);
+        track.setVisible(false);
+        return;
+      }
+      thumb.setVisible(true);
+      track.setVisible(true);
+      const ratio = scrollY / maxScroll;
+      const freeSpace = viewportHeight - thumbHeight;
+      thumb.y = trackY + ratio * freeSpace;
+    }
+
+    function setScroll(scrollY) {
+      const clamped = Phaser.Math.Clamp(scrollY, 0, maxScroll);
+      content.y = -clamped;
+      updateScrollbar(clamped);
+    }
+
+    const WHEEL_STEP = 40;
+    this.input.on('wheel', (_pointer, _gameObjects, _dx, dy) => {
+      const currentScroll = -content.y;
+      setScroll(currentScroll + (dy > 0 ? WHEEL_STEP : -WHEEL_STEP));
     });
-    updateScroll();
-    const tableBottom = tableTop + 20 + listHeight;
+
+    // Scrollbar track and thumb
+    const trackX = tableLeft + rectWidth + 8;
+    const trackY = viewportY;
+    const track = this.add
+      .rectangle(trackX, trackY, 8, viewportHeight, 0x666666, 0.6)
+      .setOrigin(0, 0);
+    const thumbMinHeight = 20;
+    const thumbHeight = Math.max(
+      thumbMinHeight,
+      (viewportHeight / Math.max(viewportHeight, contentHeight)) * viewportHeight
+    );
+    const thumb = this.add
+      .rectangle(trackX, trackY, 8, thumbHeight, 0xffffff, 0.9)
+      .setOrigin(0, 0);
+
+    // Dragging the thumb
+    thumb.setInteractive({ draggable: true, useHandCursor: true });
+    this.input.setDraggable(thumb, true);
+    this.input.on('drag', (pointer, obj, dragX, dragY) => {
+      if (obj !== thumb || maxScroll <= 0) return;
+      const minY = trackY;
+      const maxY = trackY + viewportHeight - thumbHeight;
+      const y = Phaser.Math.Clamp(dragY, minY, maxY);
+      thumb.y = y;
+      const ratio = (y - trackY) / (viewportHeight - thumbHeight);
+      const newScroll = ratio * maxScroll;
+      setScroll(newScroll);
+    });
+
+    // Initialize scrollbar position
+    setScroll(0);
+
+    const tableBottom = viewportY + viewportHeight;
 
     const pending = getPendingMatch();
     const hasPlayer = !!getPlayerBoxer();
