@@ -61,20 +61,32 @@ export class SelectBoxerScene extends Phaser.Scene {
   showBoxerOptions() {
     this.clearOptions();
     const width = this.sys.game.config.width;
-    const rectWidth = width - 160;
+    const boxers = getRankings();
+    const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
+    const columnWidths = [5, Math.max(15, maxNameLen + 1), 5, 5, 5, 5, 5, 5];
+    const charWidth = 12;
+    const rectWidth = columnWidths.reduce((a, c) => a + c, 0) * charWidth;
+    const tableLeft = (width - rectWidth) / 2;
     const rowHeight = 24;
     this.options.push(
       this.add
         .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, tableAlpha)
         .setOrigin(0.5, 0)
     );
-    const headers = `${'Rank'.padEnd(5)}${'Name'.padEnd(15)}${'Age'.padEnd(5)}${'M'.padEnd(5)}${'W'.padEnd(5)}${'L'.padEnd(5)}${'D'.padEnd(5)}${'KO'.padEnd(5)}`;
-    const headerText = this.add.text(80, 60, headers, {
+    const headers =
+      `${'Rank'.padEnd(columnWidths[0])}` +
+      `${'Name'.padEnd(columnWidths[1])}` +
+      `${'Age'.padEnd(columnWidths[2])}` +
+      `${'M'.padEnd(columnWidths[3])}` +
+      `${'W'.padEnd(columnWidths[4])}` +
+      `${'L'.padEnd(columnWidths[5])}` +
+      `${'D'.padEnd(columnWidths[6])}` +
+      `${'KO'.padEnd(columnWidths[7])}`;
+    const headerText = this.add.text(tableLeft, 60, headers, {
       font: '20px monospace',
       color: '#ffff00',
     });
     this.options.push(headerText);
-    const boxers = getRankings();
     boxers.forEach((b, i) => {
       const y = 80 + i * 24;
       this.options.push(
@@ -82,16 +94,16 @@ export class SelectBoxerScene extends Phaser.Scene {
           .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, tableAlpha)
           .setOrigin(0.5, 0)
       );
-      const line = `${b.ranking.toString().padEnd(5)}${b.name.padEnd(15)}${b.age
-        .toString()
-        .padEnd(5)}${b.matches
-        .toString()
-        .padEnd(5)}${b.wins.toString().padEnd(5)}${b.losses
-        .toString()
-        .padEnd(5)}${b.draws
-        .toString()
-        .padEnd(5)}${b.winsByKO.toString().padEnd(5)}`;
-      const txt = this.add.text(80, y, line, {
+      const line =
+        `${b.ranking.toString().padEnd(columnWidths[0])}` +
+        `${b.name.padEnd(columnWidths[1])}` +
+        `${b.age.toString().padEnd(columnWidths[2])}` +
+        `${b.matches.toString().padEnd(columnWidths[3])}` +
+        `${b.wins.toString().padEnd(columnWidths[4])}` +
+        `${b.losses.toString().padEnd(columnWidths[5])}` +
+        `${b.draws.toString().padEnd(columnWidths[6])}` +
+        `${b.winsByKO.toString().padEnd(columnWidths[7])}`;
+      const txt = this.add.text(tableLeft, y, line, {
         font: '20px monospace',
         color: '#ffffff',
       });

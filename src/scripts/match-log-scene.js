@@ -2,6 +2,7 @@ import { getMatchLog } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { tableAlpha } from './config.js';
+import { formatMoney } from './helpers.js';
 
 export class MatchLogScene extends Phaser.Scene {
   constructor() {
@@ -138,7 +139,7 @@ export class MatchLogScene extends Phaser.Scene {
         entry.method === 'KO' ? 'KO' : entry.score,
         entry.round,
         entry.method === 'KO' ? entry.time : '-',
-        entry.prize ?? '-',
+        entry.prize != null ? formatMoney(entry.prize) : '-',
       ];
       row.forEach((text, i) => {
         const obj = this.add.text(this.colX[i], y, String(text), {

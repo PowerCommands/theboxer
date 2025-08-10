@@ -54,7 +54,7 @@ export class CommentManager {
     const bgHeight = this.textObject.height + 10;
 
     this.bgObject = this.scene.add
-      .rectangle(width / 2, y, bgWidth, bgHeight, 0x808080, 0.5)
+      .rectangle(width / 2, y, bgWidth, bgHeight, 0x808080, 0.4)
       .setOrigin(0.5)
       .setDepth(0);
 

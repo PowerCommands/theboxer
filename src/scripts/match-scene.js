@@ -609,7 +609,7 @@ export class MatchScene extends Phaser.Scene {
         p1Text.width + panelPadding * 2,
         p1Text.height + panelPadding * 2,
         0x808080,
-        0.5
+        0.4
       )
       .setOrigin(0, 0);
     const p2Bg = this.add
@@ -619,7 +619,7 @@ export class MatchScene extends Phaser.Scene {
         p2Text.width + panelPadding * 2,
         p2Text.height + panelPadding * 2,
         0x808080,
-        0.5
+        0.4
       )
       .setOrigin(1, 0);
     p1Text.setDepth(1);
