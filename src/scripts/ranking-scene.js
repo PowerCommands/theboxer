@@ -50,10 +50,11 @@ export class RankingScene extends Phaser.Scene {
     const namePad = Math.max(15, maxNameLen + 1);
     const maxPrizeLen = boxers.reduce(
       (m, b) => Math.max(m, formatMoney(b.earnings || 0).length),
-      6
+      0
     );
+    const prizeColWidth = Math.max(maxPrizeLen, 'Prize money'.length) + 4;
     const rectWidth = width * 0.9;
-    const baseColumnWidths = [5, namePad, 5, 5, 5, 5, 5, 5, maxPrizeLen];
+    const baseColumnWidths = [5, namePad, 5, 5, 5, 5, 5, 5, prizeColWidth];
     const totalChars = Math.floor(rectWidth / 12);
     const baseWidth = baseColumnWidths.reduce((sum, w) => sum + w, 0);
     const titlePad = Math.max(totalChars - baseWidth, 35);
@@ -73,7 +74,7 @@ export class RankingScene extends Phaser.Scene {
       `${'L'.padEnd(columnWidths[5])}` +
       `${'D'.padEnd(columnWidths[6])}` +
       `${'KO'.padEnd(columnWidths[7])}` +
-      `${'Prize'.padEnd(columnWidths[8])}` +
+      `${'Prize money'.padEnd(columnWidths[8])}` +
       `${'Titles'.padEnd(columnWidths[9])}`;
     this.add.text(tableLeft, tableTop, headers, {
       fontFamily: 'monospace',
