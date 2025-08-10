@@ -180,7 +180,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.options.push(headerText);
     const player = getPlayerBoxer();
     const boxers = allBoxers.filter((b) => {
-      if (b === player) return false;
+      if (b === player) return true;
       // Allow facing any lower-ranked boxer but limit higher-ranked
       // opponents to within three positions above the player.
       if (b.ranking < player.ranking) {
@@ -196,12 +196,16 @@ export class SelectBoxerScene extends Phaser.Scene {
           .setOrigin(0.5, 0)
       );
       const line = `${b.ranking.toString().padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age.toString().padEnd(columnWidths[2])}${b.matches.toString().padEnd(columnWidths[3])}${b.wins.toString().padEnd(columnWidths[4])}${b.losses.toString().padEnd(columnWidths[5])}${b.draws.toString().padEnd(columnWidths[6])}${b.winsByKO.toString().padEnd(columnWidths[7])}`;
+      const isPlayer = b === player;
       const txt = this.add.text(tableLeft, y, line, {
         font: '20px monospace',
-        color: '#ffffff',
+        color: isPlayer ? '#404040' : '#ffffff',
+        fontStyle: isPlayer ? 'bold' : 'normal',
       });
-      txt.setInteractive({ useHandCursor: true });
-      txt.on('pointerdown', () => this.selectBoxer(b));
+      if (!isPlayer) {
+        txt.setInteractive({ useHandCursor: true });
+        txt.on('pointerdown', () => this.selectBoxer(b));
+      }
       this.options.push(txt);
     });
   }
