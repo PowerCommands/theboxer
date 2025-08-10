@@ -14,6 +14,7 @@ export class OverlayUI extends Phaser.Scene {
     this.enterHandler = null;
     this.clickHandler = null;
     this.locationText = null;
+    this.nextRoundHandler = null;
   }
 
   create() {
@@ -325,22 +326,35 @@ export class OverlayUI extends Phaser.Scene {
         .setOrigin(0.5)
         .setInteractive({ useHandCursor: true })
         .setDepth(1);
-      this.nextRoundText.on('pointerup', () => {
-        this.nextRoundText.setVisible(false);
-        this.hideStrategyOptions();
-        eventBus.emit('next-round');
-      });
     } else {
       this.nextRoundText.setVisible(true);
     }
+    if (this.nextRoundHandler) {
+      this.input.off('pointerup', this.nextRoundHandler);
+    }
+    this.nextRoundHandler = () => this.triggerNextRound();
+    this.input.once('pointerup', this.nextRoundHandler);
     const match = this.scene.get('Match');
     if (match?.isP1AI) {
       this.showStrategyOptions();
     }
   }
 
+  triggerNextRound() {
+    if (this.nextRoundHandler) {
+      this.nextRoundHandler = null;
+    }
+    if (this.nextRoundText) this.nextRoundText.setVisible(false);
+    this.hideStrategyOptions();
+    eventBus.emit('next-round');
+  }
+
   hideNextRoundButton() {
     if (this.nextRoundText) this.nextRoundText.setVisible(false);
+    if (this.nextRoundHandler) {
+      this.input.off('pointerup', this.nextRoundHandler);
+      this.nextRoundHandler = null;
+    }
     this.hideStrategyOptions();
   }
 
