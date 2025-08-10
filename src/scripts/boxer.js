@@ -121,17 +121,22 @@ export class Boxer {
   }
 
   applyBounds(opponent, prevX, prevY) {
-    const width = this.scene.sys.game.config.width;
-    const height = this.scene.sys.game.config.height;
+    const { width, height } = this.scene.sys.game.config;
+    const bounds = this.scene.ringBounds || {
+      left: 0,
+      right: width,
+      top: 0,
+      bottom: height,
+    };
     this.sprite.x = Phaser.Math.Clamp(
       this.sprite.x,
-      this.sprite.displayWidth / 2,
-      width - this.sprite.displayWidth / 2
+      bounds.left + this.sprite.displayWidth / 2,
+      bounds.right - this.sprite.displayWidth / 2
     );
     this.sprite.y = Phaser.Math.Clamp(
       this.sprite.y,
-      this.sprite.displayHeight / 2,
-      height - this.sprite.displayHeight / 2
+      bounds.top + this.sprite.displayHeight / 2,
+      bounds.bottom - this.sprite.displayHeight / 2
     );
 
     if (opponent) {

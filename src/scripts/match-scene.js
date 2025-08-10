@@ -28,8 +28,10 @@ export class MatchScene extends Phaser.Scene {
 
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
-    // add ring background sized to 880x660 and centered
-    this.add.image(width / 2, height / 2, 'ring').setDisplaySize(880, 660);
+    const ringWidth = 880;
+    const ringHeight = 660;
+    // add ring background sized to ringWidth x ringHeight and centered
+    this.add.image(width / 2, height / 2, 'ring').setDisplaySize(ringWidth, ringHeight);
 
     // create animations for both boxers
     createBoxerAnimations(this, BOXER_PREFIXES.P1);
@@ -67,9 +69,11 @@ export class MatchScene extends Phaser.Scene {
 
     const centerX = width / 2;
     const centerY = height / 2;
-    const ringWidth = 880; // slightly larger ring
     const ringLeft = centerX - ringWidth / 2;
     const ringRight = centerX + ringWidth / 2;
+    const ringTop = centerY - ringHeight / 2;
+    const ringBottom = centerY + ringHeight / 2;
+    this.ringBounds = { left: ringLeft, right: ringRight, top: ringTop, bottom: ringBottom };
     const startY = centerY - 100; // position boxers a bit higher
 
     this.player1 = new Boxer(

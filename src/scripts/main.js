@@ -117,8 +117,8 @@ class BootScene extends Phaser.Scene {
 // Phaser game configuration
 const config = {
   type: Phaser.AUTO,
-  width: 1600,
-  height: 1200,
+  width: 1400,
+  height: 1050,
   backgroundColor: '#2d2d2d',
   parent: 'game-container',
   dom: { createContainer: true },
