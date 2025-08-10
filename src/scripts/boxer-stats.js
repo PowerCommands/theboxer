@@ -1,4 +1,4 @@
-import { BOXERS } from './boxer-data.js';
+import { BOXERS } from './boxers.js';
 
 // Record a win/loss result between two boxers.
 export function recordResult(winner, loser, method) {
