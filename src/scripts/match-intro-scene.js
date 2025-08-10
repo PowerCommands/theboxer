@@ -1,223 +1,327 @@
-import { SoundManager } from './sound-manager.js';
-import { formatMoney } from './helpers.js';
+// match-intro-scene.js
+// Phaser 3 scen för “Tale of the Tape” utan timeline-API (manuell kedjning av tweens)
 
 export class MatchIntroScene extends Phaser.Scene {
   constructor() {
     super('MatchIntroScene');
+    this._skipHandlersBound = false;
   }
 
-  create(data) {
-    this.matchData = data;
-    const width = this.sys.game.config.width;
-    const height = this.sys.game.config.height;
+  init(data) {
+    // Förväntad struktur:
+    // {
+    //   red: { name, nick, record:{w,l,d}, rank, country },
+    //   blue:{ name, nick, record:{w,l,d}, rank, country },
+    //   weightClass: string,
+    //   purse: number,
+    //   winnerBonus: number,
+    //   titlesOnTheLine: Array<{ code, name, imageKey }>
+    // }
+    this.matchData = data || {};
+  }
 
-    // play crowd ambience
-    SoundManager.sounds?.crowd?.play();
+  create() {
+    const data = this.matchData;
+    const { width, height } = this.scale;
 
-    // allow skipping at any time
-    const skip = () => {
-      if (this.skipped) return;
-      this.skipped = true;
-      this.timeline?.stop();
-      SoundManager.sounds?.crowd?.stop();
-      this.scene.launch('OverlayUI');
-      this.scene.start('Match', this.matchData);
-    };
-    this.input.keyboard.on('keydown', skip);
-    this.input.on('pointerdown', skip);
-
-    // fighter cards
-    const createCard = (fighter, side) => {
-      const card = this.add.container(
-        side === 'left' ? -width * 0.4 : width * 1.4,
-        height * 0.35
-      );
-      card.add(this.add.image(0, 0, 'stinger'));
-      card.add(
-        this.add
-          .text(0, -60, fighter.name, { font: '32px Arial', color: '#ffffff' })
-          .setOrigin(0.5)
-      );
-      card.add(
-        this.add
-          .text(0, -20, `"${fighter.nick}"`, {
-            font: '24px Arial',
-            color: '#ffff00',
-          })
-          .setOrigin(0.5)
-      );
-      const { w = 0, l = 0, d = 0 } = fighter.record || {};
-      card.add(
-        this.add
-          .text(0, 20, `Record: ${w}-${l}-${d}`, {
-            font: '20px Arial',
-            color: '#ffffff',
-          })
-          .setOrigin(0.5)
-      );
-      card.add(
-        this.add
-          .text(0, 50, `Rank: ${fighter.rank}`, {
-            font: '20px Arial',
-            color: '#ffffff',
-          })
-          .setOrigin(0.5)
-      );
-      return card;
+    // Hjälpare
+    const formatMoney = (n) => Math.max(0, Math.floor(n || 0)).toLocaleString('sv-SE');
+    const countUp = (from, to, duration, onUpdate) => {
+      const obj = { value: from || 0 };
+      this.tweens.add({
+        targets: obj,
+        value: Math.max(0, to || 0),
+        duration: Math.max(200, duration || 800),
+        onUpdate: () => onUpdate && onUpdate(obj.value),
+      });
     };
 
-    const redCard = createCard(data.red, 'left');
-    const blueCard = createCard(data.blue, 'right');
+    // --- FIGHT CARDS ---
+    const redCard = this.createCard(data.red, data.weightClass, true);
+    const blueCard = this.createCard(data.blue, data.weightClass, false);
 
-    // purse panel
-    const purseContainer = this.add.container(width / 2, height * 0.65).setAlpha(0);
-    const purseText = this.add
-      .text(0, 0, formatMoney(0), {
-        font: '40px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5);
+    const cardY = height * 0.35;
+    const leftTargetX = width * 0.25;
+    const rightTargetX = width * 0.75;
+
+    redCard.setPosition(-redCard.displayWidth, cardY);
+    blueCard.setPosition(width + blueCard.displayWidth, cardY);
+
+    // --- PRISPENGAR ---
+    const purseContainer = this.add.container(width / 2, height * 0.68);
+    const purseBg = this.add.graphics();
+    purseBg.fillStyle(0x000000, 0.55);
+    purseBg.fillRoundedRect(-300, -80, 600, 160, 14);
+    purseContainer.add(purseBg);
+
+    const purseTitle = this.add.text(0, -38, 'Purse & Bonus', {
+      fontFamily: 'Arial',
+      fontSize: '28px',
+      color: '#FFD166',
+      align: 'center',
+    }).setOrigin(0.5);
+    purseContainer.add(purseTitle);
+
+    const purseText = this.add.text(0, 5, '0', {
+      fontFamily: 'Arial',
+      fontSize: '42px',
+      color: '#FFFFFF',
+      align: 'center',
+    }).setOrigin(0.5);
     purseContainer.add(purseText);
-    let bonusText;
-    if (data.winnerBonus > 0) {
-      bonusText = this.add
-        .text(0, 40, '', {
-          font: '24px Arial',
-          color: '#ffff00',
-        })
-        .setOrigin(0.5);
+
+    let bonusText = null;
+    if (data.winnerBonus && data.winnerBonus > 0) {
+      bonusText = this.add.text(0, 50, `Winner bonus: ${formatMoney(data.winnerBonus)}`, {
+        fontFamily: 'Arial',
+        fontSize: '22px',
+        color: '#BEE3DB',
+        align: 'center',
+      }).setOrigin(0.5);
       purseContainer.add(bonusText);
     }
+    purseContainer.setAlpha(0);
 
-    const emitter = this.add.particles(0, 0, 'coin', {
-      speed: { min: -300, max: 300 },
-      angle: { min: 0, max: 360 },
-      gravityY: 400,
-      lifespan: 1500,
-      quantity: 30,
-      scale: { start: 0.5, end: 0 },
-      emitting: false,
+    
+    const emitter = this.add.particles(width / 2, height * 0.68, 'coin', {
+      speed: { min: 100, max: 250 },
+      // 270° = uppåt i Phaser (justera ±30° som innan)
+      angle: { min: 240, max: 300 },
+      gravityY: 600,
+      lifespan: 900,
+      quantity: 0,
+      scale: { start: 0.7, end: 0.2 },
+      alpha: { start: 1, end: 0 },
+      emitting: false
     });
 
-    // belts setup
-    const beltsData = data.titlesOnTheLine || [];
+    // --- BÄLTEN ---
     const belts = [];
-    const maxCols = 3;
-    const spacingX = 220;
-    const spacingY = 120;
-    const cols = Math.min(maxCols, beltsData.length);
-    const startX = width / 2 - ((cols - 1) * spacingX) / 2;
-    const startY = height * 0.2;
-    beltsData.forEach((b, i) => {
-      const col = i % maxCols;
-      const row = Math.floor(i / maxCols);
-      const x = startX + col * spacingX;
-      const y = startY + row * spacingY;
-      const key = b.imageKey || `belt_${b.code}`;
-      const sprite = this.add.image(x, y, key).setScale(0.5).setAlpha(0);
-      belts.push(sprite);
-    });
+    const beltsData = Array.isArray(data.titlesOnTheLine) ? data.titlesOnTheLine : [];
+    if (beltsData.length > 0) {
+      const beltY = height * 0.52;
+      const beltW = 220; // ungefärlig visningsbredd
+      const spacing = 20;
+      const totalW = beltsData.length * beltW + (beltsData.length - 1) * spacing;
+      let startX = (width - totalW) / 2 + beltW / 2;
 
-    const cta = this.add
-      .text(width / 2, height * 0.9, 'Press any key to continue', {
-        font: '32px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5)
-      .setAlpha(0);
+      beltsData.forEach((b) => {
+        const imgKey = b.imageKey || b.code;
+        const belt = this.add.image(startX, beltY, imgKey).setOrigin(0.5);
+        belt.setDisplaySize(beltW, beltW * 0.5);
+        belt.setAlpha(0);
+        belt.y += 20; // för en liten "hopptween"
+        belts.push(belt);
+        startX += beltW + spacing;
+      });
+    }
 
-    // timeline
-    const timeline = this.tweens.timeline();
-    this.timeline = timeline;
+    // --- CTA ---
+    const cta = this.add.text(width / 2, height * 0.92, 'Press any key to continue', {
+      fontFamily: 'Arial',
+      fontSize: '22px',
+      color: '#FFFFFF'
+    }).setOrigin(0.5);
+    cta.setAlpha(0);
 
-    timeline.add({
+    // --- Skip / continue när som helst ---
+    const startMatch = () => {
+      // Rensa animationer och timers så vi inte dubblar
+      if (this.tweens && this.tweens.killAll) this.tweens.killAll();
+      this.scene.start('MatchScene', data);
+    };
+    if (!this._skipHandlersBound) {
+      this._skipHandlersBound = true;
+      this.input.keyboard?.on('keydown', startMatch);
+      this.input.on('pointerdown', startMatch);
+    }
+
+    // --- Manuell kedjning (ersätter timeline) ---
+    const chain = (steps) => {
+      const run = (i = 0) => {
+        if (i >= steps.length) return;
+        const s = steps[i];
+        if (s.type === 'delay') {
+          this.time.delayedCall(s.ms, () => run(i + 1));
+          return;
+        }
+        const oc = s.onComplete;
+        this.tweens.add({
+          ...s,
+          onComplete: () => {
+            if (typeof oc === 'function') oc();
+            run(i + 1);
+          }
+        });
+      };
+      run(0);
+    };
+
+    const steps = [];
+
+    // 1) Cards in
+    steps.push({
       targets: redCard,
-      x: width * 0.25,
-      duration: 1000,
+      x: leftTargetX,
+      duration: 900,
       ease: 'Elastic.Out',
-      onStart: () => this.sound.play('stinger'),
+      onStart: () => this.sound?.play?.('stinger', { volume: 0.6 })
     });
-    timeline.add({
+    steps.push({
       targets: blueCard,
-      x: width * 0.75,
-      duration: 1000,
-      ease: 'Elastic.Out',
-      offset: 0,
+      x: rightTargetX,
+      duration: 900,
+      ease: 'Elastic.Out'
     });
 
-    timeline.add({ duration: 500 });
+    // 2) Paus
+    steps.push({ type: 'delay', ms: 450 });
 
-    timeline.add({
+    // 3) Purse + counter + coins
+    steps.push({
       targets: purseContainer,
       alpha: 1,
-      duration: 300,
+      duration: 280,
       onStart: () => {
-        this.sound.play('coin_jingle');
-        emitter.explode(40, width / 2, height * 0.65);
-        this.tweens.addCounter({
-          from: 0,
-          to: data.purse || 0,
-          duration: 1000,
-          onUpdate: (t) => {
-            purseText.setText(formatMoney(Math.floor(t.getValue())));
-          },
+        this.sound?.play?.('coin_jingle', { volume: 0.6 });
+        emitter.explode(38, width / 2, height * 0.68);
+        countUp(0, data.purse || 0, 1100, (v) => {
+          purseText.setText(formatMoney(v));
         });
         if (bonusText) {
           bonusText.setText(`Winner bonus: ${formatMoney(data.winnerBonus)}`);
         }
-      },
+      }
     });
 
+    // 4) Bälten en och en + shine
     belts.forEach((belt) => {
-      timeline.add({
+      steps.push({
         targets: belt,
         alpha: 1,
         y: belt.y - 20,
-        duration: 500,
+        duration: 480,
         ease: 'Back.Out',
-        onStart: () => this.sound.play('whoosh'),
-        onComplete: () => this.shineBelt(belt),
+        onStart: () => this.sound?.play?.('whoosh', { volume: 0.4 }),
+        onComplete: () => this.shineBelt(belt)
       });
     });
 
-    timeline.add({
+    // 5) CTA + blink
+    steps.push({
       targets: cta,
       alpha: 1,
-      duration: 500,
+      duration: 450,
       onComplete: () => {
         this.tweens.add({
           targets: cta,
-          alpha: 0,
-          duration: 500,
+          alpha: 0.25,
+          duration: 600,
           yoyo: true,
-          repeat: -1,
+          repeat: -1
         });
-      },
+      }
     });
 
-    timeline.play();
+    // Kör sekvens
+    chain(steps);
   }
 
-  shineBelt(sprite) {
-    const w = sprite.displayWidth;
-    const h = sprite.displayHeight;
-    const shine = this.add.rectangle(
-      sprite.x - w,
-      sprite.y,
-      w * 0.2,
-      h * 1.5,
-      0xffffff,
-      0.3
-    );
-    shine.setAngle(20);
-    shine.setMask(sprite.createBitmapMask());
+  // Skapar ett fight card (panel + texter)
+  createCard(boxer = {}, weightClass = '', isLeft = true) {
+    const { name = 'Unknown', nick = '', record = { w: 0, l: 0, d: 0 }, rank = 0, country = '' } = boxer;
+    const c = this.add.container(0, 0);
+
+    // Panelbild (preloadad som 'fight_card'). Faller tillbaka till grafik om saknas.
+    let panel;
+    if (this.textures.exists('fight_card')) {
+      panel = this.add.image(0, 0, 'fight_card').setOrigin(0.5);
+      panel.setDisplaySize(520, 300);
+    } else {
+      const g = this.add.graphics();
+      g.fillStyle(0x0b0b0f, 0.85);
+      g.fillRoundedRect(-260, -150, 520, 300, 12);
+      g.lineStyle(2, 0xC1A44A, 0.9);
+      g.strokeRoundedRect(-260, -150, 520, 300, 12);
+      panel = g;
+    }
+    c.add(panel);
+
+    const headline = [name, nick ? `“${nick}”` : ''].filter(Boolean).join(' ');
+    const tName = this.add.text(0, -78, headline, {
+      fontFamily: 'Arial',
+      fontSize: '30px',
+      color: '#FFFFFF',
+      align: 'center',
+      wordWrap: { width: 480 }
+    }).setOrigin(0.5);
+    c.add(tName);
+
+    const tRecord = this.add.text(0, -20, `Record: ${record.w || 0}-${record.l || 0}-${record.d || 0}`, {
+      fontFamily: 'Arial',
+      fontSize: '24px',
+      color: '#BEE3DB',
+      align: 'center'
+    }).setOrigin(0.5);
+    c.add(tRecord);
+
+    const tRank = this.add.text(0, 20, `Rank: ${rank || 0}`, {
+      fontFamily: 'Arial',
+      fontSize: '24px',
+      color: '#FFD166',
+      align: 'center'
+    }).setOrigin(0.5);
+    c.add(tRank);
+
+    const tClass = this.add.text(0, 64, `${weightClass || ''}${country ? '  •  ' + country : ''}`, {
+      fontFamily: 'Arial',
+      fontSize: '22px',
+      color: '#FFFFFF',
+      align: 'center'
+    }).setOrigin(0.5);
+    c.add(tClass);
+
+    // Spegla lite om högerkort för variation (valfritt)
+    if (!isLeft) {
+      c.list.forEach((child) => {
+        if (child.setScale) child.setScale(1.0);
+      });
+    }
+
+    // Hjälp-egenskaper
+    c.displayWidth = 520;
+    c.displayHeight = 300;
+
+    return c;
+  }
+
+  // Enkel “shine”-effekt: vit remsa ADD-blend som glider över bältet
+  shineBelt(belt) {
+    const w = belt.displayWidth;
+    const h = belt.displayHeight;
+
+    const startX = belt.x - w / 2 - 40;
+    const endX = belt.x + w / 2 + 40;
+
+    const stripe = this.add.rectangle(startX, belt.y, 40, h * 1.1, 0xffffff, 0.14).setOrigin(0.5);
+    stripe.setBlendMode(Phaser.BlendModes.ADD);
+
+    // Maska till bältets rektangel så remsan inte sticker ut
+    const maskGfx = this.add.graphics();
+    maskGfx.fillStyle(0xffffff, 1);
+    maskGfx.fillRect(belt.x - w / 2, belt.y - h / 2, w, h);
+    const mask = maskGfx.createGeometryMask();
+    stripe.setMask(mask);
+
     this.tweens.add({
-      targets: shine,
-      x: sprite.x + w,
-      duration: 800,
+      targets: stripe,
+      x: endX,
+      duration: 650,
       ease: 'Sine.InOut',
-      onComplete: () => shine.destroy(),
+      onComplete: () => {
+        stripe.destroy();
+        maskGfx.destroy();
+      }
     });
   }
 }
-
