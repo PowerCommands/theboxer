@@ -168,6 +168,7 @@ export class CreateBoxerScene extends Phaser.Scene {
         defaultStrategy: defaultStrategyForRanking(ranking),
         ruleset: parseInt(rulesetSelect.value, 10),
         userCreated: true,
+        titles: [],
       };
       addBoxer(boxer);
       setPlayerBoxer(boxer);

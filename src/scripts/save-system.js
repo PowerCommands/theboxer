@@ -38,6 +38,7 @@ export function saveGameState(boxers) {
           losses: b.losses,
           draws: b.draws,
           winsByKO: b.winsByKO,
+          titles: b.titles || [],
         };
         if (b.userCreated) {
           return {
@@ -92,6 +93,7 @@ export function applyLoadedState(state) {
         defaultStrategy: saved.defaultStrategy ?? 1,
         ruleset: saved.ruleset ?? 1,
         userCreated: true,
+        titles: saved.titles ?? [],
       };
       addBoxer(boxer);
       setPlayerBoxer(boxer);
@@ -104,6 +106,7 @@ export function applyLoadedState(state) {
     boxer.losses = saved.losses ?? boxer.losses;
     boxer.draws = saved.draws ?? boxer.draws;
     boxer.winsByKO = saved.winsByKO ?? boxer.winsByKO;
+    boxer.titles = saved.titles ?? boxer.titles ?? [];
     if (saved.userCreated) {
       boxer.userCreated = true;
       boxer.nickName = saved.nickName ?? boxer.nickName;

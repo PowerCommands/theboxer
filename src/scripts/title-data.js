@@ -1,4 +1,4 @@
-[
+export const TITLES = [
   {
     "name": "WBA",
     "fullName": "World Boxing Association",
@@ -44,4 +44,4 @@
     "fullName": "Oriental and Pacific Boxing Federation",
     "region": "Asia"
   }
-]
+];

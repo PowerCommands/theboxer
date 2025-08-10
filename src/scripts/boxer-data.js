@@ -1137,7 +1137,8 @@ export const BOXER_DATA = [
     "winsByKO": 10,
     "age": 22,
     "defaultStrategy": 5,
-    "ruleset": 1
+    "ruleset": 1,
+    "titles": ["OPBF"]
   },
   {
     "name": "Great Tiger",
@@ -1441,7 +1442,8 @@ export const BOXER_DATA = [
     "winsByKO": 3,
     "age": 30,
     "defaultStrategy": 3,
-    "ruleset": 2
+    "ruleset": 2,
+    "titles": ["SABC"]
   },
   {
     "name": "George Baker",
@@ -1612,7 +1614,8 @@ export const BOXER_DATA = [
     "winsByKO": 2,
     "age": 22,
     "defaultStrategy": 5,
-    "ruleset": 2
+    "ruleset": 2,
+    "titles": ["NABF"]
   },
   {
     "name": "George Johnson",
@@ -1631,7 +1634,8 @@ export const BOXER_DATA = [
     "winsByKO": 4,
     "age": 18,
     "defaultStrategy": 3,
-    "ruleset": 1
+    "ruleset": 1,
+    "titles": ["ABU"]
   },
   {
     "name": "Ray Lopez",
@@ -1707,7 +1711,8 @@ export const BOXER_DATA = [
     "winsByKO": 2,
     "age": 24,
     "defaultStrategy": 4,
-    "ruleset": 2
+    "ruleset": 2,
+    "titles": ["EBU"]
   },
   {
     "name": "Mr. Sandman",
@@ -1821,7 +1826,8 @@ export const BOXER_DATA = [
     "winsByKO": 11,
     "age": 37,
     "defaultStrategy": 6,
-    "ruleset": 2
+    "ruleset": 2,
+    "titles": ["IBF"]
   },
   {
     "name": "Cody Jones",
@@ -1897,6 +1903,7 @@ export const BOXER_DATA = [
     "age": 23,
     "ruleset": 3,
     "ranking": 1,
-    "defaultStrategy": 5
+    "defaultStrategy": 5,
+    "titles": ["WBA", "WBC", "WBO"]
   }
 ];

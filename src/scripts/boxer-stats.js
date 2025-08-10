@@ -1,4 +1,10 @@
 import { BOXERS } from './boxers.js';
+import { TITLES } from './title-data.js';
+
+const TITLE_MAP = TITLES.reduce((acc, t) => {
+  acc[t.name] = t;
+  return acc;
+}, {});
 
 // Record a win/loss result between two boxers.
 export function recordResult(winner, loser, method) {
@@ -16,6 +22,7 @@ export function recordResult(winner, loser, method) {
     winner.ranking = loser.ranking;
     loser.ranking = temp;
   }
+  updateTitles(winner, loser);
 }
 
 // Record a draw between two boxers.
@@ -29,5 +36,32 @@ export function recordDraw(boxer1, boxer2) {
 // Get a list of boxers sorted by current ranking.
 export function getRankings() {
   return BOXERS.slice().sort((a, b) => a.ranking - b.ranking);
+}
+
+function updateTitles(winner, loser) {
+  winner.titles = winner.titles || [];
+  loser.titles = loser.titles || [];
+  const allTitles = winner.titles.concat(loser.titles);
+  const hasGlobal = allTitles.some((name) => TITLE_MAP[name]?.region === 'Global');
+
+  if (hasGlobal) {
+    winner.titles = Array.from(new Set(allTitles));
+    loser.titles = [];
+    return;
+  }
+
+  loser.titles = loser.titles.filter((name) => {
+    const info = TITLE_MAP[name];
+    if (
+      info &&
+      info.region !== 'Global' &&
+      winner.continent === info.region &&
+      loser.continent === info.region
+    ) {
+      if (!winner.titles.includes(name)) winner.titles.push(name);
+      return false;
+    }
+    return true;
+  });
 }
 
