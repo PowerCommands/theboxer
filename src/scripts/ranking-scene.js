@@ -48,7 +48,7 @@ export class RankingScene extends Phaser.Scene {
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const namePad = Math.max(15, maxNameLen + 1);
     const rectWidth = width * 0.9;
-    const baseColumnWidths = [5, namePad, 5, 5, 5, 5, 5, 5];
+    const baseColumnWidths = [5, namePad, 5, 5, 5, 5, 5, 5, 8];
     const totalChars = Math.floor(rectWidth / 12);
     const baseWidth = baseColumnWidths.reduce((sum, w) => sum + w, 0);
     const titlePad = Math.max(totalChars - baseWidth, 35);
@@ -68,7 +68,8 @@ export class RankingScene extends Phaser.Scene {
       `${'L'.padEnd(columnWidths[5])}` +
       `${'D'.padEnd(columnWidths[6])}` +
       `${'KO'.padEnd(columnWidths[7])}` +
-      `${'Titles'.padEnd(columnWidths[8])}`;
+      `${'Prize'.padEnd(columnWidths[8])}` +
+      `${'Titles'.padEnd(columnWidths[9])}`;
     this.add.text(tableLeft, tableTop, headers, {
       fontFamily: 'monospace',
       fontSize: '20px',
@@ -100,7 +101,8 @@ export class RankingScene extends Phaser.Scene {
         `${b.losses.toString().padEnd(columnWidths[5])}` +
         `${b.draws.toString().padEnd(columnWidths[6])}` +
         `${b.winsByKO.toString().padEnd(columnWidths[7])}` +
-        `${(b.titles ? b.titles.map((t) => `${t}🏆`).join(' ') : '').padEnd(columnWidths[8])}`;
+        `${(b.earnings || 0).toString().padEnd(columnWidths[8])}` +
+        `${(b.titles ? b.titles.map((t) => `${t}🏆`).join(' ') : '').padEnd(columnWidths[9])}`;
       const isPlayer = player && (b === player || b.name === player.name);
       const txt = this.add
         .text(contentOffsetX, y, line, {

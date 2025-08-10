@@ -34,11 +34,12 @@ export class MatchLogScene extends Phaser.Scene {
     this.startX = startX;
     const colPercents = [
       0.05,
-      0.09,
-      0.3,
+      0.07,
+      0.28,
       0.08,
-      0.2,
-      0.09,
+      0.19,
+      0.08,
+      0.06,
       0.06,
       0.06,
       0.07,
@@ -71,10 +72,11 @@ export class MatchLogScene extends Phaser.Scene {
         'How',
         'Round',
         'Time',
+        'Prize',
       ];
       headers.forEach((h, i) => {
         this.add.text(this.colX[i], headerY, h, {
-          font: '20px Arial',
+          font: '18px Arial',
           color: '#ffffff',
         });
       });
@@ -136,10 +138,11 @@ export class MatchLogScene extends Phaser.Scene {
         entry.method === 'KO' ? 'KO' : entry.score,
         entry.round,
         entry.method === 'KO' ? entry.time : '-',
+        entry.prize ?? '-',
       ];
       row.forEach((text, i) => {
         const obj = this.add.text(this.colX[i], y, String(text), {
-          font: '18px Arial',
+          font: '16px Arial',
           color: '#ffffff',
         });
         this.rowObjs.push(obj);
