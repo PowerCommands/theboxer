@@ -3,6 +3,9 @@ export const appConfig = {
   version: '0.0.002'
 };
 
+// Default transparency for UI tables (1.0 = fully opaque)
+export const tableAlpha = 0.7;
+
 // Start the game in non-test mode by default.  The ranking screen
 // provides a checkbox that can enable test mode if needed.
 let testMode = false;

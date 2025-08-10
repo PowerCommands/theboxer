@@ -1,5 +1,5 @@
 import { getRankings } from './boxer-stats.js';
-import { appConfig, getTestMode, setTestMode } from './config.js';
+import { appConfig, getTestMode, setTestMode, tableAlpha } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
@@ -57,7 +57,7 @@ export class RankingScene extends Phaser.Scene {
     const tableTop = headerY + 40;
     const tableLeft = width * 0.05;
     this.add
-      .rectangle(tableLeft, tableTop, rectWidth, rowHeight, 0x808080, 0.5)
+      .rectangle(tableLeft, tableTop, rectWidth, rowHeight, 0x808080, tableAlpha)
       .setOrigin(0, 0);
     const headers =
       `${'Rank'.padEnd(columnWidths[0])}` +
@@ -89,7 +89,7 @@ export class RankingScene extends Phaser.Scene {
     boxers.forEach((b, i) => {
       const y = startY + i * rowHeight;
       const rowRect = this.add
-        .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
+        .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, tableAlpha)
         .setOrigin(0.5, 0);
       const line =
         `${b.ranking.toString().padEnd(columnWidths[0])}` +

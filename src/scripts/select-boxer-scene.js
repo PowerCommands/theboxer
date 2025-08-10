@@ -1,5 +1,5 @@
 import { getRankings } from './boxer-stats.js';
-import { getTestMode } from './config.js';
+import { getTestMode, tableAlpha } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
 import { scheduleMatch } from './next-match.js';
@@ -65,7 +65,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     const rowHeight = 24;
     this.options.push(
       this.add
-        .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, 0.5)
+        .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, tableAlpha)
         .setOrigin(0.5, 0)
     );
     const headers = `${'Rank'.padEnd(5)}${'Name'.padEnd(15)}${'Age'.padEnd(5)}${'M'.padEnd(5)}${'W'.padEnd(5)}${'L'.padEnd(5)}${'D'.padEnd(5)}${'KO'.padEnd(5)}`;
@@ -79,7 +79,7 @@ export class SelectBoxerScene extends Phaser.Scene {
       const y = 80 + i * 24;
       this.options.push(
         this.add
-          .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
+          .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, tableAlpha)
           .setOrigin(0.5, 0)
       );
       const line = `${b.ranking.toString().padEnd(5)}${b.name.padEnd(15)}${b.age
@@ -157,7 +157,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     const tableLeft = (width - rectWidth) / 2;
     this.options.push(
       this.add
-        .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, 0.5)
+        .rectangle(width / 2, 60, rectWidth, rowHeight, 0x808080, tableAlpha)
         .setOrigin(0.5, 0)
     );
     const headers = `${'Rank'.padEnd(columnWidths[0])}${'Name'.padEnd(columnWidths[1])}${'Age'.padEnd(columnWidths[2])}${'M'.padEnd(columnWidths[3])}${'W'.padEnd(columnWidths[4])}${'L'.padEnd(columnWidths[5])}${'D'.padEnd(columnWidths[6])}${'KO'.padEnd(columnWidths[7])}`;
@@ -180,7 +180,7 @@ export class SelectBoxerScene extends Phaser.Scene {
       const y = 80 + i * 24;
       this.options.push(
         this.add
-          .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
+          .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, tableAlpha)
           .setOrigin(0.5, 0)
       );
       const line = `${b.ranking.toString().padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age.toString().padEnd(columnWidths[2])}${b.matches.toString().padEnd(columnWidths[3])}${b.wins.toString().padEnd(columnWidths[4])}${b.losses.toString().padEnd(columnWidths[5])}${b.draws.toString().padEnd(columnWidths[6])}${b.winsByKO.toString().padEnd(columnWidths[7])}`;
