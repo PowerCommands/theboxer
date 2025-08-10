@@ -44,6 +44,7 @@ export class RankingScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     const boxers = getRankings();
+    const player = getPlayerBoxer();
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const namePad = Math.max(15, maxNameLen + 1);
     const columnWidths = [5, namePad, 5, 5, 5, 5, 5, 5];
@@ -85,10 +86,12 @@ export class RankingScene extends Phaser.Scene {
         `${b.losses.toString().padEnd(columnWidths[5])}` +
         `${b.draws.toString().padEnd(columnWidths[6])}` +
         `${b.winsByKO.toString().padEnd(columnWidths[7])}`;
+      const isPlayer = player && (b === player || b.name === player.name);
       const txt = this.add
         .text(contentOffsetX, y, line, {
           font: '20px monospace',
-          color: '#ffffff',
+          color: isPlayer ? '#0000ff' : '#ffffff',
+          fontStyle: isPlayer ? 'bold' : 'normal',
         })
         .setOrigin(0, 0);
 
@@ -165,7 +168,6 @@ export class RankingScene extends Phaser.Scene {
 
     // Initialize scrollbar position so the player's boxer is centered if possible
     let initialScroll = 0;
-    const player = getPlayerBoxer();
     if (player) {
       const index = boxers.findIndex((b) => b === player || b.name === player.name);
       if (index >= 0) {
