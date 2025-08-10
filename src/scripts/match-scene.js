@@ -438,6 +438,9 @@ export class MatchScene extends Phaser.Scene {
       : this.player2.stats.userCreated
       ? this.player2.stats
       : null;
+    const before = user ? user.earnings || 0 : 0;
+    recordResult(winner.stats, loser.stats, 'KO');
+    const prize = user ? user.earnings - before : 0;
     if (user) {
       const opponent =
         user === this.player1.stats ? this.player2.stats : this.player1.stats;
@@ -460,10 +463,10 @@ export class MatchScene extends Phaser.Scene {
         method: 'KO',
         round: this.roundTimer.round,
         time: timeStr,
+        prize,
         roundDetails,
       });
     }
-    recordResult(winner.stats, loser.stats, 'KO');
     saveGameState(BOXERS);
   }
 
@@ -485,7 +488,9 @@ export class MatchScene extends Phaser.Scene {
         method: 'Draw',
         round: this.roundTimer.round,
       });
+      const before = user ? user.earnings || 0 : 0;
       recordDraw(this.player1.stats, this.player2.stats);
+      const prize = user ? user.earnings - before : 0;
       if (user) {
         const opponent = userIsP1 ? this.player2.stats : this.player1.stats;
         const roundDetails = this.roundLog.map((r) => ({
@@ -507,6 +512,7 @@ export class MatchScene extends Phaser.Scene {
           round: this.roundTimer.round,
           time: '-',
           score: `${userScore}-${oppScore}`,
+          prize,
           roundDetails,
         });
       }
@@ -525,7 +531,9 @@ export class MatchScene extends Phaser.Scene {
       method: 'Points',
       round: this.roundTimer.round,
     });
+    const before = user ? user.earnings || 0 : 0;
     recordResult(winner.stats, loser.stats, 'Points');
+    const prize = user ? user.earnings - before : 0;
     if (user) {
       const opponent = userIsP1 ? this.player2.stats : this.player1.stats;
       const roundDetails = this.roundLog.map((r) => ({
@@ -547,6 +555,7 @@ export class MatchScene extends Phaser.Scene {
         round: this.roundTimer.round,
         time: '-',
         score: `${userScore}-${oppScore}`,
+        prize,
         roundDetails,
       });
     }

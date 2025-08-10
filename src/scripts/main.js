@@ -5,6 +5,7 @@ import { RankingScene } from './ranking-scene.js';
 import { SoundManager } from './sound-manager.js';
 import { CreateBoxerScene } from './create-boxer-scene.js';
 import { MatchLogScene } from './match-log-scene.js';
+import { BackdropManager } from './backdrop-manager.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -99,6 +100,7 @@ class BootScene extends Phaser.Scene {
   create() {
     console.log('BootScene: preload complete, switching to Ranking');
     SoundManager.init(this);
+    BackdropManager.init();
 
     const gameSound = this.game.sound;
     const resume = () => {
