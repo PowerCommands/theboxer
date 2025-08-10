@@ -47,7 +47,16 @@ export class RankingScene extends Phaser.Scene {
     const player = getPlayerBoxer();
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const namePad = Math.max(15, maxNameLen + 1);
-    const columnWidths = [5, namePad, 5, 5, 5, 5, 5, 5];
+    const maxTitleLen = boxers.reduce(
+      (m, b) =>
+        Math.max(
+          m,
+          (b.titles ? b.titles.map((t) => `${t}🏆`).join(' ').length : 0)
+        ),
+      6
+    );
+    const titlePad = Math.max(10, maxTitleLen + 1);
+    const columnWidths = [5, namePad, titlePad, 5, 5, 5, 5, 5, 5];
     const rectWidth = width * 0.9;
     const rowHeight = 24;
     const tableTop = headerY + 40;
@@ -55,7 +64,16 @@ export class RankingScene extends Phaser.Scene {
     this.add
       .rectangle(tableLeft, tableTop, rectWidth, rowHeight, 0x808080, 0.5)
       .setOrigin(0, 0);
-    const headers = `${'Rank'.padEnd(columnWidths[0])}${'Name'.padEnd(columnWidths[1])}${'Age'.padEnd(columnWidths[2])}${'M'.padEnd(columnWidths[3])}${'W'.padEnd(columnWidths[4])}${'L'.padEnd(columnWidths[5])}${'D'.padEnd(columnWidths[6])}${'KO'.padEnd(columnWidths[7])}`;
+    const headers =
+      `${'Rank'.padEnd(columnWidths[0])}` +
+      `${'Name'.padEnd(columnWidths[1])}` +
+      `${'Titles'.padEnd(columnWidths[2])}` +
+      `${'Age'.padEnd(columnWidths[3])}` +
+      `${'M'.padEnd(columnWidths[4])}` +
+      `${'W'.padEnd(columnWidths[5])}` +
+      `${'L'.padEnd(columnWidths[6])}` +
+      `${'D'.padEnd(columnWidths[7])}` +
+      `${'KO'.padEnd(columnWidths[8])}`;
     this.add.text(tableLeft, tableTop, headers, {
       fontFamily: 'monospace',
       fontSize: '20px',
@@ -78,14 +96,16 @@ export class RankingScene extends Phaser.Scene {
       const rowRect = this.add
         .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
         .setOrigin(0.5, 0);
-      const line = `${b.ranking.toString().padEnd(columnWidths[0])}` +
+      const line =
+        `${b.ranking.toString().padEnd(columnWidths[0])}` +
         `${b.name.padEnd(columnWidths[1])}` +
-        `${b.age.toString().padEnd(columnWidths[2])}` +
-        `${b.matches.toString().padEnd(columnWidths[3])}` +
-        `${b.wins.toString().padEnd(columnWidths[4])}` +
-        `${b.losses.toString().padEnd(columnWidths[5])}` +
-        `${b.draws.toString().padEnd(columnWidths[6])}` +
-        `${b.winsByKO.toString().padEnd(columnWidths[7])}`;
+        `${(b.titles ? b.titles.map((t) => `${t}🏆`).join(' ') : '').padEnd(columnWidths[2])}` +
+        `${b.age.toString().padEnd(columnWidths[3])}` +
+        `${b.matches.toString().padEnd(columnWidths[4])}` +
+        `${b.wins.toString().padEnd(columnWidths[5])}` +
+        `${b.losses.toString().padEnd(columnWidths[6])}` +
+        `${b.draws.toString().padEnd(columnWidths[7])}` +
+        `${b.winsByKO.toString().padEnd(columnWidths[8])}`;
       const isPlayer = player && (b === player || b.name === player.name);
       const txt = this.add
         .text(contentOffsetX, y, line, {
