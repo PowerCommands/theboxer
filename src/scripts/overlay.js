@@ -1,5 +1,6 @@
 import { eventBus } from './event-bus.js';
 import { appConfig } from './config.js';
+import { SoundManager } from './sound-manager.js';
 
 export class OverlayUI extends Phaser.Scene {
   constructor() {
@@ -353,6 +354,7 @@ export class OverlayUI extends Phaser.Scene {
         controller.setLevel(levelValue);
         this.strategyOptions.forEach((o) => o.setColor('#ffffff'));
         txt.setColor('#ffff00');
+        SoundManager.playClick();
       });
       this.strategyOptions.push(txt);
     });
