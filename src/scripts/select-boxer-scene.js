@@ -2,7 +2,11 @@ import { getRankings } from './boxer-stats.js';
 import { getTestMode, tableAlpha } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
-import { scheduleMatch } from './next-match.js';
+import {
+  scheduleMatch,
+  getPendingMatch,
+  clearPendingMatch,
+} from './next-match.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -329,7 +333,18 @@ export class SelectBoxerScene extends Phaser.Scene {
       : this.selectedStrategy1 ?? 'default';
     const aiLevel2 = this.selectedStrategy2 ?? 'default';
     scheduleMatch({ boxer1, boxer2, aiLevel1, aiLevel2, rounds });
-    this.scene.start('Ranking');
+    const pending = getPendingMatch();
+    if (pending) {
+      const matchData = {
+        ...pending,
+        red: pending.boxer1,
+        blue: pending.boxer2,
+      };
+      clearPendingMatch();
+      this.scene.start('MatchIntroScene', matchData);
+    } else {
+      this.scene.start('Ranking');
+    }
   }
 
   resetSelection() {
