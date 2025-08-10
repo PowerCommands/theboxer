@@ -99,6 +99,20 @@ export class OverlayUI extends Phaser.Scene {
       }),
     };
 
+    // track hits and round-score totals
+    this.hits = { p1: 0, p2: 0 };
+    this.score = { p1: 0, p2: 0 };
+
+    this.updateHitTexts = () => {
+      this.hitText.p1.setText(
+        `Hits: ${this.hits.p1} (${this.score.p1}-${this.score.p2})`
+      );
+      this.hitText.p2.setText(
+        `Hits: ${this.hits.p2} (${this.score.p2}-${this.score.p1})`
+      );
+    };
+    this.updateHitTexts();
+
     // initialize full bars
     this.setBarValue(this.bars.p1.stamina, 1);
     this.setBarValue(this.bars.p1.power, 1);
@@ -145,8 +159,13 @@ export class OverlayUI extends Phaser.Scene {
       this.announceWinner(data);
     };
     this.onHitUpdate = ({ p1, p2 }) => {
-      this.hitText.p1.setText(`Hits: ${p1}`);
-      this.hitText.p2.setText(`Hits: ${p2}`);
+      this.hits = { p1, p2 };
+      this.updateHitTexts();
+    };
+
+    this.onScoreUpdate = ({ p1, p2 }) => {
+      this.score = { p1, p2 };
+      this.updateHitTexts();
     };
 
     this.onMatchDate = ({ date, year, time, arena, city, country }) => {
@@ -168,6 +187,7 @@ export class OverlayUI extends Phaser.Scene {
     eventBus.on('round-ended', this.onRoundEnded);
     eventBus.on('match-winner', this.onMatchWinner);
     eventBus.on('hit-update', this.onHitUpdate);
+    eventBus.on('score-update', this.onScoreUpdate);
     eventBus.on('match-date', this.onMatchDate);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
@@ -180,6 +200,7 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('round-ended', this.onRoundEnded);
       eventBus.off('match-winner', this.onMatchWinner);
       eventBus.off('hit-update', this.onHitUpdate);
+      eventBus.off('score-update', this.onScoreUpdate);
       eventBus.off('match-date', this.onMatchDate);
     });
   }
