@@ -246,20 +246,13 @@ export class RankingScene extends Phaser.Scene {
         .on('pointerup', () => {
           SoundManager.stopMenuLoop();
           SoundManager.playIntro();
-          this.scene.launch('OverlayUI');
-          const { boxer1, boxer2, aiLevel1, aiLevel2, rounds, arena, year, date } =
-            pending;
+          const matchData = {
+            ...pending,
+            red: pending.boxer1,
+            blue: pending.boxer2,
+          };
           clearPendingMatch();
-          this.scene.start('Match', {
-            boxer1,
-            boxer2,
-            aiLevel1,
-            aiLevel2,
-            rounds,
-            arena,
-            year,
-            date,
-          });
+          this.scene.start('MatchIntroScene', matchData);
         });
     } else {
       const btnLabel = getTestMode()

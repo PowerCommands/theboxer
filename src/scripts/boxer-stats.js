@@ -37,6 +37,36 @@ function beltsOnLine(b1, b2) {
   return titles.size;
 }
 
+function titlesOnLineList(b1, b2) {
+  const titles = new Set();
+  const check = (t) => {
+    const info = TITLE_MAP[t];
+    if (!info) return;
+    if (info.region === 'Global') {
+      titles.add(t);
+    } else if (b1.continent === info.region && b2.continent === info.region) {
+      titles.add(t);
+    }
+  };
+  (b1.titles || []).forEach(check);
+  (b2.titles || []).forEach(check);
+  return Array.from(titles);
+}
+
+export function getMatchPreview(b1, b2) {
+  const titles = titlesOnLineList(b1, b2);
+  const worstRank = Math.max(b1.ranking || 100, b2.ranking || 100);
+  const { base, bonus } = basePrizeForRank(worstRank);
+  const beltMult = Math.pow(3, titles.length);
+  const purse = roundThousand(base * beltMult);
+  const winnerBonus = roundThousand(purse * bonus);
+  return {
+    purse,
+    winnerBonus,
+    titlesOnTheLine: titles.map((code) => ({ code })),
+  };
+}
+
 function awardEarnings(b1, b2, winner) {
   const worstRank = Math.max(b1.ranking || 100, b2.ranking || 100);
   const { base, bonus } = basePrizeForRank(worstRank);

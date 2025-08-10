@@ -20,7 +20,8 @@ export class MatchIntroScene extends Phaser.Scene {
       this.skipped = true;
       this.timeline?.stop();
       SoundManager.sounds?.crowd?.stop();
-      this.scene.start('MatchScene', this.matchData);
+      this.scene.launch('OverlayUI');
+      this.scene.start('Match', this.matchData);
     };
     this.input.keyboard.on('keydown', skip);
     this.input.on('pointerdown', skip);
