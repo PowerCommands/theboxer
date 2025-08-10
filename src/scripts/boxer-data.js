@@ -1121,8 +1121,8 @@ export const BOXER_DATA = [
     "ruleset": 2
   },
   {
-    "name": "Kevin Fisher",
-    "nickName": "Hawk",
+    "name": "Wong Tong",
+    "nickName": "The Wrestler",
     "country": "South Korea",
     "continent": "Asia",
     "stamina": 0.5,
@@ -1293,7 +1293,7 @@ export const BOXER_DATA = [
   },
   {
     "name": "Zane Smith",
-    "nickName": "Eagle",
+    "nickName": "Hawkeye",
     "country": "Brazil",
     "continent": "South America",
     "stamina": 0.6,
@@ -1369,7 +1369,7 @@ export const BOXER_DATA = [
   },
   {
     "name": "Alex Smith",
-    "nickName": "Eagle",
+    "nickName": "Falcon",
     "country": "Sweden",
     "continent": "Europe",
     "stamina": 1.9,
@@ -1425,8 +1425,8 @@ export const BOXER_DATA = [
     "ruleset": 1
   },
   {
-    "name": "Dylan Iverson",
-    "nickName": "Eagle",
+    "name": "Juan Perez",
+    "nickName": "The Eagle",
     "country": "Brazil",
     "continent": "South America",
     "stamina": 1.6,
@@ -1596,8 +1596,8 @@ export const BOXER_DATA = [
     "ruleset": 3
   },
   {
-    "name": "Mark Evans",
-    "nickName": "Bear",
+    "name": "Chaves Esmeraldo",
+    "nickName": "The Knife",
     "country": "Mexico",
     "continent": "North America",
     "stamina": 2.2,
@@ -1617,8 +1617,8 @@ export const BOXER_DATA = [
   {
     "name": "George Johnson",
     "nickName": "Thunder",
-    "country": "New Zealand",
-    "continent": "Oceania",
+    "country": "Nigeria",
+    "continent": "Africa",
     "stamina": 1,
     "power": 1.8,
     "health": 3.5,
@@ -1692,8 +1692,8 @@ export const BOXER_DATA = [
   },
   {
     "name": "Liam Smith",
-    "nickName": "Tiger",
-    "country": "Norway",
+    "nickName": "Flash",
+    "country": "Ireland",
     "continent": "Europe",
     "stamina": 1,
     "power": 2.8,
