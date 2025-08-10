@@ -119,9 +119,9 @@ const config = {
   type: Phaser.AUTO,
   width: 1400,
   height: 1050,
-  backgroundColor: '#2d2d2d',
   parent: 'game-container',
   dom: { createContainer: true },
+  transparent: true,
   scene: [
     BootScene,
     RankingScene,
