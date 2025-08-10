@@ -34,6 +34,14 @@ export class CreateBoxerScene extends Phaser.Scene {
           <tr><td>Name</td><td><input type="text" id="name" size="${inputSize}" /></td></tr>
           <tr><td>Nickname</td><td><input type="text" id="nick" size="${inputSize}" /></td></tr>
           <tr><td>Country</td><td><input type="text" id="country" size="${inputSize}" /></td></tr>
+          <tr><td>Continent</td><td><select id="continent">
+            <option value="Africa">Africa</option>
+            <option value="Asia">Asia</option>
+            <option value="Europe">Europe</option>
+            <option value="North America">North America</option>
+            <option value="Oceania">Oceania</option>
+            <option value="South America">South America</option>
+          </select></td></tr>
           <tr><td>Age <span id="ageVal">18</span></td><td><input type="range" id="age" min="18" max="30" value="18" /></td></tr>
           <tr><th colspan="2">Difficulty &amp; Ruleset</th></tr>
           <tr><td>Difficulty <span id="diffText">Easy</span></td><td><input type="range" id="difficulty" min="0" max="2" step="1" value="0" /></td></tr>
@@ -54,6 +62,7 @@ export class CreateBoxerScene extends Phaser.Scene {
     const nameInput = dom.getChildByID('name');
     const nickInput = dom.getChildByID('nick');
     const countryInput = dom.getChildByID('country');
+    const continentSelect = dom.getChildByID('continent');
     const ageInput = dom.getChildByID('age');
     const ageVal = dom.getChildByID('ageVal');
     const diffSlider = dom.getChildByID('difficulty');
@@ -144,6 +153,7 @@ export class CreateBoxerScene extends Phaser.Scene {
         name: nameInput.value || 'Player',
         nickName: nickInput.value || '',
         country: countryInput.value || '',
+        continent: continentSelect.value || '',
         age,
         stamina: parseFloat(staminaSlider.value),
         power: parseFloat(powerSlider.value),

@@ -54,7 +54,7 @@ Press `Shift` + `P` to pause the match.
 Select **Start new game** on the ranking screen to build your own fighter.
 You will be presented with a form where you can customise the boxer:
 
-- **Identity** – Choose the name, nickname, country and age.
+- **Identity** – Choose the name, nickname, country, continent and age.
 - **Difficulty** – Easy, Normal and Hard determine how many attribute points you
   can spend and which rulesets are available.
 - **Ruleset** – Pick the ruleset for your matches. Higher difficulties offer
