@@ -88,18 +88,24 @@ export class RankingScene extends Phaser.Scene {
       this.add.text(
         tableLeft,
         infoY + 30,
+        `Rounds: ${pending.rounds}`,
+        { font: '20px Arial', color: '#ffffff' }
+      );
+      this.add.text(
+        tableLeft,
+        infoY + 60,
         `${pending.arena.Name}, ${pending.arena.City} (${pending.arena.Country})`,
         { font: '20px Arial', color: '#ffffff' }
       );
       const targetRank = Math.min(pending.boxer1.ranking, pending.boxer2.ranking);
       this.add.text(
         tableLeft,
-        infoY + 60,
+        infoY + 90,
         `Winner of this fight gets ranked as number ${targetRank}.`,
         { font: '20px Arial', color: '#ffffff' }
       );
       this.add
-        .text(tableLeft, infoY + 100, 'Start fight!', {
+        .text(tableLeft, infoY + 130, 'Start fight!', {
           font: '24px Arial',
           color: '#00ff00',
         })
