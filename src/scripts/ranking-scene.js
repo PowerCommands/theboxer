@@ -66,19 +66,34 @@ export class RankingScene extends Phaser.Scene {
     const listContainer = this.add.container(tableLeft, tableTop + 20);
     boxers.forEach((b, i) => {
       const y = i * rowHeight;
-      listContainer.add(
-        this.add
-          .rectangle(0, y, rectWidth, rowHeight, 0x808080, 0.5)
-          .setOrigin(0, 0)
-      );
-      const line = `${b.ranking.toString().padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age.toString().padEnd(columnWidths[2])}${b.matches.toString().padEnd(columnWidths[3])}${b.wins.toString().padEnd(columnWidths[4])}${b.losses.toString().padEnd(columnWidths[5])}${b.draws.toString().padEnd(columnWidths[6])}${b.winsByKO.toString().padEnd(columnWidths[7])}`;
-      listContainer.add(
-        this.add.text(0, y, line, {
-          fontFamily: 'monospace',
-          fontSize: '20px',
-          color: '#ffffff',
-        })
-      );
+      const rowBg = this.add
+        .rectangle(0, 0, rectWidth, rowHeight, 0x808080, 0.5)
+        .setOrigin(0, 0);
+      listContainer.add(rowBg);
+      rowBg.setPosition(0, y);
+
+      const line = `${b.ranking
+        .toString()
+        .padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age
+        .toString()
+        .padEnd(columnWidths[2])}${b.matches
+        .toString()
+        .padEnd(columnWidths[3])}${b.wins
+        .toString()
+        .padEnd(columnWidths[4])}${b.losses
+        .toString()
+        .padEnd(columnWidths[5])}${b.draws
+        .toString()
+        .padEnd(columnWidths[6])}${b.winsByKO
+        .toString()
+        .padEnd(columnWidths[7])}`;
+      const rowText = this.add.text(0, 0, line, {
+        fontFamily: 'monospace',
+        fontSize: '20px',
+        color: '#ffffff',
+      });
+      listContainer.add(rowText);
+      rowText.setPosition(0, y);
     });
     const maskShape = this.add
       .rectangle(tableLeft, tableTop + 20, rectWidth, listHeight)
