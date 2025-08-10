@@ -1,5 +1,18 @@
-import { BOXERS, addBoxer, defaultStrategyForRanking } from './boxer-data.js';
+import { BOXERS, addBoxer } from './boxers.js';
 import { setPlayerBoxer } from './player-boxer.js';
+
+function defaultStrategyForRanking(ranking) {
+  if (ranking >= 80) {
+    return Math.floor(Math.random() * 4) + 1;
+  }
+  if (ranking >= 50) {
+    return Math.floor(Math.random() * 3) + 2;
+  }
+  if (ranking >= 11) {
+    return Math.floor(Math.random() * 4) + 3;
+  }
+  return Math.floor(Math.random() * 4) + 4;
+}
 
 // Scene that lets the player create their own boxer.
 export class CreateBoxerScene extends Phaser.Scene {

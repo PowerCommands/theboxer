@@ -1,4 +1,4 @@
-import { BOXERS, resetBoxers, addBoxer } from './boxer-data.js';
+import { BOXERS, resetBoxers, addBoxer } from './boxers.js';
 import { setPlayerBoxer } from './player-boxer.js';
 import { getMatchLog, setMatchLog, resetMatchLog } from './match-log.js';
 

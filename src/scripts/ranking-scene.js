@@ -62,18 +62,53 @@ export class RankingScene extends Phaser.Scene {
       color: '#ffff00',
     });
 
-    const tableBottom = tableTop + 20 + boxers.length * rowHeight;
+    const visibleRows = Math.min(20, boxers.length);
+    const listHeight = visibleRows * rowHeight;
+    const listContainer = this.add.container(tableLeft, tableTop + 20);
     boxers.forEach((b, i) => {
-      const y = tableTop + 20 + i * rowHeight; // 20px offset from header
-      this.add
-        .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
-        .setOrigin(0.5, 0);
+      const y = i * rowHeight;
+      listContainer.add(
+        this.add
+          .rectangle(rectWidth / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
+          .setOrigin(0.5, 0)
+      );
       const line = `${b.ranking.toString().padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age.toString().padEnd(columnWidths[2])}${b.matches.toString().padEnd(columnWidths[3])}${b.wins.toString().padEnd(columnWidths[4])}${b.losses.toString().padEnd(columnWidths[5])}${b.draws.toString().padEnd(columnWidths[6])}${b.winsByKO.toString().padEnd(columnWidths[7])}`;
-      this.add.text(tableLeft, y, line, {
-        font: '20px monospace',
-        color: '#ffffff',
-      });
+      listContainer.add(
+        this.add.text(0, y, line, {
+          font: '20px monospace',
+          color: '#ffffff',
+        })
+      );
     });
+    const maskShape = this.add
+      .rectangle(
+        tableLeft + rectWidth / 2,
+        tableTop + 20 + listHeight / 2,
+        rectWidth,
+        listHeight
+      )
+      .setOrigin(0.5)
+      .setVisible(false);
+    listContainer.setMask(maskShape.createGeometryMask());
+    const barX = tableLeft + rectWidth + 10;
+    this.add.rectangle(barX, tableTop + 20 + listHeight / 2, 6, listHeight, 0xffffff, 0.2);
+    const thumbHeight = Math.max(20, (listHeight * listHeight) / (boxers.length * rowHeight));
+    const thumb = this.add
+      .rectangle(barX, tableTop + 20, 6, thumbHeight, 0xffffff, 0.8)
+      .setOrigin(0.5, 0);
+    let scroll = 0;
+    const maxScroll = Math.max(0, boxers.length * rowHeight - listHeight);
+    const updateScroll = () => {
+      listContainer.y = tableTop + 20 - scroll;
+      const t = maxScroll === 0 ? 0 : scroll / maxScroll;
+      thumb.y = tableTop + 20 + t * (listHeight - thumbHeight);
+    };
+    this.input.on('wheel', (_p, _g, _dx, dy) => {
+      scroll = Phaser.Math.Clamp(scroll + dy, 0, maxScroll);
+      updateScroll();
+    });
+    updateScroll();
+    const tableBottom = tableTop + 20 + listHeight;
 
     const pending = getPendingMatch();
     const hasPlayer = !!getPlayerBoxer();

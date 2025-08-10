@@ -13,7 +13,7 @@ import { RuleSet3Manager } from './ruleset3-manager.js';
 import { CommentManager } from './comment-manager.js';
 import { showComment } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
-import { BOXERS } from './boxer-data.js';
+import { BOXERS } from './boxers.js';
 import { saveGameState } from './save-system.js';
 import { addMatchLog, getMatchLog } from './match-log.js';
 
