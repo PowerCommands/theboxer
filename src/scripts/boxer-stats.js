@@ -6,9 +6,52 @@ const TITLE_MAP = TITLES.reduce((acc, t) => {
   return acc;
 }, {});
 
+function roundThousand(value) {
+  return Math.round(value / 1000) * 1000;
+}
+
+function randomThousand(min, max) {
+  return roundThousand(min + Math.random() * (max - min));
+}
+
+function basePrizeForRank(rank) {
+  if (rank >= 75) return { base: randomThousand(5000, 10000), bonus: 1 };
+  if (rank >= 50) return { base: randomThousand(10000, 50000), bonus: 1.5 };
+  if (rank >= 20) return { base: randomThousand(50000, 100000), bonus: 2 };
+  return { base: randomThousand(100000, 250000), bonus: 3 };
+}
+
+function beltsOnLine(b1, b2) {
+  const titles = new Set();
+  const check = (t) => {
+    const info = TITLE_MAP[t];
+    if (!info) return;
+    if (info.region === 'Global') {
+      titles.add(t);
+    } else if (b1.continent === info.region && b2.continent === info.region) {
+      titles.add(t);
+    }
+  };
+  (b1.titles || []).forEach(check);
+  (b2.titles || []).forEach(check);
+  return titles.size;
+}
+
+function awardEarnings(b1, b2, winner) {
+  const worstRank = Math.max(b1.ranking || 100, b2.ranking || 100);
+  const { base, bonus } = basePrizeForRank(worstRank);
+  const beltMult = Math.pow(3, beltsOnLine(b1, b2));
+  const purse = base * beltMult;
+  const loserAmt = roundThousand(purse);
+  const winnerAmt = winner ? roundThousand(purse * (1 + bonus)) : loserAmt;
+  b1.earnings = (b1.earnings || 0) + (winner === b1 ? winnerAmt : loserAmt);
+  b2.earnings = (b2.earnings || 0) + (winner === b2 ? winnerAmt : loserAmt);
+}
+
 // Record a win/loss result between two boxers.
 export function recordResult(winner, loser, method) {
   if (!winner || !loser) return;
+  awardEarnings(winner, loser, winner);
   winner.matches = (winner.matches || 0) + 1;
   loser.matches = (loser.matches || 0) + 1;
   winner.wins = (winner.wins || 0) + 1;
@@ -31,6 +74,7 @@ export function recordDraw(boxer1, boxer2) {
   boxer2.matches = (boxer2.matches || 0) + 1;
   boxer1.draws = (boxer1.draws || 0) + 1;
   boxer2.draws = (boxer2.draws || 0) + 1;
+  awardEarnings(boxer1, boxer2, null);
 }
 
 // Get a list of boxers sorted by current ranking.

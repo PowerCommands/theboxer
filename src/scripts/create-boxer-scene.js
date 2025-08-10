@@ -169,6 +169,7 @@ export class CreateBoxerScene extends Phaser.Scene {
         ruleset: parseInt(rulesetSelect.value, 10),
         userCreated: true,
         titles: [],
+        earnings: 0,
       };
       addBoxer(boxer);
       setPlayerBoxer(boxer);
