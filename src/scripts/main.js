@@ -99,7 +99,17 @@ class BootScene extends Phaser.Scene {
   create() {
     console.log('BootScene: preload complete, switching to Ranking');
     SoundManager.init(this);
-    SoundManager.playMenuLoop();
+
+    const gameSound = this.game.sound;
+    const resume = () => {
+      if (gameSound.context.state === 'suspended') {
+        gameSound.context.resume();
+      }
+      SoundManager.playMenuLoop();
+      document.body.removeEventListener('pointerdown', resume);
+    };
+    document.body.addEventListener('pointerdown', resume);
+
     this.scene.start('Ranking');
   }
 }
