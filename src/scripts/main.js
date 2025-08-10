@@ -28,6 +28,9 @@ class BootScene extends Phaser.Scene {
     this.load.audio('left-jab', 'assets/sounds/left-jab.mp3');
     this.load.audio('right-jab', 'assets/sounds/right-jab.mp3');
     this.load.audio('uppercut', 'assets/sounds/uppercut.mp3');
+    this.load.audio('whoosh', 'assets/sounds/whoosh.mp3');
+    this.load.audio('stinger', 'assets/sounds/whoosh.mp3');
+    this.load.audio('coin_jingle', 'assets/sounds/coin-spill.mp3');
     // Load idle animation frames for the boxers
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');

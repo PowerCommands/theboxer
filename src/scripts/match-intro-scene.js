@@ -165,7 +165,7 @@ export class MatchIntroScene extends Phaser.Scene {
       x: leftTargetX,
       duration: 900,
       ease: 'Elastic.Out',
-      onStart: () => this.sound?.play?.('stinger', { volume: 0.6 })
+      onStart: () => this.sound?.play?.('whoosh', { volume: 0.6 })
     });
     steps.push({
       targets: blueCard,
