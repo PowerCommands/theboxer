@@ -47,18 +47,17 @@ export class RankingScene extends Phaser.Scene {
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const namePad = Math.max(15, maxNameLen + 1);
     const columnWidths = [5, namePad, 5, 5, 5, 5, 5, 5];
-    const totalChars = columnWidths.reduce((a, c) => a + c, 0);
-    const charWidth = 12;
-    const rectWidth = totalChars * charWidth;
+    const rectWidth = width * 0.9;
     const rowHeight = 24;
     const tableTop = headerY + 40;
-    const tableLeft = (width - rectWidth) / 2;
+    const tableLeft = width * 0.05;
     this.add
-      .rectangle(width / 2, tableTop, rectWidth, rowHeight, 0x808080, 0.5)
-      .setOrigin(0.5, 0);
+      .rectangle(tableLeft, tableTop, rectWidth, rowHeight, 0x808080, 0.5)
+      .setOrigin(0, 0);
     const headers = `${'Rank'.padEnd(columnWidths[0])}${'Name'.padEnd(columnWidths[1])}${'Age'.padEnd(columnWidths[2])}${'M'.padEnd(columnWidths[3])}${'W'.padEnd(columnWidths[4])}${'L'.padEnd(columnWidths[5])}${'D'.padEnd(columnWidths[6])}${'KO'.padEnd(columnWidths[7])}`;
     this.add.text(tableLeft, tableTop, headers, {
-      font: '20px monospace',
+      fontFamily: 'monospace',
+      fontSize: '20px',
       color: '#ffff00',
     });
 
@@ -69,25 +68,21 @@ export class RankingScene extends Phaser.Scene {
       const y = i * rowHeight;
       listContainer.add(
         this.add
-          .rectangle(rectWidth / 2, y, rectWidth, rowHeight, 0x808080, 0.5)
-          .setOrigin(0.5, 0)
+          .rectangle(0, y, rectWidth, rowHeight, 0x808080, 0.5)
+          .setOrigin(0, 0)
       );
       const line = `${b.ranking.toString().padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age.toString().padEnd(columnWidths[2])}${b.matches.toString().padEnd(columnWidths[3])}${b.wins.toString().padEnd(columnWidths[4])}${b.losses.toString().padEnd(columnWidths[5])}${b.draws.toString().padEnd(columnWidths[6])}${b.winsByKO.toString().padEnd(columnWidths[7])}`;
       listContainer.add(
         this.add.text(0, y, line, {
-          font: '20px monospace',
+          fontFamily: 'monospace',
+          fontSize: '20px',
           color: '#ffffff',
         })
       );
     });
     const maskShape = this.add
-      .rectangle(
-        tableLeft + rectWidth / 2,
-        tableTop + 20 + listHeight / 2,
-        rectWidth,
-        listHeight
-      )
-      .setOrigin(0.5)
+      .rectangle(tableLeft, tableTop + 20, rectWidth, listHeight)
+      .setOrigin(0, 0)
       .setVisible(false);
     listContainer.setMask(maskShape.createGeometryMask());
     const barX = tableLeft + rectWidth + 10;
