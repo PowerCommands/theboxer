@@ -116,6 +116,8 @@ class BootScene extends Phaser.Scene {
     };
     document.body.addEventListener('pointerdown', resume);
 
+    // Start the overlay scene so match UI elements are ready when needed.
+    this.scene.launch('OverlayUI');
     this.scene.start('Ranking');
   }
 }
