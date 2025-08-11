@@ -6,9 +6,8 @@ export class OverlayUI extends Phaser.Scene {
   constructor() {
     super('OverlayUI');
     this.pendingNames = ['', ''];
-    this.newMatchText = null;
-    this.rankingText = null;
     this.nextRoundText = null;
+    this.continueText = null;
     this.matchOver = false;
     this.strategyOptions = [];
     this.enterHandler = null;
@@ -129,19 +128,18 @@ export class OverlayUI extends Phaser.Scene {
       // Ensure the overlay is always rendered above the match scene.
       this.scene.bringToTop();
       // When a new match begins, reset match-over state and hide any
-      // post-match buttons so the normal round flow works again.
+      // post-match messages so the normal round flow works again.
       this.matchOver = false;
-      this.newMatchText?.setVisible(false);
-      this.rankingText?.setVisible(false);
+      this.continueText?.setVisible(false);
       this.hideNextRoundButton();
       this.showRound(round);
       // Remove any pending fallback handlers from the previous match.
       if (this.enterHandler) {
-        this.input.keyboard.off('keydown-ENTER', this.enterHandler);
+        this.input.keyboard.off('keydown', this.enterHandler);
         this.enterHandler = null;
       }
       if (this.clickHandler) {
-        this.input.off('pointerup', this.clickHandler);
+        this.input.off('pointerdown', this.clickHandler);
         this.clickHandler = null;
       }
     };
@@ -263,50 +261,34 @@ export class OverlayUI extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
     const startY = height - 60;
-    if (!this.newMatchText) {
-      this.newMatchText = this.add
-        .text(width / 2, startY, 'Start New Match', {
+
+    if (!this.continueText) {
+      this.continueText = this.add
+        .text(width / 2, startY, 'Press any key to continue', {
           font: '32px Arial',
           color: '#ffffff',
         })
         .setOrigin(0.5)
-        .setInteractive({ useHandCursor: true })
         .setDepth(1);
-      this.newMatchText.on('pointerup', () => {
-        this.scene.stop('MatchScene');
-        this.scene.sleep('OverlayUI');
-        this.scene.setVisible('OverlayUI', false);
-        this.scene.start('SelectBoxer');
-      });
     } else {
-      this.newMatchText.setVisible(true).setPosition(width / 2, startY);
+      this.continueText.setVisible(true).setPosition(width / 2, startY);
     }
+    this.continueText.setAlpha(0);
+    this.tweens.add({
+      targets: this.continueText,
+      alpha: 1,
+      duration: 450,
+      onComplete: () => {
+        this.tweens.add({
+          targets: this.continueText,
+          alpha: 0.25,
+          duration: 600,
+          yoyo: true,
+          repeat: -1,
+        });
+      },
+    });
 
-    if (!this.rankingText) {
-      this.rankingText = this.add
-        .text(width / 2, startY + 40, 'Show ranking', {
-          font: '32px Arial',
-          color: '#ffffff',
-        })
-        .setOrigin(0.5)
-        .setInteractive({ useHandCursor: true })
-        .setDepth(1);
-      this.rankingText.on('pointerup', () => {
-        this.scene.stop('MatchScene');
-        this.scene.sleep('OverlayUI');
-        this.scene.setVisible('OverlayUI', false);
-        this.scene.start('Ranking');
-      });
-    } else {
-      this.rankingText
-        .setVisible(true)
-        .setPosition(width / 2, startY + 40);
-    }
-
-    // As a fallback, allow pressing Enter or clicking anywhere else on
-    // the screen to return to the ranking list. This helps when the
-    // post-match buttons fail to appear or when playing on devices
-    // without a keyboard.
     const goToRanking = () => {
       this.scene.stop('MatchScene');
       this.scene.sleep('OverlayUI');
@@ -314,13 +296,9 @@ export class OverlayUI extends Phaser.Scene {
       this.scene.start('Ranking');
     };
     this.enterHandler = goToRanking;
-    this.clickHandler = (pointer, gameObjects) => {
-      if (gameObjects.length === 0) {
-        goToRanking();
-      }
-    };
-    this.input.keyboard.once('keydown-ENTER', this.enterHandler);
-    this.input.once('pointerup', this.clickHandler);
+    this.clickHandler = goToRanking;
+    this.input.keyboard.once('keydown', this.enterHandler);
+    this.input.once('pointerdown', this.clickHandler);
   }
 
   showNextRoundButton() {
