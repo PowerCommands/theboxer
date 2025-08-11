@@ -53,7 +53,7 @@ export class MatchLogScene extends Phaser.Scene {
     });
     const headerY = 80;
     this.add
-      .rectangle(width / 2, headerY, tableWidth, rowHeight, 0x808080, tableAlpha)
+      .rectangle(width / 2, headerY, tableWidth, rowHeight, 0x001b44, tableAlpha)
       .setOrigin(0.5, 0);
     if (!this.log.length) {
       this.add
@@ -106,7 +106,7 @@ export class MatchLogScene extends Phaser.Scene {
     const rowHeight = this.rowHeight;
     this.log.forEach((entry, index) => {
       const rowRect = this.add
-        .rectangle(width / 2, y, this.tableWidth, rowHeight, 0x808080, tableAlpha)
+        .rectangle(width / 2, y, this.tableWidth, rowHeight, 0x001b44, tableAlpha)
         .setOrigin(0.5, 0);
       this.rowObjs.push(rowRect);
 
