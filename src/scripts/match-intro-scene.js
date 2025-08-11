@@ -84,16 +84,17 @@ export class MatchIntroScene extends Phaser.Scene {
     purseContainer.setAlpha(0);
 
     
-    const emitter = this.add.particles(width / 2, height * 0.68, 'coin', {
-      speed: { min: 100, max: 250 },
-      // 270° = uppåt i Phaser (justera ±30° som innan)
-      angle: { min: 240, max: 300 },
-      gravityY: 600,
-      lifespan: 900,
-      quantity: 0,
+    const coins = this.add.particles('coin').setDepth(10);
+    const emitter = coins.createEmitter({
+      x: { min: width / 2 - 250, max: width / 2 + 250 },
+      y: { min: -150, max: -50 },
+      speedY: { min: 200, max: 400 },
+      lifespan: 2000,
+      quantity: 2,
+      frequency: 80,
       scale: { start: 0.7, end: 0.2 },
       alpha: { start: 1, end: 0 },
-      emitting: false
+      on: false
     });
 
     // --- BÄLTEN ---
@@ -186,7 +187,8 @@ export class MatchIntroScene extends Phaser.Scene {
       duration: 280,
       onStart: () => {
         this.sound?.play?.('coin_jingle', { volume: 0.6 });
-        emitter.explode(38, width / 2, height * 0.68);
+        emitter.start();
+        this.time.delayedCall(1200, () => emitter.stop());
         countUp(0, data.purse || 0, 1100, (v) => {
           purseText.setText(formatMoney(v));
         });
@@ -261,10 +263,10 @@ export class MatchIntroScene extends Phaser.Scene {
     }
     c.add(panel);
 
-    const headline =
-      [name, nickname ? `“${nickname}”` : ''].filter(Boolean).join(' ') +
-      (age ? ` (age ${age})` : '');
-    const tName = this.add.text(0, -78, headline, {
+    const headline = [name, nickname ? `“${nickname}”` : '']
+      .filter(Boolean)
+      .join(' ');
+    const tName = this.add.text(0, -90, headline, {
       fontFamily: 'Arial',
       fontSize: '30px',
       color: '#FFFFFF',
@@ -272,6 +274,16 @@ export class MatchIntroScene extends Phaser.Scene {
       wordWrap: { width: 480 }
     }).setOrigin(0.5);
     c.add(tName);
+
+    if (age !== null) {
+      const tAge = this.add.text(0, -52, `Age: ${age}`, {
+        fontFamily: 'Arial',
+        fontSize: '24px',
+        color: '#FFFFFF',
+        align: 'center'
+      }).setOrigin(0.5);
+      c.add(tAge);
+    }
 
     const tRecord = this.add.text(0, -20, `Record: ${wins}-${losses}-${draws}`, {
       fontFamily: 'Arial',
