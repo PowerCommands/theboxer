@@ -34,16 +34,15 @@ export class MatchLogScene extends Phaser.Scene {
     this.rowHeight = rowHeight;
     this.startX = startX;
     const colPercents = [
-      0.05,
-      0.07,
+      0.1,
       0.28,
       0.08,
       0.19,
       0.08,
       0.06,
       0.06,
-      0.06,
-      0.07,
+      0.05,
+      0.1,
     ];
     let accum = startX;
     this.colX = colPercents.map((p) => {
@@ -64,7 +63,6 @@ export class MatchLogScene extends Phaser.Scene {
         .setOrigin(0.5, 0);
     } else {
       const headers = [
-        'Year',
         'Date',
         'Arena',
         'Rank',
@@ -129,16 +127,34 @@ export class MatchLogScene extends Phaser.Scene {
       const arenaText = [entry.arena?.Name, entry.arena?.City]
         .filter(Boolean)
         .join(', ');
+      const [day, monthName] = String(entry.date).split(' ');
+      const months = {
+        Januari: '01',
+        Februari: '02',
+        Mars: '03',
+        April: '04',
+        Maj: '05',
+        Juni: '06',
+        Juli: '07',
+        Augusti: '08',
+        September: '09',
+        Oktober: '10',
+        November: '11',
+        December: '12',
+      };
+      const monthNum = months[monthName] || '01';
+      const dateStr = `${entry.year}${monthNum}${String(day).padStart(2, '0')}`;
+      const timeStr =
+        entry.method === 'KO' ? String(entry.time).padStart(5, '0') : '-';
       const row = [
-        entry.year,
-        entry.date,
+        dateStr,
         arenaText,
         entry.rank,
         `${entry.opponent} (rank ${entry.opponentRank})`,
         entry.result,
         entry.method === 'KO' ? 'KO' : entry.score,
         entry.round,
-        entry.method === 'KO' ? entry.time : '-',
+        timeStr,
         entry.prize != null ? formatMoney(entry.prize) : '-',
       ];
       row.forEach((text, i) => {
@@ -153,7 +169,7 @@ export class MatchLogScene extends Phaser.Scene {
       if (this.expandedRows.has(index) && Array.isArray(entry.roundDetails)) {
         entry.roundDetails.forEach((rd) => {
           const detail = this.add.text(
-            this.colX[3],
+            this.colX[2],
             y,
             `R${rd.round}: ${rd.userScore}-${rd.oppScore} (${rd.totalUser}-${rd.totalOpp})`,
             { font: '18px Arial', color: '#cccccc' }
