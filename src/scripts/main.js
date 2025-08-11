@@ -5,6 +5,8 @@ import { RankingScene } from './ranking-scene.js';
 import { SoundManager } from './sound-manager.js';
 import { CreateBoxerScene } from './create-boxer-scene.js';
 import { MatchLogScene } from './match-log-scene.js';
+import { StartScene } from './start-scene.js';
+import { OptionsScene } from './options-scene.js';
 import { BackdropManager } from './backdrop-manager.js';
 import { MatchIntroScene } from './match-intro-scene.js';
 import { TITLES } from './title-data.js';
@@ -114,7 +116,7 @@ class BootScene extends Phaser.Scene {
   }
 
   create() {
-    console.log('BootScene: preload complete, switching to Ranking');
+    console.log('BootScene: preload complete, switching to StartScene');
     SoundManager.init(this);
     BackdropManager.init();
 
@@ -132,7 +134,7 @@ class BootScene extends Phaser.Scene {
     this.scene.launch('OverlayUI');
     this.scene.sleep('OverlayUI');
     this.scene.setVisible('OverlayUI', false);
-    this.scene.start('Ranking');
+    this.scene.start('StartScene');
   }
 }
 
@@ -146,9 +148,11 @@ const config = {
   transparent: true,
   scene: [
     BootScene,
+    StartScene,
     RankingScene,
     MatchLogScene,
     CreateBoxerScene,
+    OptionsScene,
     SelectBoxerScene,
     MatchIntroScene,
     MatchScene,
