@@ -352,32 +352,53 @@ export class OverlayUI extends Phaser.Scene {
     const current = controller.getLevel();
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
-    let y = height / 2 + 40;
     this.strategyOptions.forEach((o) => o.destroy());
     this.strategyOptions = [];
-    const levels = ['default', 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    levels.forEach((lvl, i) => {
-      const label = lvl === 'default' ? 'Default' : `Strategy ${lvl}`;
-      const txt = this.add
-        .text(width / 2, y + i * 24, label, {
-          font: '20px Arial',
-          color: '#ffffff',
-        })
-        .setOrigin(0.5, 0)
-        .setInteractive({ useHandCursor: true })
-        .setDepth(1);
-      const levelValue = lvl === 'default' ? defaultLevel : lvl;
-      if (levelValue === current) {
-        txt.setColor('#ffff00');
-      }
-      txt.on('pointerup', () => {
-        controller.setLevel(levelValue);
-        this.strategyOptions.forEach((o) => o.setColor('#ffffff'));
-        txt.setColor('#ffff00');
-        SoundManager.playClick();
-      });
-      this.strategyOptions.push(txt);
+
+    const slider = this.add.dom(width / 2, height / 2, 'input', {
+      type: 'range',
+      min: '1',
+      max: '10',
+      value: String(current),
+      style: 'width:300px',
     });
+    const valueText = this.add
+      .text(width / 2, height / 2 - 50, String(current), {
+        font: '32px Arial',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5);
+    slider.node.addEventListener('input', () => {
+      valueText.setText(slider.node.value);
+    });
+
+    const makeBtn = (x, label, handler) => {
+      const container = this.add.container(x, height / 2 + 60);
+      const bg = this.add.rectangle(0, 0, 200, 40, 0x001b44, 0.4);
+      const txt = this.add
+        .text(0, 0, label, { font: '20px Arial', color: '#ffffff' })
+        .setOrigin(0.5);
+      container.add([bg, txt]);
+      container.setSize(200, 40);
+      container.setInteractive({ useHandCursor: true });
+      container.on('pointerdown', handler);
+      this.strategyOptions.push(container);
+    };
+
+    const btnSpacing = 40;
+    makeBtn(width / 2 - 100 - btnSpacing / 2, 'Ok', () => {
+      controller.setLevel(parseInt(slider.node.value, 10));
+      SoundManager.playClick();
+      this.hideStrategyOptions();
+    });
+    makeBtn(width / 2 + 100 + btnSpacing / 2, 'Use default', () => {
+      controller.setLevel(defaultLevel);
+      SoundManager.playClick();
+      this.hideStrategyOptions();
+    });
+
+    this.strategyOptions.push(slider);
+    this.strategyOptions.push(valueText);
   }
 
   hideStrategyOptions() {
