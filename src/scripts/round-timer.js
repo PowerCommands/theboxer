@@ -37,7 +37,7 @@ export class RoundTimer {
     this.remaining = 0;
     eventBus.emit('timer-tick', this.remaining);
     
-    const match = this.scene.scene.get('Match');
+    const match = this.scene.scene.get('MatchScene');
     if (match) {
       const p1 = match.player1;
       const p2 = match.player2;

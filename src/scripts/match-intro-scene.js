@@ -45,8 +45,8 @@ export class MatchIntroScene extends Phaser.Scene {
     const rightTargetX = width * 0.75;
 
     // Position cards just outside the screen based on their explicit width.
-    redCard.setPosition(-redCard.width, cardY).setDepth(5);
-    blueCard.setPosition(width + blueCard.width, cardY).setDepth(5);
+    redCard.setPosition(-redCard.cardWidth, cardY).setDepth(5);
+    blueCard.setPosition(width + blueCard.cardWidth, cardY).setDepth(5);
 
     // --- PRISPENGAR ---
     const purseContainer = this.add.container(width / 2, height * 0.68);
@@ -130,7 +130,7 @@ export class MatchIntroScene extends Phaser.Scene {
       // Rensa animationer och timers så vi inte dubblar
       if (this.tweens && this.tweens.killAll) this.tweens.killAll();
       // Scene key for the actual fight is "Match"
-      this.scene.start('Match', data);
+      this.scene.start('MatchScene', data);
     };
     if (!this._skipHandlersBound) {
       this._skipHandlersBound = true;

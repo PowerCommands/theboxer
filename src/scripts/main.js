@@ -118,6 +118,8 @@ class BootScene extends Phaser.Scene {
 
     // Start the overlay scene so match UI elements are ready when needed.
     this.scene.launch('OverlayUI');
+    this.scene.sleep('OverlayUI');
+    this.scene.setVisible('OverlayUI', false);
     this.scene.start('Ranking');
   }
 }
