@@ -1,5 +1,5 @@
 import { getRankings } from './boxer-stats.js';
-import { appConfig, getTestMode, tableAlpha } from './config.js';
+import { appConfig, getTestMode } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { formatMoney } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
@@ -62,8 +62,10 @@ export class RankingScene extends Phaser.Scene {
     const rowHeight = 24;
     const tableTop = headerY + 40;
     const tableLeft = width * 0.05;
+    const bgColor = 0x001b44;
+    const bgAlpha = 0.4;
     this.add
-      .rectangle(tableLeft, tableTop, rectWidth, rowHeight, 0x00008b, tableAlpha)
+      .rectangle(tableLeft, tableTop, rectWidth, rowHeight, bgColor, bgAlpha)
       .setOrigin(0, 0);
     const headers =
       `${'Rank'.padEnd(columnWidths[0])}` +
@@ -96,7 +98,7 @@ export class RankingScene extends Phaser.Scene {
     boxers.forEach((b, i) => {
       const y = startY + i * rowHeight;
       const rowRect = this.add
-        .rectangle(width / 2, y, rectWidth, rowHeight, 0x00008b, tableAlpha)
+        .rectangle(width / 2, y, rectWidth, rowHeight, bgColor, bgAlpha)
         .setOrigin(0.5, 0)
         .setInteractive({ useHandCursor: true })
         .on('pointerup', () => {
@@ -271,8 +273,7 @@ export class RankingScene extends Phaser.Scene {
         startBtn = this.add.container(btnX, btnY);
         startBtn.setSize(500, 80);
         const bg = this.add
-          .image(0, 0, 'fight_card')
-          .setDisplaySize(500, 80);
+          .rectangle(0, 0, 500, 80, bgColor, bgAlpha);
         const label = this.add
           .text(0, 0, 'Next fight', {
             font: '32px Arial',
