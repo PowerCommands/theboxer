@@ -18,6 +18,7 @@ export class OverlayUI extends Phaser.Scene {
   }
 
   create() {
+    this.scene.setVisible(false);
     const width = this.sys.game.config.width;
     const infoY = 0;
     const infoHeight = 140;
@@ -272,7 +273,9 @@ export class OverlayUI extends Phaser.Scene {
         .setInteractive({ useHandCursor: true })
         .setDepth(1);
       this.newMatchText.on('pointerup', () => {
-        this.scene.stop('Match');
+        this.scene.stop('MatchScene');
+        this.scene.sleep('OverlayUI');
+        this.scene.setVisible('OverlayUI', false);
         this.scene.start('SelectBoxer');
       });
     } else {
@@ -289,7 +292,9 @@ export class OverlayUI extends Phaser.Scene {
         .setInteractive({ useHandCursor: true })
         .setDepth(1);
       this.rankingText.on('pointerup', () => {
-        this.scene.stop('Match');
+        this.scene.stop('MatchScene');
+        this.scene.sleep('OverlayUI');
+        this.scene.setVisible('OverlayUI', false);
         this.scene.start('Ranking');
       });
     } else {
@@ -303,7 +308,9 @@ export class OverlayUI extends Phaser.Scene {
     // post-match buttons fail to appear or when playing on devices
     // without a keyboard.
     const goToRanking = () => {
-      this.scene.stop('Match');
+      this.scene.stop('MatchScene');
+      this.scene.sleep('OverlayUI');
+      this.scene.setVisible('OverlayUI', false);
       this.scene.start('Ranking');
     };
     this.enterHandler = goToRanking;
@@ -337,7 +344,7 @@ export class OverlayUI extends Phaser.Scene {
     }
     this.nextRoundHandler = () => this.triggerNextRound();
     this.input.once('pointerup', this.nextRoundHandler);
-    const match = this.scene.get('Match');
+    const match = this.scene.get('MatchScene');
     if (match?.isP1AI) {
       this.showStrategyOptions();
     }
@@ -362,7 +369,7 @@ export class OverlayUI extends Phaser.Scene {
   }
 
   showStrategyOptions() {
-    const match = this.scene.get('Match');
+    const match = this.scene.get('MatchScene');
     if (!match) return;
     const controller = match.player1?.controller;
     if (!controller || typeof controller.getLevel !== 'function') return;

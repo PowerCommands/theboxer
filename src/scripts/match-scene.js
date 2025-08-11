@@ -19,12 +19,15 @@ import { addMatchLog, getMatchLog } from './match-log.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
-    super('Match');
+    super('MatchScene');
   }
 
   create(data) {
-    console.log('MatchScene: create started');    
+    console.log('MatchScene: create started');
     this.hitLimit = 280; // max distance for a hit to register
+
+    this.scene.wake('OverlayUI');
+    this.scene.setVisible('OverlayUI', true);
 
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
