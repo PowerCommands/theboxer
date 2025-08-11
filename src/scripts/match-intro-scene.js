@@ -336,17 +336,20 @@ export class MatchIntroScene extends Phaser.Scene {
     const nickname = nick || nickName || '';
     const c = this.add.container(0, 0);
 
+    const cardWidth = 520;
+    const cardHeight = 310;
+
     // Panelbild (preloadad som 'fight_card'). Faller tillbaka till grafik om saknas.
     let panel;
     if (this.textures.exists('fight_card')) {
       panel = this.add.image(0, 0, 'fight_card').setOrigin(0.5);
-      panel.setDisplaySize(520, 300);
+      panel.setDisplaySize(cardWidth, cardHeight);
     } else {
       const g = this.add.graphics();
       g.fillStyle(0x0b0b0f, 0.85);
-      g.fillRoundedRect(-260, -150, 520, 300, 12);
+      g.fillRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12);
       g.lineStyle(2, 0xC1A44A, 0.9);
-      g.strokeRoundedRect(-260, -150, 520, 300, 12);
+      g.strokeRoundedRect(-cardWidth / 2, -cardHeight / 2, cardWidth, cardHeight, 12);
       panel = g;
     }
     c.add(panel);
@@ -354,7 +357,7 @@ export class MatchIntroScene extends Phaser.Scene {
     const headline = [name, nickname ? `“${nickname}”` : '']
       .filter(Boolean)
       .join(' ');
-    const tName = this.add.text(0, -90, headline, {
+    const tName = this.add.text(0, -80, headline, {
       fontFamily: 'Arial',
       fontSize: '30px',
       color: '#FFFFFF',
@@ -364,7 +367,7 @@ export class MatchIntroScene extends Phaser.Scene {
     c.add(tName);
 
     if (age !== null) {
-      const tAge = this.add.text(0, -52, `Age: ${age}`, {
+      const tAge = this.add.text(0, -42, `Age: ${age}`, {
         fontFamily: 'Arial',
         fontSize: '24px',
         color: '#FFFFFF',
@@ -373,7 +376,7 @@ export class MatchIntroScene extends Phaser.Scene {
       c.add(tAge);
     }
 
-    const tRecord = this.add.text(0, -20, `Record: ${wins}-${losses}-${draws}`, {
+    const tRecord = this.add.text(0, -10, `Record: ${wins}-${losses}-${draws}`, {
       fontFamily: 'Arial',
       fontSize: '24px',
       color: '#BEE3DB',
@@ -381,7 +384,7 @@ export class MatchIntroScene extends Phaser.Scene {
     }).setOrigin(0.5);
     c.add(tRecord);
 
-    const tRank = this.add.text(0, 20, `Rank: ${ranking}`, {
+    const tRank = this.add.text(0, 30, `Rank: ${ranking}`, {
       fontFamily: 'Arial',
       fontSize: '24px',
       color: '#FFD166',
@@ -394,7 +397,7 @@ export class MatchIntroScene extends Phaser.Scene {
       : '';
     const tClass = this.add.text(
       0,
-      64,
+      74,
       [weightClass, location].filter(Boolean).join('  •  '),
       {
       fontFamily: 'Arial',
@@ -412,8 +415,6 @@ export class MatchIntroScene extends Phaser.Scene {
     }
 
     // Hjälp-egenskaper: sätt storlek utan att påverka skalning
-    const cardWidth = 520;
-    const cardHeight = 300;
     c.setSize(cardWidth, cardHeight);
     c.cardWidth = cardWidth;
     c.cardHeight = cardHeight;
