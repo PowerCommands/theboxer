@@ -1,7 +1,18 @@
 import { SoundManager } from './sound-manager.js';
 import { resetSavedData } from './save-system.js';
 import { getTestMode, setTestMode } from './config.js';
-import { createGloveButton } from './glove-button.js';
+
+function createTextButton(scene, x, y, label, onClick) {
+  const btn = scene.add
+    .text(x, y, label, { font: 'bold 32px Arial', color: '#ffffff' })
+    .setOrigin(0.5)
+    .setInteractive({ useHandCursor: true });
+  const setColor = (hover) => btn.setColor(hover ? '#ffff00' : '#ffffff');
+  btn.on('pointerover', () => setColor(true));
+  btn.on('pointerout', () => setColor(false));
+  btn.on('pointerdown', () => onClick && onClick());
+  return btn;
+}
 
 // Phaser is loaded globally via a script tag in index.html
 
@@ -50,7 +61,7 @@ export class OptionsScene extends Phaser.Scene {
 
     const soundsGroup = dom.getChildByID('soundsGroup');
     const saveY = soundsGroup.offsetTop + soundsGroup.offsetHeight + 40;
-    createGloveButton(this, width / 2, saveY, 'Save', () => {
+    createTextButton(this, width / 2, saveY, 'Save', () => {
       Object.entries(sliders).forEach(([k, el]) => {
         const v = parseFloat(el.value);
         const snd = SoundManager.sounds[k];
@@ -61,7 +72,7 @@ export class OptionsScene extends Phaser.Scene {
 
     const dataGroup = dom.getChildByID('dataGroup');
     const clearY = dataGroup.offsetTop + dataGroup.offsetHeight + 40;
-    createGloveButton(this, width / 2, clearY, 'Clear data', () => {
+    createTextButton(this, width / 2, clearY, 'Clear data', () => {
       resetSavedData();
     });
 
@@ -69,19 +80,13 @@ export class OptionsScene extends Phaser.Scene {
     chk.checked = getTestMode();
     chk.addEventListener('change', () => setTestMode(chk.checked));
 
-    const back = this.add
-      .text(width / 2, height - 40, 'Back', {
-        font: '32px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5)
-      .setInteractive({ useHandCursor: true });
-    const setColor = (hover) => back.setColor(hover ? '#ffff00' : '#ffffff');
-    back.on('pointerover', () => setColor(true));
-    back.on('pointerout', () => setColor(false));
-    back.on('pointerdown', () => this.scene.start('StartScene'));
+    const goBack = () => {
+      dom.destroy();
+      this.scene.start('StartScene');
+    };
+    const back = createTextButton(this, width / 2, height - 40, 'Back', goBack);
 
-    this.input.keyboard.on('keydown-ESC', () => this.scene.start('StartScene'));
-    this.input.keyboard.on('keydown-ENTER', () => this.scene.start('StartScene'));
+    this.input.keyboard.on('keydown-ESC', goBack);
+    this.input.keyboard.on('keydown-ENTER', goBack);
   }
 }
