@@ -1,6 +1,7 @@
 import { BOXERS, resetBoxers, addBoxer } from './boxers.js';
 import { setPlayerBoxer } from './player-boxer.js';
 import { setMatchLog, resetMatchLog, getAllMatchLogs } from './match-log.js';
+import { SoundManager } from './sound-manager.js';
 
 const SAVE_KEY = 'theBoxer.save.v1';
 const VERSION = 1;
@@ -140,6 +141,7 @@ export function resetSavedData() {
       // Ignore
     }
   }
+  SoundManager.resetVolumes();
   resetBoxers();
   setPlayerBoxer(null);
   resetMatchLog();

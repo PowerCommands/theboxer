@@ -1,6 +1,7 @@
 import { SoundManager } from './sound-manager.js';
 import { resetSavedData } from './save-system.js';
 import { getTestMode, setTestMode } from './config.js';
+import { createGloveButton } from './glove-button.js';
 
 // Phaser is loaded globally via a script tag in index.html
 
@@ -27,12 +28,8 @@ export class OptionsScene extends Phaser.Scene {
         <table>
           <tr><th colspan="2">Sounds</th></tr>
           ${soundRows}
-          <tr><td colspan="2" style="text-align:center;padding-top:10px"><button type="button" id="saveBtn">Save</button></td></tr>
-          <tr><th colspan="2">Data</th></tr>
-          <tr><td colspan="2" style="text-align:center"><button type="button" id="clearBtn">Clear data</button></td></tr>
           <tr><th colspan="2">Debug</th></tr>
           <tr><td colspan="2"><label><input type="checkbox" id="testModeChk"/> Test mode</label></td></tr>
-          <tr><td colspan="2" style="text-align:center;padding-top:10px"><button type="button" id="backBtn">Back</button></td></tr>
         </table>
       </form>`;
 
@@ -43,18 +40,22 @@ export class OptionsScene extends Phaser.Scene {
       sliders[key] = dom.getChildByID(`vol_${key}`);
     });
 
-    dom.getChildByID('saveBtn').addEventListener('click', () => {
+    const save = () => {
       Object.entries(sliders).forEach(([k, el]) => {
         const v = parseFloat(el.value);
         const snd = SoundManager.sounds[k];
         if (snd) snd.setVolume(v);
       });
       SoundManager.saveVolumes();
-    });
+    };
 
-    dom.getChildByID('clearBtn').addEventListener('click', () => {
+    const clear = () => {
       resetSavedData();
-    });
+      Object.entries(sliders).forEach(([k, el]) => {
+        const snd = SoundManager.sounds[k];
+        if (snd) el.value = snd.volume.toFixed(1);
+      });
+    };
 
     const chk = dom.getChildByID('testModeChk');
     chk.checked = getTestMode();
@@ -64,7 +65,20 @@ export class OptionsScene extends Phaser.Scene {
       dom.destroy();
       this.scene.start('StartScene');
     };
-    dom.getChildByID('backBtn').addEventListener('click', goBack);
+
+    const btnY = height * 0.75;
+    createGloveButton(this, width / 2, btnY, 'Save', () => {
+      save();
+      SoundManager.playClick();
+    });
+    createGloveButton(this, width / 2, btnY + 90, 'Clear data', () => {
+      clear();
+      SoundManager.playClick();
+    });
+    createGloveButton(this, width / 2, btnY + 180, 'Back', () => {
+      SoundManager.playClick();
+      goBack();
+    });
 
     this.input.keyboard.on('keydown-ESC', goBack);
     this.input.keyboard.on('keydown-ENTER', goBack);
