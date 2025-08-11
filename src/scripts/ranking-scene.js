@@ -97,7 +97,11 @@ export class RankingScene extends Phaser.Scene {
       const y = startY + i * rowHeight;
       const rowRect = this.add
         .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, tableAlpha)
-        .setOrigin(0.5, 0);
+        .setOrigin(0.5, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          this.scene.start('MatchLog', { boxer: b });
+        });
       const line =
         `${b.ranking.toString().padEnd(columnWidths[0])}` +
         `${b.name.padEnd(columnWidths[1])}` +
@@ -116,7 +120,11 @@ export class RankingScene extends Phaser.Scene {
           color: isPlayer ? '#0000ff' : '#ffffff',
           fontStyle: isPlayer ? 'bold' : 'normal',
         })
-        .setOrigin(0, 0);
+        .setOrigin(0, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          this.scene.start('MatchLog', { boxer: b });
+        });
 
       content.add(rowRect);
       content.add(txt);
@@ -299,17 +307,6 @@ export class RankingScene extends Phaser.Scene {
           });
         nextY = resetBtn.y + 40;
       }
-
-      this.add
-        .text(tableLeft, nextY, 'Match log', {
-          font: '20px Arial',
-          color: '#ffffff',
-        })
-        .setOrigin(0, 0)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => {
-          this.scene.start('MatchLog');
-        });
     }
   }
 }

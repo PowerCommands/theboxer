@@ -9,13 +9,13 @@ export class MatchLogScene extends Phaser.Scene {
     super('MatchLog');
   }
 
-  create() {
+  create(data) {
     const width = this.sys.game.config.width;
     SoundManager.playMenuLoop();
-    const player = getPlayerBoxer();
-    const header = player
-      ? `${player.name} (${player.wins || 0} Win ${player.losses || 0} Loss ${
-          player.winsByKO || 0
+    const boxer = data?.boxer || getPlayerBoxer();
+    const header = boxer
+      ? `${boxer.name} (${boxer.wins || 0} Win ${boxer.losses || 0} Loss ${
+          boxer.winsByKO || 0
         } KO)`
       : 'Match log';
     this.add
@@ -25,7 +25,7 @@ export class MatchLogScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
-    this.log = getMatchLog();
+    this.log = getMatchLog(boxer?.name);
     this.expandedRows = new Set();
     const tableWidth = width * 0.95;
     const startX = width * 0.025;
