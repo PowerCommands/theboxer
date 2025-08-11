@@ -263,30 +263,68 @@ export class RankingScene extends Phaser.Scene {
           this.scene.start('MatchIntroScene', matchData);
         });
     } else {
-      const btnLabel = getTestMode()
-        ? 'Start new game'
-        : hasPlayer
-        ? 'Setup next fight'
-        : 'Start new game';
-      const startBtn = this.add
-        .text(tableLeft, tableBottom + 10, btnLabel, {
-          font: '24px Arial',
-          color: '#00ff00',
-        })
-        .setOrigin(0, 0)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => {
-          if (getTestMode()) {
-            this.scene.start('SelectBoxer');
-          } else if (hasPlayer) {
-            this.scene.start('SelectBoxer');
-          } else {
-            this.scene.start('CreateBoxer');
-          }
+      let startBtn;
+      let nextY;
+      if (hasPlayer && !getTestMode()) {
+        const btnX = tableLeft + 250;
+        const btnY = tableBottom + 50;
+        startBtn = this.add.container(btnX, btnY);
+        startBtn.setSize(500, 80);
+        const bg = this.add
+          .image(0, 0, 'fight_card')
+          .setDisplaySize(500, 80);
+        const label = this.add
+          .text(0, 0, 'Next fight', {
+            font: '32px Arial',
+            color: '#ffffff',
+          })
+          .setOrigin(0.5);
+        const gloveL = this.add
+          .image(-300, 0, 'glove_horizontal')
+          .setDisplaySize(100, 70);
+        const gloveR = this.add
+          .image(300, 0, 'glove_horizontal')
+          .setDisplaySize(100, 70)
+          .setFlipX(true);
+        startBtn.add([bg, label, gloveL, gloveR]);
+        this.tweens.add({
+          targets: gloveL,
+          x: -150,
+          duration: 800,
+          ease: 'Sine.Out',
         });
+        this.tweens.add({
+          targets: gloveR,
+          x: 150,
+          duration: 800,
+          ease: 'Sine.Out',
+        });
+        startBtn
+          .setInteractive({ useHandCursor: true })
+          .on('pointerup', () => {
+            this.scene.start('SelectBoxer');
+          });
+        nextY = btnY + 60;
+      } else {
+        const btnLabel = 'Start new game';
+        startBtn = this.add
+          .text(tableLeft, tableBottom + 10, btnLabel, {
+            font: '24px Arial',
+            color: '#00ff00',
+          })
+          .setOrigin(0, 0)
+          .setInteractive({ useHandCursor: true })
+          .on('pointerup', () => {
+            if (getTestMode()) {
+              this.scene.start('SelectBoxer');
+            } else {
+              this.scene.start('CreateBoxer');
+            }
+          });
+        nextY = startBtn.y + 40;
+      }
 
       // Optional reset button and match log link
-      let nextY = startBtn.y + 40;
       if (getTestMode()) {
         const resetBtn = this.add
           .text(tableLeft, nextY, 'Reset data', {

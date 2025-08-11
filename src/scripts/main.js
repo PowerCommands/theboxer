@@ -33,6 +33,11 @@ class BootScene extends Phaser.Scene {
     this.load.audio('stinger', 'assets/sounds/whoosh.mp3');
     this.load.audio('coin_jingle', 'assets/sounds/coin-spill.mp3');
     this.load.image('coin', 'assets/arena/coin.png');
+    this.load.image('fight_card', 'assets/arena/fight-card.png');
+    this.load.image(
+      'glove_horizontal',
+      'assets/arena/glove-horisontal.png'
+    );
     TITLES.forEach((t) => {
       this.load.image(t.name, `assets/titles/${t.name.toLowerCase()}.png`);
     });
