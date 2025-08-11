@@ -184,9 +184,9 @@ export class SelectBoxerScene extends Phaser.Scene {
       this.options.push(container);
     };
 
-    makeOption(startX, 'Keyboard', 'keyboard', () => this.selectControl('human'));
-    makeOption(startX + 300 + spacing, 'Computer', 'computer', () =>
-      this.selectControl('ai')
+    makeOption(startX, 'Computer', 'computer', () => this.selectControl('ai'));
+    makeOption(startX + 300 + spacing, 'Keyboard', 'keyboard', () =>
+      this.selectControl('human')
     );
   }
 
