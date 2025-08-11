@@ -40,7 +40,7 @@ export class MatchIntroScene extends Phaser.Scene {
     const redCard = this.createCard(data.red, data.weightClass, true);
     const blueCard = this.createCard(data.blue, data.weightClass, false);
 
-    const cardY = height * 0.35;
+    const cardY = height * 0.3;
     const leftTargetX = width * 0.25;
     const rightTargetX = width * 0.75;
 
@@ -48,8 +48,79 @@ export class MatchIntroScene extends Phaser.Scene {
     redCard.setPosition(-redCard.cardWidth, cardY).setDepth(5);
     blueCard.setPosition(width + blueCard.cardWidth, cardY).setDepth(5);
 
+    // --- ARENAINFO ---
+    const infoContainer = this.add.container(width / 2, height * 0.68);
+    const infoBg = this.add.graphics();
+    infoBg.fillStyle(0x000000, 0.55);
+    infoBg.fillRoundedRect(-300, -60, 600, 120, 14);
+    infoContainer.add(infoBg);
+
+    const locationLine = [
+      data?.arena?.Name,
+      data?.arena?.City,
+      data?.arena?.Country,
+    ]
+      .filter(Boolean)
+      .join(', ');
+
+    // compute or use provided time
+    const computeTime = (prest) => {
+      let start;
+      let end;
+      switch (prest) {
+        case 1:
+          start = 12 * 60;
+          end = 15 * 60;
+          break;
+        case 2:
+          start = 15 * 60 + 30;
+          end = 18 * 60 + 30;
+          break;
+        case 3:
+          start = 19 * 60;
+          end = 23 * 60 + 30;
+          break;
+        default:
+          start = 12 * 60;
+          end = 15 * 60;
+      }
+      const steps = Math.floor((end - start) / 30);
+      const total = start + Phaser.Math.Between(0, steps) * 30;
+      const hour = Math.floor(total / 60)
+        .toString()
+        .padStart(2, '0');
+      const minute = (total % 60).toString().padStart(2, '0');
+      return `${hour}:${minute}`;
+    };
+    const timeDisplay = data.time || computeTime(data?.arena?.Prestige || 1);
+    data.time = timeDisplay;
+
+    const dateLine = [data.date, data.year, timeDisplay].filter(Boolean).join(' ');
+
+    const arenaText = this.add
+      .text(0, -15, locationLine, {
+        fontFamily: 'Arial',
+        fontSize: '26px',
+        color: '#FFFFFF',
+        align: 'center',
+        wordWrap: { width: 560 },
+      })
+      .setOrigin(0.5);
+    infoContainer.add(arenaText);
+
+    const dateText = this.add
+      .text(0, 25, dateLine, {
+        fontFamily: 'Arial',
+        fontSize: '24px',
+        color: '#FFD166',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+    infoContainer.add(dateText);
+    infoContainer.setAlpha(0);
+
     // --- PRISPENGAR ---
-    const purseContainer = this.add.container(width / 2, height * 0.68);
+    const purseContainer = this.add.container(width / 2, height * 0.85);
     const purseBg = this.add.graphics();
     purseBg.fillStyle(0x000000, 0.55);
     purseBg.fillRoundedRect(-300, -80, 600, 160, 14);
@@ -179,7 +250,14 @@ export class MatchIntroScene extends Phaser.Scene {
     // 2) Paus
     steps.push({ type: 'delay', ms: 450 });
 
-    // 3) Purse + counter + coins
+    // 3) Arena info
+    steps.push({
+      targets: infoContainer,
+      alpha: 1,
+      duration: 280,
+    });
+
+    // 4) Purse + counter + coins
     steps.push({
       targets: purseContainer,
       alpha: 1,
@@ -197,7 +275,7 @@ export class MatchIntroScene extends Phaser.Scene {
       }
     });
 
-    // 4) Bälten en och en + shine
+    // 5) Bälten en och en + shine
     belts.forEach((belt) => {
       steps.push({
         targets: belt,
@@ -210,7 +288,7 @@ export class MatchIntroScene extends Phaser.Scene {
       });
     });
 
-    // 5) CTA + blink
+    // 6) CTA + blink
     steps.push({
       targets: cta,
       alpha: 1,

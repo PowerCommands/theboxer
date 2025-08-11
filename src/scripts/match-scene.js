@@ -132,46 +132,47 @@ export class MatchScene extends Phaser.Scene {
         const [day, month] = ds.split(' ');
         dateStr = `${day} ${month.charAt(0).toUpperCase()}${month.slice(1)}`;
       }
-      const prestige = data?.arena?.Prestige || 1;
-      const getTime = (prest) => {
-        let start;
-        let end;
-        switch (prest) {
-          case 1:
-            start = 12 * 60;
-            end = 15 * 60;
-            break;
-          case 2:
-            start = 15 * 60 + 30;
-            end = 18 * 60 + 30;
-            break;
-          case 3:
-            start = 19 * 60;
-            end = 23 * 60 + 30;
-            break;
-          default:
-            start = 12 * 60;
-            end = 15 * 60;
-        }
-        const steps = Math.floor((end - start) / 30);
-        const total = start + Phaser.Math.Between(0, steps) * 30;
-        return { hour: Math.floor(total / 60), minute: total % 60 };
-      };
-      const { hour, minute } = getTime(prestige);
-      const timeDisplay = `${hour.toString().padStart(2, '0')}:${minute
-        .toString()
-        .padStart(2, '0')}`;
-      this.matchMeta = {
-        year,
-        date: dateStr,
-        rank: user.ranking,
-        opponentRank: opponent.ranking,
-        arena: data?.arena,
-      };
-      eventBus.emit('match-date', {
-        date: dateStr,
-        year,
-        time: timeDisplay,
+        const prestige = data?.arena?.Prestige || 1;
+        const computeTime = (prest) => {
+          let start;
+          let end;
+          switch (prest) {
+            case 1:
+              start = 12 * 60;
+              end = 15 * 60;
+              break;
+            case 2:
+              start = 15 * 60 + 30;
+              end = 18 * 60 + 30;
+              break;
+            case 3:
+              start = 19 * 60;
+              end = 23 * 60 + 30;
+              break;
+            default:
+              start = 12 * 60;
+              end = 15 * 60;
+          }
+          const steps = Math.floor((end - start) / 30);
+          const total = start + Phaser.Math.Between(0, steps) * 30;
+          const hour = Math.floor(total / 60)
+            .toString()
+            .padStart(2, '0');
+          const minute = (total % 60).toString().padStart(2, '0');
+          return `${hour}:${minute}`;
+        };
+        const timeDisplay = data?.time || computeTime(prestige);
+        this.matchMeta = {
+          year,
+          date: dateStr,
+          rank: user.ranking,
+          opponentRank: opponent.ranking,
+          arena: data?.arena,
+        };
+        eventBus.emit('match-date', {
+          date: dateStr,
+          year,
+          time: timeDisplay,
         arena: data?.arena?.Name || '',
         city: data?.arena?.City || '',
         country: data?.arena?.Country || '',
