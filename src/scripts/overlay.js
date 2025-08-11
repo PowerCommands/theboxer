@@ -19,6 +19,7 @@ export class OverlayUI extends Phaser.Scene {
   create() {
     this.scene.setVisible(false);
     const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
     const infoY = 0;
     const infoHeight = 140;
     // Slightly increased transparency for the overlay background
@@ -26,17 +27,13 @@ export class OverlayUI extends Phaser.Scene {
       .rectangle(width / 2, infoY, width, infoHeight, 0x808080, 0.4)
       .setOrigin(0.5, 0);
 
-    // show application name and version
-    this.appInfoText = this.add.text(
-      width / 2,
-      infoY + 10,
-      `${appConfig.name} v${appConfig.version}`,
-      {
+    // show application name and version in the bottom-right corner
+    this.appInfoText = this.add
+      .text(width - 10, height - 10, `${appConfig.name} v${appConfig.version}`, {
         font: '20px Arial',
         color: '#ffffff',
-      }
-    );
-    this.appInfoText.setOrigin(0.5, 0);
+      })
+      .setOrigin(1, 1);
 
     // create timer text centered slightly lower
     this.timerText = this.add.text(width / 2, infoY + 40, '0:00', {

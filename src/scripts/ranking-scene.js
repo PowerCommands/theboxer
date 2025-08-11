@@ -1,5 +1,5 @@
 import { getRankings } from './boxer-stats.js';
-import { appConfig, getTestMode, setTestMode, tableAlpha } from './config.js';
+import { appConfig, getTestMode, tableAlpha } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { formatMoney } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
@@ -18,6 +18,7 @@ export class RankingScene extends Phaser.Scene {
 
   create() {
     const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
     SoundManager.playMenuLoop();
 
     // Load any saved boxer stats before rendering the list.
@@ -26,17 +27,16 @@ export class RankingScene extends Phaser.Scene {
       applyLoadedState(migrateIfNeeded(loaded));
     }
 
-    // Show application name and version at the top
-    const infoY = 20;
+    // Show application name and version in the bottom-right corner
     this.add
-      .text(width / 2, infoY, `${appConfig.name} v${appConfig.version}`, {
+      .text(width - 10, height - 10, `${appConfig.name} v${appConfig.version}`, {
         font: '20px Arial',
         color: '#ffffff',
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(1, 1);
 
-    // Position the ranking title below the app info
-    const headerY = infoY + 40;
+    // Position the ranking title near the top
+    const headerY = 20;
     this.add
       .text(width / 2, headerY, 'Ranking', {
         font: '32px Arial',
@@ -260,7 +260,6 @@ export class RankingScene extends Phaser.Scene {
         : hasPlayer
         ? 'Setup next fight'
         : 'Start new game';
-      const tableRight = tableLeft + rectWidth;
       const startBtn = this.add
         .text(tableLeft, tableBottom + 10, btnLabel, {
           font: '24px Arial',
@@ -278,27 +277,31 @@ export class RankingScene extends Phaser.Scene {
           }
         });
 
-      // Button to reset saved rankings and stats.
-      const resetBtn = this.add
-        .text(tableLeft, startBtn.y + 40, 'Reset data', {
-          font: '20px Arial',
-          color: '#ff0000',
-        })
-        .setOrigin(0, 0)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => {
-          if (
-            window.confirm(
-              'This will erase saved rankings, stats, and match log. Continue?'
-            )
-          ) {
-            resetSavedData();
-            this.scene.restart();
-          }
-        });
+      // Optional reset button and match log link
+      let nextY = startBtn.y + 40;
+      if (getTestMode()) {
+        const resetBtn = this.add
+          .text(tableLeft, nextY, 'Reset data', {
+            font: '20px Arial',
+            color: '#ff0000',
+          })
+          .setOrigin(0, 0)
+          .setInteractive({ useHandCursor: true })
+          .on('pointerup', () => {
+            if (
+              window.confirm(
+                'This will erase saved rankings, stats, and match log. Continue?'
+              )
+            ) {
+              resetSavedData();
+              this.scene.restart();
+            }
+          });
+        nextY = resetBtn.y + 40;
+      }
 
       this.add
-        .text(tableLeft, resetBtn.y + 40, 'Match log', {
+        .text(tableLeft, nextY, 'Match log', {
           font: '20px Arial',
           color: '#ffffff',
         })
@@ -307,32 +310,6 @@ export class RankingScene extends Phaser.Scene {
         .on('pointerup', () => {
           this.scene.start('MatchLog');
         });
-
-      // Place the test mode checkbox on the same row as the start button
-      const testLabel = this.add
-        .text(tableRight, startBtn.y, 'Test mode', {
-          font: '20px Arial',
-          color: '#ffffff',
-        })
-        .setOrigin(1, 0);
-      const cbX = testLabel.x - testLabel.width - 30;
-      const cbY = startBtn.y;
-      const testBox = this.add
-        .rectangle(cbX, cbY, 20, 20, 0xffffff)
-        .setOrigin(0, 0)
-        .setInteractive({ useHandCursor: true });
-      const testCheck = this.add
-        .text(cbX + 10, cbY, 'X', {
-          font: '20px Arial',
-          color: '#000000',
-        })
-        .setOrigin(0.5, 0)
-        .setVisible(getTestMode());
-      testBox.on('pointerdown', () => {
-        const newVal = !getTestMode();
-        setTestMode(newVal);
-        testCheck.setVisible(newVal);
-      });
     }
   }
 }
