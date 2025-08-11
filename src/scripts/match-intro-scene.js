@@ -84,8 +84,7 @@ export class MatchIntroScene extends Phaser.Scene {
     purseContainer.setAlpha(0);
 
     
-    const coins = this.add.particles('coin').setDepth(10);
-    const emitter = coins.createEmitter({
+    const emitter = this.add.particles(0, 0, 'coin', {
       x: { min: width / 2 - 250, max: width / 2 + 250 },
       y: { min: -150, max: -50 },
       speedY: { min: 200, max: 400 },
@@ -94,8 +93,8 @@ export class MatchIntroScene extends Phaser.Scene {
       frequency: 80,
       scale: { start: 0.7, end: 0.2 },
       alpha: { start: 1, end: 0 },
-      on: false
-    });
+      emitting: false
+    }).setDepth(10);
 
     // --- BÄLTEN ---
     const belts = [];
