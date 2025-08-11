@@ -2,18 +2,6 @@ import { SoundManager } from './sound-manager.js';
 import { resetSavedData } from './save-system.js';
 import { getTestMode, setTestMode } from './config.js';
 
-function createTextButton(scene, x, y, label, onClick) {
-  const btn = scene.add
-    .text(x, y, label, { font: 'bold 32px Arial', color: '#ffffff' })
-    .setOrigin(0.5)
-    .setInteractive({ useHandCursor: true });
-  const setColor = (hover) => btn.setColor(hover ? '#ffff00' : '#ffffff');
-  btn.on('pointerover', () => setColor(true));
-  btn.on('pointerout', () => setColor(false));
-  btn.on('pointerdown', () => onClick && onClick());
-  return btn;
-}
-
 // Phaser is loaded globally via a script tag in index.html
 
 export class OptionsScene extends Phaser.Scene {
@@ -22,46 +10,40 @@ export class OptionsScene extends Phaser.Scene {
   }
 
   create() {
-    const { width, height } = this.sys.game.config;
+    const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
+
+    const soundRows = Object.entries(SoundManager.sounds || {})
+      .map(
+        ([key, snd]) =>
+          `<tr><td>${key}</td><td><input type="range" id="vol_${key}" min="0" max="1" step="0.1" value="${snd.volume.toFixed(
+            1,
+          )}"/></td></tr>`,
+      )
+      .join('');
 
     const formHTML = `
-      <div id="opts" style="color:white;font-family:Arial">
-        <div id="soundsGroup">
-          <h2>Sounds</h2>
-          <div id="soundControls"></div>
-        </div>
-        <div id="dataGroup" style="margin-top:20px;">
-          <h2>Data</h2>
-        </div>
-        <div id="debugGroup" style="margin-top:20px;">
-          <h2>Debug</h2>
-          <label><input type="checkbox" id="testModeChk"/> Test mode</label>
-        </div>
-      </div>`;
+      <form id="opts" style="color:white">
+        <table>
+          <tr><th colspan="2">Sounds</th></tr>
+          ${soundRows}
+          <tr><td colspan="2" style="text-align:center;padding-top:10px"><button type="button" id="saveBtn">Save</button></td></tr>
+          <tr><th colspan="2">Data</th></tr>
+          <tr><td colspan="2" style="text-align:center"><button type="button" id="clearBtn">Clear data</button></td></tr>
+          <tr><th colspan="2">Debug</th></tr>
+          <tr><td colspan="2"><label><input type="checkbox" id="testModeChk"/> Test mode</label></td></tr>
+          <tr><td colspan="2" style="text-align:center;padding-top:10px"><button type="button" id="backBtn">Back</button></td></tr>
+        </table>
+      </form>`;
 
-    const dom = this.add.dom(width / 2, 0).createFromHTML(formHTML);
-    dom.setOrigin(0.5, 0);
+    const dom = this.add.dom(width / 2, height / 2).createFromHTML(formHTML);
 
-    const soundContainer = dom.getChildByID('soundControls');
     const sliders = {};
-    Object.entries(SoundManager.sounds || {}).forEach(([key, snd]) => {
-      const row = document.createElement('div');
-      row.textContent = key + ': ';
-      const input = document.createElement('input');
-      input.type = 'range';
-      input.min = '0';
-      input.max = '1';
-      input.step = '0.1';
-      input.value = snd.volume.toFixed(1);
-      input.id = `vol_${key}`;
-      row.appendChild(input);
-      soundContainer.appendChild(row);
-      sliders[key] = input;
+    Object.keys(SoundManager.sounds || {}).forEach((key) => {
+      sliders[key] = dom.getChildByID(`vol_${key}`);
     });
 
-    const soundsGroup = dom.getChildByID('soundsGroup');
-    const saveY = soundsGroup.offsetTop + soundsGroup.offsetHeight + 40;
-    createTextButton(this, width / 2, saveY, 'Save', () => {
+    dom.getChildByID('saveBtn').addEventListener('click', () => {
       Object.entries(sliders).forEach(([k, el]) => {
         const v = parseFloat(el.value);
         const snd = SoundManager.sounds[k];
@@ -70,9 +52,7 @@ export class OptionsScene extends Phaser.Scene {
       SoundManager.saveVolumes();
     });
 
-    const dataGroup = dom.getChildByID('dataGroup');
-    const clearY = dataGroup.offsetTop + dataGroup.offsetHeight + 40;
-    createTextButton(this, width / 2, clearY, 'Clear data', () => {
+    dom.getChildByID('clearBtn').addEventListener('click', () => {
       resetSavedData();
     });
 
@@ -84,7 +64,7 @@ export class OptionsScene extends Phaser.Scene {
       dom.destroy();
       this.scene.start('StartScene');
     };
-    const back = createTextButton(this, width / 2, height - 40, 'Back', goBack);
+    dom.getChildByID('backBtn').addEventListener('click', goBack);
 
     this.input.keyboard.on('keydown-ESC', goBack);
     this.input.keyboard.on('keydown-ENTER', goBack);
