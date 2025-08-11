@@ -321,7 +321,7 @@ export class OverlayUI extends Phaser.Scene {
     this.input.once('pointerup', this.nextRoundHandler);
     const match = this.scene.get('MatchScene');
     if (match?.isP1AI) {
-      this.showStrategyOptions();
+      this.showStrategyOptions(10);
     }
   }
 
@@ -343,7 +343,7 @@ export class OverlayUI extends Phaser.Scene {
     this.hideStrategyOptions();
   }
 
-  showStrategyOptions() {
+  showStrategyOptions(maxLevel = 10) {
     const match = this.scene.get('MatchScene');
     if (!match) return;
     const controller = match.player1?.controller;
@@ -358,7 +358,7 @@ export class OverlayUI extends Phaser.Scene {
     const slider = this.add.dom(width / 2, height / 2, 'input', {
       type: 'range',
       min: '1',
-      max: '10',
+      max: String(maxLevel),
       value: String(current),
       style: 'width:300px',
     });
