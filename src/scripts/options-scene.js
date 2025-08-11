@@ -61,8 +61,14 @@ export class OptionsScene extends Phaser.Scene {
     chk.checked = getTestMode();
     chk.addEventListener('change', () => setTestMode(chk.checked));
 
+    // Ensure the form DOM element is cleaned up when this scene shuts down
+    // rather than destroying it immediately on button press. Destroying the
+    // element during the current render tick caused Phaser to attempt to render
+    // a now-null WebGL texture (glTexture), throwing an error. By waiting for
+    // the shutdown event we let Phaser handle destruction safely.
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => dom.destroy());
+
     const goBack = () => {
-      dom.destroy();
       this.scene.start('StartScene');
     };
 
