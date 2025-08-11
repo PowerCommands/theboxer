@@ -287,10 +287,15 @@ export class OverlayUI extends Phaser.Scene {
     });
 
     const goToRanking = () => {
+      // Stop the active match but keep the overlay scene alive so it can
+      // be reused for future matches. Launch the ranking scene separately
+      // and then sleep + hide the overlay. Using `launch` instead of `start`
+      // ensures this scene isn't shut down, which previously caused the
+      // overlay to disappear in subsequent matches.
       this.scene.stop('MatchScene');
+      this.scene.launch('Ranking');
       this.scene.sleep('OverlayUI');
       this.scene.setVisible('OverlayUI', false);
-      this.scene.start('Ranking');
     };
     this.enterHandler = goToRanking;
     this.clickHandler = goToRanking;
