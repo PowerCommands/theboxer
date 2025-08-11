@@ -49,12 +49,15 @@ export class StartScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    // Glove image with fade-in effect
-    const glove = this.add.image(width / 2, height * 0.32, 'glove_vertical');
+    // Glove image sweeps in from below
+    const gloveStartY = height + 200;
+    const gloveEndY = height * 0.32 + 20;
+    const glove = this.add.image(width / 2, gloveStartY, 'glove_vertical');
     glove.setDisplaySize(400, 400);
     glove.setAlpha(0);
     this.tweens.add({
       targets: glove,
+      y: gloveEndY,
       alpha: 1,
       duration: 800,
       ease: 'Power2',
