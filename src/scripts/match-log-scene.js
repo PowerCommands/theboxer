@@ -165,8 +165,7 @@ export class MatchLogScene extends Phaser.Scene {
       };
       const monthNum = months[monthName] || '01';
       const dateStr = `${entry.year}${monthNum}${String(day).padStart(2, '0')}`;
-      const timeStr =
-        entry.method === 'KO' ? String(entry.time).padStart(5, '0') : '-';
+      const timeStr = entry.method === 'KO' ? String(entry.time) : '-';
       const row = [
         dateStr,
         arenaText,
