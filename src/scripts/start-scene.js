@@ -1,4 +1,5 @@
 import { loadGameState } from './save-system.js';
+import { SoundManager } from './sound-manager.js';
 
 // Phaser is loaded globally via a script tag in index.html
 
@@ -48,23 +49,45 @@ export class StartScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
 
-    const items = [
-      {
+    // Glove image with fade-in effect
+    const glove = this.add.image(width / 2, height * 0.32, 'glove_vertical');
+    glove.setDisplaySize(400, 400);
+    glove.setAlpha(0);
+    this.tweens.add({
+      targets: glove,
+      alpha: 1,
+      duration: 800,
+      ease: 'Power2',
+    });
+
+    // Play cinematic intro sound once audio is unlocked
+    if (this.sound.locked) {
+      this.sound.once(Phaser.Sound.Events.UNLOCKED, () => {
+        SoundManager.playCinematicIntro();
+      });
+    } else {
+      SoundManager.playCinematicIntro();
+    }
+
+    const items = [];
+    if (HAS_SAVE) {
+      items.push({
+        label: 'Continue Career',
+        enabled: true,
+        onClick: () => this.goTo(resolveContinueKey()),
+      });
+    } else {
+      items.push({
         label: 'Start New Career',
         enabled: true,
         onClick: () => this.goTo(resolveNewCareerKey()),
-      },
-      {
-        label: 'Continue Career',
-        enabled: HAS_SAVE,
-        onClick: () => this.goTo(resolveContinueKey()),
-      },
-      {
-        label: 'Options',
-        enabled: true,
-        onClick: () => this.goTo(resolveOptionsKey()),
-      },
-    ];
+      });
+    }
+    items.push({
+      label: 'Options',
+      enabled: true,
+      onClick: () => this.goTo(resolveOptionsKey()),
+    });
 
     const spacing = 70;
     const startY = height * 0.4;
