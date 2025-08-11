@@ -231,7 +231,19 @@ export class MatchIntroScene extends Phaser.Scene {
 
   // Skapar ett fight card (panel + texter)
   createCard(boxer = {}, weightClass = '', isLeft = true) {
-    const { name = 'Unknown', nick = '', record = { w: 0, l: 0, d: 0 }, rank = 0, country = '' } = boxer;
+    const {
+      name = 'Unknown',
+      nickName = '',
+      nick = '',
+      wins = 0,
+      losses = 0,
+      draws = 0,
+      ranking = 0,
+      country = '',
+      continent = '',
+      age = null,
+    } = boxer;
+    const nickname = nick || nickName || '';
     const c = this.add.container(0, 0);
 
     // Panelbild (preloadad som 'fight_card'). Faller tillbaka till grafik om saknas.
@@ -249,7 +261,9 @@ export class MatchIntroScene extends Phaser.Scene {
     }
     c.add(panel);
 
-    const headline = [name, nick ? `“${nick}”` : ''].filter(Boolean).join(' ');
+    const headline =
+      [name, nickname ? `“${nickname}”` : ''].filter(Boolean).join(' ') +
+      (age ? ` (age ${age})` : '');
     const tName = this.add.text(0, -78, headline, {
       fontFamily: 'Arial',
       fontSize: '30px',
@@ -259,7 +273,7 @@ export class MatchIntroScene extends Phaser.Scene {
     }).setOrigin(0.5);
     c.add(tName);
 
-    const tRecord = this.add.text(0, -20, `Record: ${record.w || 0}-${record.l || 0}-${record.d || 0}`, {
+    const tRecord = this.add.text(0, -20, `Record: ${wins}-${losses}-${draws}`, {
       fontFamily: 'Arial',
       fontSize: '24px',
       color: '#BEE3DB',
@@ -267,7 +281,7 @@ export class MatchIntroScene extends Phaser.Scene {
     }).setOrigin(0.5);
     c.add(tRecord);
 
-    const tRank = this.add.text(0, 20, `Rank: ${rank || 0}`, {
+    const tRank = this.add.text(0, 20, `Rank: ${ranking}`, {
       fontFamily: 'Arial',
       fontSize: '24px',
       color: '#FFD166',
@@ -275,7 +289,14 @@ export class MatchIntroScene extends Phaser.Scene {
     }).setOrigin(0.5);
     c.add(tRank);
 
-    const tClass = this.add.text(0, 64, `${weightClass || ''}${country ? '  •  ' + country : ''}`, {
+    const location = country
+      ? `${country}${continent ? ` (${continent})` : ''}`
+      : '';
+    const tClass = this.add.text(
+      0,
+      64,
+      [weightClass, location].filter(Boolean).join('  •  '),
+      {
       fontFamily: 'Arial',
       fontSize: '22px',
       color: '#FFFFFF',

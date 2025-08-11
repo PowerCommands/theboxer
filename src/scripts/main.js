@@ -31,6 +31,7 @@ class BootScene extends Phaser.Scene {
     this.load.audio('whoosh', 'assets/sounds/whoosh.mp3');
     this.load.audio('stinger', 'assets/sounds/whoosh.mp3');
     this.load.audio('coin_jingle', 'assets/sounds/coin-spill.mp3');
+    this.load.image('coin', 'assets/arena/coin.png');
     // Load idle animation frames for the boxers
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
