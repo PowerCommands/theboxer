@@ -13,3 +13,7 @@ let testMode = params.get('mode') === 'test';
 export function getTestMode() {
   return testMode;
 }
+
+export function setTestMode(val) {
+  testMode = !!val;
+}

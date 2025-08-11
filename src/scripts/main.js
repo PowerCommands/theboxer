@@ -18,6 +18,7 @@ class BootScene extends Phaser.Scene {
 
   preload() {
     console.log('BootScene: preload started');
+    this.load.image('arena_bg_dark', 'assets/arena/backdrop-dark.png');
     this.load.image('ring', 'assets/ring.png');
     this.load.audio('loop-menu', 'assets/sounds/loop-menu.mp3');
     this.load.audio('click-menu', 'assets/sounds/click-menu.mp3');
