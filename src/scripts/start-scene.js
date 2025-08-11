@@ -1,5 +1,6 @@
-import Phaser from 'phaser';
 import { loadGameState } from './save-system.js';
+
+// Phaser is loaded globally via a script tag in index.html
 
 // Determine if a save game exists.
 const HAS_SAVE = !!loadGameState();
