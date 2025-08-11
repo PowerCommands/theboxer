@@ -119,44 +119,75 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   showStrategyOptions() {
     this.clearOptions();
-    let y = 60;
-    const defTxt = this.add.text(50, y, `Default`, {
-      font: '20px Arial',
-      color: '#ffffff',
-    });
-    defTxt.setInteractive({ useHandCursor: true });
-    defTxt.on('pointerdown', () => this.selectStrategy('default'));
-    this.options.push(defTxt);
-    for (let i = 1; i <= 10; i++) {
-      y += 30;
-      const txt = this.add.text(50, y, `Strategy ${i}`, {
-        font: '20px Arial',
-        color: '#ffffff',
-      });
-      txt.setInteractive({ useHandCursor: true });
-      txt.on('pointerdown', () => this.selectStrategy(i));
-      this.options.push(txt);
-    }
-  }
-
-  showControlOptions() {
-    this.clearOptions();
     const width = this.sys.game.config.width;
-    const makeOption = (y, label, icon, handler) => {
-      const container = this.add.container(width / 2, y);
+    const height = this.sys.game.config.height;
+
+    const slider = this.add.dom(width / 2, height / 2, 'input', {
+      type: 'range',
+      min: '1',
+      max: '10',
+      value: '1',
+      style: 'width:300px',
+    });
+    const valueText = this.add
+      .text(width / 2, height / 2 - 50, slider.node.value, {
+        font: '32px Arial',
+        color: '#ffffff',
+      })
+      .setOrigin(0.5);
+    slider.node.addEventListener('input', () => {
+      valueText.setText(slider.node.value);
+    });
+
+    const makeBtn = (x, label, handler) => {
+      const container = this.add.container(x, height / 2 + 60);
       const bg = this.add.rectangle(0, 0, 200, 40, 0x001b44, 0.4);
-      const img = this.add.image(-60, 0, icon).setDisplaySize(32, 32);
-      const txt = this.add
-        .text(-40, 0, label, { font: '20px Arial', color: '#ffffff' })
-        .setOrigin(0, 0.5);
-      container.add([bg, img, txt]);
+      const txt = this.add.text(0, 0, label, { font: '20px Arial', color: '#ffffff' }).setOrigin(0.5);
+      container.add([bg, txt]);
       container.setSize(200, 40);
       container.setInteractive({ useHandCursor: true });
       container.on('pointerdown', handler);
       this.options.push(container);
     };
-    makeOption(80, 'Keyboard', 'keyboard', () => this.selectControl('human'));
-    makeOption(130, 'Computer', 'computer', () => this.selectControl('ai'));
+
+    const btnSpacing = 40;
+    makeBtn(width / 2 - 100 - btnSpacing / 2, 'Ok', () =>
+      this.selectStrategy(parseInt(slider.node.value, 10))
+    );
+    makeBtn(width / 2 + 100 + btnSpacing / 2, 'Use default', () =>
+      this.selectStrategy('default')
+    );
+
+    this.options.push(slider);
+    this.options.push(valueText);
+  }
+
+  showControlOptions() {
+    this.clearOptions();
+    const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
+    const spacing = 40;
+    const startX = (width - (300 * 2 + spacing)) / 2 + 150;
+    const centerY = height / 2;
+
+    const makeOption = (x, label, icon, handler) => {
+      const container = this.add.container(x, centerY);
+      const bg = this.add.rectangle(0, 0, 300, 200, 0x001b44, 0.4);
+      const img = this.add.image(0, -30, icon).setDisplaySize(128, 128);
+      const txt = this.add
+        .text(0, 70, label, { font: '32px Arial', color: '#ffffff' })
+        .setOrigin(0.5);
+      container.add([bg, img, txt]);
+      container.setSize(300, 200);
+      container.setInteractive({ useHandCursor: true });
+      container.on('pointerdown', handler);
+      this.options.push(container);
+    };
+
+    makeOption(startX, 'Keyboard', 'keyboard', () => this.selectControl('human'));
+    makeOption(startX + 300 + spacing, 'Computer', 'computer', () =>
+      this.selectControl('ai')
+    );
   }
 
   showOpponentOptions() {
