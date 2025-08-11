@@ -20,6 +20,7 @@ export class SoundManager {
       uppercut: scene.sound.add('uppercut', vol),
       cheer: scene.sound.add('crowd-cheering', vol),
       cheerKO: scene.sound.add('crowd-cheering-ko', vol),
+      cinematicIntro: scene.sound.add('cinematic-intro', vol),
     };
 
     eventBus.on('round-started', () => {
@@ -74,6 +75,12 @@ export class SoundManager {
 
   static playIntro() {
     this.sounds?.intro?.play();
+  }
+
+  static playCinematicIntro() {
+    if (this.cinematicIntroPlayed) return;
+    this.cinematicIntroPlayed = true;
+    this.sounds?.cinematicIntro?.play();
   }
 
   static playBellStart() {

@@ -31,6 +31,10 @@ class BootScene extends Phaser.Scene {
     this.load.audio('left-jab', 'assets/sounds/left-jab.mp3');
     this.load.audio('right-jab', 'assets/sounds/right-jab.mp3');
     this.load.audio('uppercut', 'assets/sounds/uppercut.mp3');
+    this.load.audio(
+      'cinematic-intro',
+      'assets/sounds/cinematic-intro.mp3'
+    );
     this.load.audio('whoosh', 'assets/sounds/whoosh.mp3');
     this.load.audio('stinger', 'assets/sounds/whoosh.mp3');
     this.load.audio('coin_jingle', 'assets/sounds/coin-spill.mp3');
@@ -39,6 +43,10 @@ class BootScene extends Phaser.Scene {
     this.load.image(
       'glove_horizontal',
       'assets/arena/glove-horisontal.png'
+    );
+    this.load.image(
+      'glove_vertical',
+      'assets/arena/glove-vertical.png'
     );
     this.load.image('keyboard', 'assets/arena/keyboard.png');
     this.load.image('computer', 'assets/arena/computer.png');
