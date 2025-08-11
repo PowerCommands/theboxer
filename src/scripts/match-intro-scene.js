@@ -1,6 +1,8 @@
 // match-intro-scene.js
 // Phaser 3 scen för “Tale of the Tape” utan timeline-API (manuell kedjning av tweens)
 
+import { makeWhiteTransparent } from './helpers.js';
+
 export class MatchIntroScene extends Phaser.Scene {
   constructor() {
     super('MatchIntroScene');
@@ -52,7 +54,7 @@ export class MatchIntroScene extends Phaser.Scene {
     const infoContainer = this.add.container(width / 2, height * 0.68);
     const infoBg = this.add.graphics();
     infoBg.fillStyle(0x000000, 0.55);
-    infoBg.fillRoundedRect(-300, -60, 600, 120, 14);
+    infoBg.fillRoundedRect(-300, -75, 600, 150, 14);
     infoContainer.add(infoBg);
 
     const locationLine = [
@@ -117,6 +119,15 @@ export class MatchIntroScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     infoContainer.add(dateText);
+    const scheduleText = this.add
+      .text(0, 60, 'Scheduled for 3 rounds', {
+        fontFamily: 'Arial',
+        fontSize: '22px',
+        color: '#FFFFFF',
+        align: 'center',
+      })
+      .setOrigin(0.5);
+    infoContainer.add(scheduleText);
     infoContainer.setAlpha(0);
 
     // --- PRISPENGAR ---
@@ -178,7 +189,7 @@ export class MatchIntroScene extends Phaser.Scene {
       let startX = (width - totalW) / 2 + beltW / 2;
 
       beltsData.forEach((b) => {
-        const imgKey = b.imageKey || b.code;
+        const imgKey = makeWhiteTransparent(this, b.imageKey || b.code);
         const belt = this.add.image(startX, beltY, imgKey).setOrigin(0.5);
         belt.setDisplaySize(beltW, beltW * 0.5);
         belt.setAlpha(0);
@@ -189,7 +200,7 @@ export class MatchIntroScene extends Phaser.Scene {
     }
 
     // --- CTA ---
-    const cta = this.add.text(width / 2, height * 0.92, 'Press any key to continue', {
+    const cta = this.add.text(width / 2, height * 0.95, 'Press any key to continue', {
       fontFamily: 'Arial',
       fontSize: '22px',
       color: '#FFFFFF'
