@@ -1,6 +1,6 @@
 import { BOXERS, resetBoxers, addBoxer } from './boxers.js';
 import { setPlayerBoxer } from './player-boxer.js';
-import { getMatchLog, setMatchLog, resetMatchLog } from './match-log.js';
+import { setMatchLog, resetMatchLog, getAllMatchLogs } from './match-log.js';
 
 const SAVE_KEY = 'theBoxer.save.v1';
 const VERSION = 1;
@@ -59,7 +59,7 @@ export function saveGameState(boxers) {
         }
         return base;
       }),
-      matchLog: getMatchLog(),
+      matchLog: getAllMatchLogs(),
     };
     localStorage.setItem(SAVE_KEY, JSON.stringify(payload));
   } catch (err) {
@@ -71,7 +71,7 @@ export function saveGameState(boxers) {
 export function applyLoadedState(state) {
   if (!state || !Array.isArray(state.boxers)) return;
   setPlayerBoxer(null);
-  setMatchLog(state.matchLog || []);
+  setMatchLog(state.matchLog || {});
   state.boxers.forEach((saved) => {
     let boxer = BOXERS.find((b) => b.name === saved.id);
     if (!boxer && saved.userCreated) {

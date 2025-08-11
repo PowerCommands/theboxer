@@ -15,7 +15,7 @@ import { showComment } from './comment-manager.js';
 import { recordResult, recordDraw } from './boxer-stats.js';
 import { BOXERS } from './boxers.js';
 import { saveGameState } from './save-system.js';
-import { addMatchLog, getMatchLog } from './match-log.js';
+import { addMatchLog } from './match-log.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -437,94 +437,130 @@ export class MatchScene extends Phaser.Scene {
     const minutes = Math.floor(timeSec / 60);
     const seconds = Math.floor(timeSec % 60);
     const timeStr = `${minutes} min ${seconds} sec.`;
-    const user = this.player1.stats.userCreated
-      ? this.player1.stats
-      : this.player2.stats.userCreated
-      ? this.player2.stats
-      : null;
-    const before = user ? user.earnings || 0 : 0;
+    const b1 = this.player1.stats;
+    const b2 = this.player2.stats;
+    const rank1 = b1.ranking;
+    const rank2 = b2.ranking;
+    const before1 = b1.earnings || 0;
+    const before2 = b2.earnings || 0;
     recordResult(winner.stats, loser.stats, 'KO');
-    const prize = user ? user.earnings - before : 0;
-    if (user) {
-      const opponent =
-        user === this.player1.stats ? this.player2.stats : this.player1.stats;
-      const userIsWinner = winner.stats === user;
-      const roundDetails = this.roundLog.map((r) => ({
-        round: r.round,
-        userScore: user === this.player1.stats ? r.p1Score : r.p2Score,
-        oppScore: user === this.player1.stats ? r.p2Score : r.p1Score,
-        totalUser: user === this.player1.stats ? r.totalP1 : r.totalP2,
-        totalOpp: user === this.player1.stats ? r.totalP2 : r.totalP1,
-      }));
-      addMatchLog({
-        year: this.matchMeta?.year,
-        date: this.matchMeta?.date,
-        arena: this.matchMeta?.arena,
-        rank: this.matchMeta?.rank,
-        opponent: opponent.name,
-        opponentRank: this.matchMeta?.opponentRank,
-        result: userIsWinner ? 'Win' : 'Loss',
-        method: 'KO',
-        round: this.roundTimer.round,
-        time: timeStr,
-        prize,
-        roundDetails,
-      });
-    }
+    const prize1 = b1.earnings - before1;
+    const prize2 = b2.earnings - before2;
+    const roundDetails1 = this.roundLog.map((r) => ({
+      round: r.round,
+      userScore: r.p1Score,
+      oppScore: r.p2Score,
+      totalUser: r.totalP1,
+      totalOpp: r.totalP2,
+    }));
+    const roundDetails2 = this.roundLog.map((r) => ({
+      round: r.round,
+      userScore: r.p2Score,
+      oppScore: r.p1Score,
+      totalUser: r.totalP2,
+      totalOpp: r.totalP1,
+    }));
+    addMatchLog(b1.name, {
+      year: this.matchMeta?.year,
+      date: this.matchMeta?.date,
+      arena: this.matchMeta?.arena,
+      rank: rank1,
+      opponent: b2.name,
+      opponentRank: rank2,
+      result: winner.stats === b1 ? 'Win' : 'Loss',
+      method: 'KO',
+      round: this.roundTimer.round,
+      time: timeStr,
+      prize: prize1,
+      roundDetails: roundDetails1,
+    });
+    addMatchLog(b2.name, {
+      year: this.matchMeta?.year,
+      date: this.matchMeta?.date,
+      arena: this.matchMeta?.arena,
+      rank: rank2,
+      opponent: b1.name,
+      opponentRank: rank1,
+      result: winner.stats === b2 ? 'Win' : 'Loss',
+      method: 'KO',
+      round: this.roundTimer.round,
+      time: timeStr,
+      prize: prize2,
+      roundDetails: roundDetails2,
+    });
     saveGameState(BOXERS);
   }
 
   determineWinnerByPoints() {
     if (this.matchOver) return;
     this.matchOver = true;
-    const user = this.player1.stats.userCreated
-      ? this.player1.stats
-      : this.player2.stats.userCreated
-      ? this.player2.stats
-      : null;
-    const userIsP1 = user === this.player1.stats;
-    const userScore = userIsP1 ? this.score.p1 : this.score.p2;
-    const oppScore = userIsP1 ? this.score.p2 : this.score.p1;
-    if (this.score.p1 === this.score.p2) {
+    const b1 = this.player1.stats;
+    const b2 = this.player2.stats;
+    const rank1 = b1.ranking;
+    const rank2 = b2.ranking;
+    const score1 = this.score.p1;
+    const score2 = this.score.p2;
+    const before1 = b1.earnings || 0;
+    const before2 = b2.earnings || 0;
+    const roundDetails1 = this.roundLog.map((r) => ({
+      round: r.round,
+      userScore: r.p1Score,
+      oppScore: r.p2Score,
+      totalUser: r.totalP1,
+      totalOpp: r.totalP2,
+    }));
+    const roundDetails2 = this.roundLog.map((r) => ({
+      round: r.round,
+      userScore: r.p2Score,
+      oppScore: r.p1Score,
+      totalUser: r.totalP2,
+      totalOpp: r.totalP1,
+    }));
+    if (score1 === score2) {
       this.roundTimer.pause();
       eventBus.emit('match-winner', {
         name: 'Draw',
         method: 'Draw',
         round: this.roundTimer.round,
       });
-      const before = user ? user.earnings || 0 : 0;
-      recordDraw(this.player1.stats, this.player2.stats);
-      const prize = user ? user.earnings - before : 0;
-      if (user) {
-        const opponent = userIsP1 ? this.player2.stats : this.player1.stats;
-        const roundDetails = this.roundLog.map((r) => ({
-          round: r.round,
-          userScore: userIsP1 ? r.p1Score : r.p2Score,
-          oppScore: userIsP1 ? r.p2Score : r.p1Score,
-          totalUser: userIsP1 ? r.totalP1 : r.totalP2,
-          totalOpp: userIsP1 ? r.totalP2 : r.totalP1,
-        }));
-        addMatchLog({
-          year: this.matchMeta?.year,
-          date: this.matchMeta?.date,
-          arena: this.matchMeta?.arena,
-          rank: this.matchMeta?.rank,
-          opponent: opponent.name,
-          opponentRank: this.matchMeta?.opponentRank,
-          result: 'Draw',
-          method: 'Points',
-          round: this.roundTimer.round,
-          time: '-',
-          score: `${userScore}-${oppScore}`,
-          prize,
-          roundDetails,
-        });
-      }
+      recordDraw(b1, b2);
+      const prize1 = b1.earnings - before1;
+      const prize2 = b2.earnings - before2;
+      addMatchLog(b1.name, {
+        year: this.matchMeta?.year,
+        date: this.matchMeta?.date,
+        arena: this.matchMeta?.arena,
+        rank: rank1,
+        opponent: b2.name,
+        opponentRank: rank2,
+        result: 'Draw',
+        method: 'Points',
+        round: this.roundTimer.round,
+        time: '-',
+        score: `${score1}-${score2}`,
+        prize: prize1,
+        roundDetails: roundDetails1,
+      });
+      addMatchLog(b2.name, {
+        year: this.matchMeta?.year,
+        date: this.matchMeta?.date,
+        arena: this.matchMeta?.arena,
+        rank: rank2,
+        opponent: b1.name,
+        opponentRank: rank1,
+        result: 'Draw',
+        method: 'Points',
+        round: this.roundTimer.round,
+        time: '-',
+        score: `${score2}-${score1}`,
+        prize: prize2,
+        roundDetails: roundDetails2,
+      });
       saveGameState(BOXERS);
       return;
     }
 
-    let winner = this.score.p1 > this.score.p2 ? this.player1 : this.player2;
+    let winner = score1 > score2 ? this.player1 : this.player2;
     const loser = winner === this.player1 ? this.player2 : this.player1;
     winner.isWinner = true;
     winner.sprite.play(animKey(winner.prefix, 'win'));
@@ -535,34 +571,39 @@ export class MatchScene extends Phaser.Scene {
       method: 'Points',
       round: this.roundTimer.round,
     });
-    const before = user ? user.earnings || 0 : 0;
     recordResult(winner.stats, loser.stats, 'Points');
-    const prize = user ? user.earnings - before : 0;
-    if (user) {
-      const opponent = userIsP1 ? this.player2.stats : this.player1.stats;
-      const roundDetails = this.roundLog.map((r) => ({
-        round: r.round,
-        userScore: userIsP1 ? r.p1Score : r.p2Score,
-        oppScore: userIsP1 ? r.p2Score : r.p1Score,
-        totalUser: userIsP1 ? r.totalP1 : r.totalP2,
-        totalOpp: userIsP1 ? r.totalP2 : r.totalP1,
-      }));
-      addMatchLog({
-        year: this.matchMeta?.year,
-        date: this.matchMeta?.date,
-        arena: this.matchMeta?.arena,
-        rank: this.matchMeta?.rank,
-        opponent: opponent.name,
-        opponentRank: this.matchMeta?.opponentRank,
-        result: winner.stats === user ? 'Win' : 'Loss',
-        method: 'Points',
-        round: this.roundTimer.round,
-        time: '-',
-        score: `${userScore}-${oppScore}`,
-        prize,
-        roundDetails,
-      });
-    }
+    const prize1 = b1.earnings - before1;
+    const prize2 = b2.earnings - before2;
+    addMatchLog(b1.name, {
+      year: this.matchMeta?.year,
+      date: this.matchMeta?.date,
+      arena: this.matchMeta?.arena,
+      rank: rank1,
+      opponent: b2.name,
+      opponentRank: rank2,
+      result: winner.stats === b1 ? 'Win' : 'Loss',
+      method: 'Points',
+      round: this.roundTimer.round,
+      time: '-',
+      score: `${score1}-${score2}`,
+      prize: prize1,
+      roundDetails: roundDetails1,
+    });
+    addMatchLog(b2.name, {
+      year: this.matchMeta?.year,
+      date: this.matchMeta?.date,
+      arena: this.matchMeta?.arena,
+      rank: rank2,
+      opponent: b1.name,
+      opponentRank: rank1,
+      result: winner.stats === b2 ? 'Win' : 'Loss',
+      method: 'Points',
+      round: this.roundTimer.round,
+      time: '-',
+      score: `${score2}-${score1}`,
+      prize: prize2,
+      roundDetails: roundDetails2,
+    });
     saveGameState(BOXERS);
   }
 
