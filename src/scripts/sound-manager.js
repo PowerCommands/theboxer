@@ -23,6 +23,11 @@ export class SoundManager {
       cinematicIntro: scene.sound.add('cinematic-intro', vol),
     };
 
+    this.defaultVolumes = {};
+    Object.entries(this.sounds).forEach(([k, s]) => {
+      this.defaultVolumes[k] = s.volume;
+    });
+
     try {
       const raw = localStorage.getItem('theBoxer.volumes');
       if (raw) {
@@ -136,6 +141,19 @@ export class SoundManager {
         data[k] = s.volume;
       });
       localStorage.setItem('theBoxer.volumes', JSON.stringify(data));
+    } catch (err) {
+      // ignore
+    }
+  }
+
+  static resetVolumes() {
+    if (!this.sounds) return;
+    Object.entries(this.sounds).forEach(([k, s]) => {
+      const v = this.defaultVolumes ? this.defaultVolumes[k] : undefined;
+      if (v != null) s.setVolume(v);
+    });
+    try {
+      localStorage.removeItem('theBoxer.volumes');
     } catch (err) {
       // ignore
     }
