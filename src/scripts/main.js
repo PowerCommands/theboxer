@@ -129,14 +129,18 @@ class BootScene extends Phaser.Scene {
     BackdropManager.init();
 
     const gameSound = this.game.sound;
-    const resume = () => {
+    const unlockAndPlay = () => {
       if (gameSound.context.state === 'suspended') {
         gameSound.context.resume();
       }
       SoundManager.playMenuLoop();
-      document.body.removeEventListener('pointerdown', resume);
     };
-    document.body.addEventListener('pointerdown', resume);
+    unlockAndPlay();
+    if (gameSound.context.state !== 'running') {
+      document.body.addEventListener('pointerdown', unlockAndPlay, {
+        once: true,
+      });
+    }
 
     // Start the overlay scene so match UI elements are ready when needed.
     this.scene.launch('OverlayUI');

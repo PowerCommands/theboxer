@@ -51,7 +51,7 @@ export class StartScene extends Phaser.Scene {
 
     // Glove image sweeps in from below
     const gloveStartY = height + 200;
-    const gloveEndY = height * 0.32 + 20;
+    const gloveEndY = height * 0.32 + 40;
     const glove = this.add.image(width / 2, gloveStartY, 'glove_vertical');
     glove.setDisplaySize(400, 400);
     glove.setAlpha(0);
