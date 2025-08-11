@@ -59,10 +59,16 @@ export class RuleManager {
       const dist = Math.abs(this.b1.sprite.x - this.b2.sprite.x);
 
       const getActions = (boxer) => {
-        const ctrl = boxer.controller;
-        if (typeof ctrl.getLevel === 'function') {
-          const strategies = boxer === this.b1 ? STRATEGIES_P1 : STRATEGIES_P2;
-          return strategies[ctrl.getLevel() - 1].actions;
+        try{
+          const ctrl = boxer.controller;
+          if (typeof ctrl.getLevel === 'function') {
+            const strategies = boxer === this.b1 ? STRATEGIES_P1 : STRATEGIES_P2;
+            return strategies[ctrl.getLevel() - 1].actions;
+          }          
+        }
+        catch(exception){
+          console.log('Error occurred', exception)
+          return null;
         }
         return null;
       };
