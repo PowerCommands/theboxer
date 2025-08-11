@@ -274,7 +274,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     } else {
       this.step = 1;
       this.instruction.setText('Choose Player 1 strategy');
-      this.showStrategyOptions();
+      this.showStrategyOptions(10);
     }
   }
 
@@ -308,7 +308,7 @@ export class SelectBoxerScene extends Phaser.Scene {
         if (getTestMode()) {
           this.step = 2;
           this.instruction.setText('Choose Player 1 strategy');
-          this.showStrategyOptions();
+          this.showStrategyOptions(10);
         } else {
           this.selectedStrategy1 = 'default';
           this.step = 2;
@@ -320,7 +320,7 @@ export class SelectBoxerScene extends Phaser.Scene {
       if (getTestMode()) {
         this.step = 4;
         this.instruction.setText("Choose the opponent's strategy");
-        this.showStrategyOptions();
+        this.showStrategyOptions(10);
       } else {
         this.selectedStrategy2 = 'default';
         this.step = 5;
@@ -335,27 +335,21 @@ export class SelectBoxerScene extends Phaser.Scene {
     if (this.step === 1) {
       // non-test mode: player strategy selection
       this.selectedStrategy1 = level;
-      this.input.once('pointerup', () => {
-        this.step = 2;
-        this.instruction.setText('Choose your opponent');
-        this.showOpponentOptions();
-      });
+      this.step = 2;
+      this.instruction.setText('Choose your opponent');
+      this.showOpponentOptions();
     } else if (this.step === 2) {
       // test mode: player strategy selection
       this.selectedStrategy1 = level;
-      this.input.once('pointerup', () => {
-        this.step = 3;
-        this.instruction.setText('Choose your opponent');
-        this.showBoxerOptions();
-      });
+      this.step = 3;
+      this.instruction.setText('Choose your opponent');
+      this.showBoxerOptions();
     } else if (this.step === 4) {
       // test mode: opponent strategy selection
       this.selectedStrategy2 = level;
-      this.input.once('pointerup', () => {
-        this.step = 5;
-        this.instruction.setText('Choose number of rounds (1-13)');
-        this.showRoundOptions();
-      });
+      this.step = 5;
+      this.instruction.setText('Choose number of rounds (1-13)');
+      this.showRoundOptions();
     }
   }
 
