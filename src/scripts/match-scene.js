@@ -436,7 +436,7 @@ export class MatchScene extends Phaser.Scene {
     const timeSec = this.roundLength - this.roundTimer.remaining;
     const minutes = Math.floor(timeSec / 60);
     const seconds = Math.floor(timeSec % 60);
-    const timeStr = `${minutes} min ${seconds} sec.`;
+    const timeStr = `${minutes}:${seconds.toString().padStart(2, '0')}`;
     const b1 = this.player1.stats;
     const b2 = this.player2.stats;
     const rank1 = b1.ranking;
