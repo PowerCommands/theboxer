@@ -142,21 +142,21 @@ export class SelectBoxerScene extends Phaser.Scene {
   showControlOptions() {
     this.clearOptions();
     const width = this.sys.game.config.width;
-    const keyboard = this.add.text(width / 2, 60, 'Keyboard', {
-      font: '20px Arial',
-      color: '#ffffff',
-    });
-    keyboard.setOrigin(0.5, 0);
-    keyboard.setInteractive({ useHandCursor: true });
-    keyboard.on('pointerdown', () => this.selectControl('human'));
-    const ai = this.add.text(width / 2, 100, 'AI', {
-      font: '20px Arial',
-      color: '#ffffff',
-    });
-    ai.setOrigin(0.5, 0);
-    ai.setInteractive({ useHandCursor: true });
-    ai.on('pointerdown', () => this.selectControl('ai'));
-    this.options.push(keyboard, ai);
+    const makeOption = (y, label, icon, handler) => {
+      const container = this.add.container(width / 2, y);
+      const bg = this.add.rectangle(0, 0, 200, 40, 0x001b44, 0.4);
+      const img = this.add.image(-60, 0, icon).setDisplaySize(32, 32);
+      const txt = this.add
+        .text(-40, 0, label, { font: '20px Arial', color: '#ffffff' })
+        .setOrigin(0, 0.5);
+      container.add([bg, img, txt]);
+      container.setSize(200, 40);
+      container.setInteractive({ useHandCursor: true });
+      container.on('pointerdown', handler);
+      this.options.push(container);
+    };
+    makeOption(80, 'Keyboard', 'keyboard', () => this.selectControl('human'));
+    makeOption(130, 'Computer', 'computer', () => this.selectControl('ai'));
   }
 
   showOpponentOptions() {

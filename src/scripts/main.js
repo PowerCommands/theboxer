@@ -38,6 +38,8 @@ class BootScene extends Phaser.Scene {
       'glove_horizontal',
       'assets/arena/glove-horisontal.png'
     );
+    this.load.image('keyboard', 'assets/arena/keyboard.png');
+    this.load.image('computer', 'assets/arena/computer.png');
     TITLES.forEach((t) => {
       this.load.image(t.name, `assets/titles/${t.name.toLowerCase()}.png`);
     });

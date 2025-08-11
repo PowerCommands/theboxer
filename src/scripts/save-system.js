@@ -47,6 +47,7 @@ export function saveGameState(boxers) {
             userCreated: true,
             nickName: b.nickName,
             country: b.country,
+            continent: b.continent,
             age: b.age,
             stamina: b.stamina,
             power: b.power,
@@ -79,6 +80,7 @@ export function applyLoadedState(state) {
         name: saved.id,
         nickName: saved.nickName || '',
         country: saved.country || '',
+        continent: saved.continent || '',
         age: saved.age || 18,
         stamina: saved.stamina ?? 1,
         power: saved.power ?? 1,
@@ -115,6 +117,7 @@ export function applyLoadedState(state) {
       boxer.userCreated = true;
       boxer.nickName = saved.nickName ?? boxer.nickName;
       boxer.country = saved.country ?? boxer.country;
+      boxer.continent = saved.continent ?? boxer.continent;
       boxer.age = saved.age ?? boxer.age;
       boxer.stamina = saved.stamina ?? boxer.stamina;
       boxer.power = saved.power ?? boxer.power;
