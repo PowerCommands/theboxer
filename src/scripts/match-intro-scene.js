@@ -44,10 +44,9 @@ export class MatchIntroScene extends Phaser.Scene {
     const leftTargetX = width * 0.25;
     const rightTargetX = width * 0.75;
 
-    redCard.setPosition(-redCard.displayWidth, cardY).setDepth(5);
-    blueCard
-      .setPosition(width + blueCard.displayWidth, cardY)
-      .setDepth(5);
+    // Position cards just outside the screen based on their explicit width.
+    redCard.setPosition(-redCard.width, cardY).setDepth(5);
+    blueCard.setPosition(width + blueCard.width, cardY).setDepth(5);
 
     // --- PRISPENGAR ---
     const purseContainer = this.add.container(width / 2, height * 0.68);
@@ -291,9 +290,12 @@ export class MatchIntroScene extends Phaser.Scene {
       });
     }
 
-    // Hjälp-egenskaper
-    c.displayWidth = 520;
-    c.displayHeight = 300;
+    // Hjälp-egenskaper: sätt storlek utan att påverka skalning
+    const cardWidth = 520;
+    const cardHeight = 300;
+    c.setSize(cardWidth, cardHeight);
+    c.cardWidth = cardWidth;
+    c.cardHeight = cardHeight;
 
     return c;
   }
