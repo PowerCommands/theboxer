@@ -7,6 +7,7 @@ import { CreateBoxerScene } from './create-boxer-scene.js';
 import { MatchLogScene } from './match-log-scene.js';
 import { BackdropManager } from './backdrop-manager.js';
 import { MatchIntroScene } from './match-intro-scene.js';
+import { TITLES } from './title-data.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -32,6 +33,9 @@ class BootScene extends Phaser.Scene {
     this.load.audio('stinger', 'assets/sounds/whoosh.mp3');
     this.load.audio('coin_jingle', 'assets/sounds/coin-spill.mp3');
     this.load.image('coin', 'assets/arena/coin.png');
+    TITLES.forEach((t) => {
+      this.load.image(t.name, `assets/titles/${t.name.toLowerCase()}.png`);
+    });
     // Load idle animation frames for the boxers
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
