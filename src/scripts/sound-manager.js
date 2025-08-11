@@ -23,6 +23,20 @@ export class SoundManager {
       cinematicIntro: scene.sound.add('cinematic-intro', vol),
     };
 
+    try {
+      const raw = localStorage.getItem('theBoxer.volumes');
+      if (raw) {
+        const data = JSON.parse(raw);
+        Object.entries(data).forEach(([k, v]) => {
+          if (this.sounds[k]) {
+            this.sounds[k].setVolume(v);
+          }
+        });
+      }
+    } catch (err) {
+      // ignore
+    }
+
     eventBus.on('round-started', () => {
       if (this.sounds.intro && this.sounds.intro.isPlaying) {
         this.sounds.intro.stop();
@@ -112,5 +126,18 @@ export class SoundManager {
 
   static playCheering() {
     this.sounds?.cheer?.play();
+  }
+
+  static saveVolumes() {
+    if (!this.sounds) return;
+    try {
+      const data = {};
+      Object.entries(this.sounds).forEach(([k, s]) => {
+        data[k] = s.volume;
+      });
+      localStorage.setItem('theBoxer.volumes', JSON.stringify(data));
+    } catch (err) {
+      // ignore
+    }
   }
 }

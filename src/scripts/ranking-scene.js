@@ -4,6 +4,7 @@ import { getPlayerBoxer } from './player-boxer.js';
 import { formatMoney } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
+import { createGloveButton } from './glove-button.js';
 import {
   loadGameState,
   applyLoadedState,
@@ -263,43 +264,11 @@ export class RankingScene extends Phaser.Scene {
           this.scene.start('MatchIntroScene', matchData);
         });
     } else {
-      const btnX = width / 2;
       const btnY = tableBottom + 50;
-      const startBtn = this.add.container(btnX, btnY);
-      startBtn.setSize(500, 80);
-      const bg = this.add.rectangle(0, 0, 500, 80, bgColor, bgAlpha);
-      const label = this.add
-        .text(0, 0, 'Next fight', {
-          font: '32px Arial',
-          color: '#ffffff',
-        })
-        .setOrigin(0.5);
-      const gloveL = this.add
-        .image(-300, 0, 'glove_horizontal')
-        .setDisplaySize(100, 70);
-      const gloveR = this.add
-        .image(300, 0, 'glove_horizontal')
-        .setDisplaySize(100, 70)
-        .setFlipX(true);
-      startBtn.add([bg, label, gloveL, gloveR]);
-      this.tweens.add({
-        targets: gloveL,
-        x: -150,
-        duration: 800,
-        ease: 'Sine.Out',
-      });
-      this.tweens.add({
-        targets: gloveR,
-        x: 150,
-        duration: 800,
-        ease: 'Sine.Out',
-      });
       const goToSetup = () => {
         this.scene.start('SelectBoxer');
       };
-      startBtn
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', goToSetup);
+      createGloveButton(this, width / 2, btnY, 'Next fight', goToSetup);
       this.input.keyboard.on('keydown-ENTER', goToSetup);
       this.input.keyboard.on('keydown-SPACE', goToSetup);
     }
