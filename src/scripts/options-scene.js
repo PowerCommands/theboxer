@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+// Phaser is loaded globally via a script tag in index.html
 
 export class OptionsScene extends Phaser.Scene {
   constructor() {
