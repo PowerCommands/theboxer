@@ -122,44 +122,32 @@ export class SelectBoxerScene extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
 
-    const slider = this.add.dom(width / 2, height / 2, 'input', {
-      type: 'range',
-      min: '1',
-      max: '10',
-      value: '1',
-      style: 'width:300px',
-    });
-    const valueText = this.add
-      .text(width / 2, height / 2 - 50, slider.node.value, {
-        font: '32px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5);
-    slider.node.addEventListener('input', () => {
-      valueText.setText(slider.node.value);
-    });
+    const panelHTML = `
+      <div style="background:rgba(0,0,0,0.4);padding:20px;text-align:center">
+        <input id="strategy-slider" type="range" min="1" max="10" step="1" value="5" />
+        <label id="strategy-value" style="display:block;margin-bottom:10px">5</label>
+        <button id="strategy-default">Default</button>
+        <button id="strategy-select">Select</button>
+      </div>
+    `;
 
-    const makeBtn = (x, label, handler) => {
-      const container = this.add.container(x, height / 2 + 60);
-      const bg = this.add.rectangle(0, 0, 200, 40, 0x001b44, 0.4);
-      const txt = this.add.text(0, 0, label, { font: '20px Arial', color: '#ffffff' }).setOrigin(0.5);
-      container.add([bg, txt]);
-      container.setSize(200, 40);
-      container.setInteractive({ useHandCursor: true });
-      container.on('pointerdown', handler);
-      this.options.push(container);
-    };
+    const dom = this.add.dom(width / 2, height / 2).createFromHTML(panelHTML);
+    dom.setOrigin(0.5);
 
-    const btnSpacing = 40;
-    makeBtn(width / 2 - 100 - btnSpacing / 2, 'Ok', () =>
-      this.selectStrategy(parseInt(slider.node.value, 10))
-    );
-    makeBtn(width / 2 + 100 + btnSpacing / 2, 'Use default', () =>
-      this.selectStrategy('default')
+    const slider = dom.getChildByID('strategy-slider');
+    const valueLabel = dom.getChildByID('strategy-value');
+    const defaultBtn = dom.getChildByID('strategy-default');
+    const selectBtn = dom.getChildByID('strategy-select');
+
+    slider.addEventListener('input', () => {
+      valueLabel.textContent = slider.value;
+    });
+    defaultBtn.addEventListener('click', () => this.selectStrategy('default'));
+    selectBtn.addEventListener('click', () =>
+      this.selectStrategy(parseInt(slider.value, 10))
     );
 
-    this.options.push(slider);
-    this.options.push(valueText);
+    this.options.push(dom);
   }
 
   showControlOptions() {
