@@ -63,7 +63,7 @@ export class RankingScene extends Phaser.Scene {
     const tableTop = headerY + 40;
     const tableLeft = width * 0.05;
     this.add
-      .rectangle(tableLeft, tableTop, rectWidth, rowHeight, 0x808080, tableAlpha)
+      .rectangle(tableLeft, tableTop, rectWidth, rowHeight, 0x00008b, tableAlpha)
       .setOrigin(0, 0);
     const headers =
       `${'Rank'.padEnd(columnWidths[0])}` +
@@ -96,7 +96,7 @@ export class RankingScene extends Phaser.Scene {
     boxers.forEach((b, i) => {
       const y = startY + i * rowHeight;
       const rowRect = this.add
-        .rectangle(width / 2, y, rectWidth, rowHeight, 0x808080, tableAlpha)
+        .rectangle(width / 2, y, rectWidth, rowHeight, 0x00008b, tableAlpha)
         .setOrigin(0.5, 0)
         .setInteractive({ useHandCursor: true })
         .on('pointerup', () => {
@@ -117,7 +117,7 @@ export class RankingScene extends Phaser.Scene {
       const txt = this.add
         .text(contentOffsetX, y, line, {
           font: '20px monospace',
-          color: isPlayer ? '#0000ff' : '#ffffff',
+          color: isPlayer ? '#00ff00' : '#ffffff',
           fontStyle: isPlayer ? 'bold' : 'normal',
         })
         .setOrigin(0, 0)
@@ -266,7 +266,7 @@ export class RankingScene extends Phaser.Scene {
       let startBtn;
       let nextY;
       if (hasPlayer && !getTestMode()) {
-        const btnX = tableLeft + 250;
+        const btnX = width / 2;
         const btnY = tableBottom + 50;
         startBtn = this.add.container(btnX, btnY);
         startBtn.setSize(500, 80);
