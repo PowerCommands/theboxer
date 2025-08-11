@@ -11,6 +11,7 @@ export class MatchLogScene extends Phaser.Scene {
 
   create(data) {
     const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
     SoundManager.playMenuLoop();
     const boxer = data?.boxer || getPlayerBoxer();
     const header = boxer
@@ -33,15 +34,16 @@ export class MatchLogScene extends Phaser.Scene {
     this.tableWidth = tableWidth;
     this.rowHeight = rowHeight;
     this.startX = startX;
+    this.tableBottom = height * 0.85;
     const colPercents = [
-      0.1,
+      0.08,
       0.28,
       0.08,
       0.19,
       0.08,
       0.06,
       0.06,
-      0.05,
+      0.07,
       0.1,
     ];
     let accum = startX;
@@ -83,11 +85,27 @@ export class MatchLogScene extends Phaser.Scene {
       this.renderRows();
     }
 
-    this.add
-      .text(20, this.sys.game.config.height - 40, 'Back', {
-        font: '24px Arial',
-        color: '#00ff00',
-      })
+    const btnX = width / 2;
+    const btnY = height * 0.93;
+    const bgColor = 0x001b44;
+    const bgAlpha = 0.4;
+    const backBtn = this.add.container(btnX, btnY);
+    backBtn.setSize(500, 80);
+    const bg = this.add.rectangle(0, 0, 500, 80, bgColor, bgAlpha);
+    const label = this.add
+      .text(0, 0, 'Back', { font: '32px Arial', color: '#ffffff' })
+      .setOrigin(0.5);
+    const gloveL = this.add
+      .image(-300, 0, 'glove_horizontal')
+      .setDisplaySize(100, 70);
+    const gloveR = this.add
+      .image(300, 0, 'glove_horizontal')
+      .setDisplaySize(100, 70)
+      .setFlipX(true);
+    backBtn.add([bg, label, gloveL, gloveR]);
+    this.tweens.add({ targets: gloveL, x: -150, duration: 800, ease: 'Sine.Out' });
+    this.tweens.add({ targets: gloveR, x: 150, duration: 800, ease: 'Sine.Out' });
+    backBtn
       .setInteractive({ useHandCursor: true })
       .on('pointerup', () => {
         this.scene.start('Ranking');
@@ -102,7 +120,10 @@ export class MatchLogScene extends Phaser.Scene {
     let y = this.startY;
     const width = this.sys.game.config.width;
     const rowHeight = this.rowHeight;
-    this.log.forEach((entry, index) => {
+    for (let [index, entry] of this.log.entries()) {
+      if (y > this.tableBottom) {
+        break;
+      }
       const rowRect = this.add
         .rectangle(width / 2, y, this.tableWidth, rowHeight, 0x001b44, tableAlpha)
         .setOrigin(0.5, 0);
@@ -167,7 +188,10 @@ export class MatchLogScene extends Phaser.Scene {
       y += rowHeight;
 
       if (this.expandedRows.has(index) && Array.isArray(entry.roundDetails)) {
-        entry.roundDetails.forEach((rd) => {
+        for (const rd of entry.roundDetails) {
+          if (y > this.tableBottom) {
+            break;
+          }
           const detail = this.add.text(
             this.colX[2],
             y,
@@ -176,8 +200,8 @@ export class MatchLogScene extends Phaser.Scene {
           );
           this.rowObjs.push(detail);
           y += 20;
-        });
+        }
       }
-    });
+    }
   }
 }
