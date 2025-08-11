@@ -408,11 +408,9 @@ export class MatchIntroScene extends Phaser.Scene {
     c.add(tClass);
 
     // Spegla lite om högerkort för variation (valfritt)
-    if (!isLeft) {
-      c.list.forEach((child) => {
-        if (child.setScale) child.setScale(1.0);
-      });
-    }
+    // Tidigare skalades högerkortets innehåll om vilket gjorde kortet
+    // oproportionerligt stort. Vi låter alla element behålla sina
+    // ursprungliga skalor så att både vänster och höger kort ser likadana ut.
 
     // Hjälp-egenskaper: sätt storlek utan att påverka skalning
     c.setSize(cardWidth, cardHeight);
