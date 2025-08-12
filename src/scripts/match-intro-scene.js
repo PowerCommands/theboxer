@@ -6,7 +6,6 @@ import { makeWhiteTransparent } from './helpers.js';
 export class MatchIntroScene extends Phaser.Scene {
   constructor() {
     super('MatchIntroScene');
-    this._skipHandlersBound = false;
   }
 
   init(data) {
@@ -214,11 +213,8 @@ export class MatchIntroScene extends Phaser.Scene {
       // Scene key for the actual fight is "Match"
       this.scene.start('MatchScene', data);
     };
-    if (!this._skipHandlersBound) {
-      this._skipHandlersBound = true;
-      this.input.keyboard?.on('keydown', startMatch);
-      this.input.on('pointerdown', startMatch);
-    }
+    this.input.keyboard?.once('keydown', startMatch);
+    this.input.once('pointerdown', startMatch);
 
     // --- Manuell kedjning (ersätter timeline) ---
     const chain = (steps) => {
