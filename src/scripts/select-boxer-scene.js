@@ -232,11 +232,12 @@ export class SelectBoxerScene extends Phaser.Scene {
     });
     this.options.push(headerText);
     const player = getPlayerBoxer();
-    // Only show boxers starting three ranks above the player so that
-    // those opponents are visible and selectable while still allowing
-    // any lower-ranked boxer.
-    const minRank = Math.max(1, player.ranking - 3);
-    const boxers = allBoxers.filter((b) => b.ranking >= minRank);
+    // Limit the number of higher-ranked opponents to at most three.
+    const above = allBoxers
+      .filter((b) => b.ranking < player.ranking)
+      .slice(-3);
+    const belowOrEqual = allBoxers.filter((b) => b.ranking >= player.ranking);
+    const boxers = above.concat(belowOrEqual);
     boxers.forEach((b, i) => {
       const y = 80 + i * 24;
       this.options.push(
