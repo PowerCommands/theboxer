@@ -10,6 +10,7 @@ import { OptionsScene } from './options-scene.js';
 import { BackdropManager } from './backdrop-manager.js';
 import { MatchIntroScene } from './match-intro-scene.js';
 import { TITLES } from './title-data.js';
+import { GameResultScene } from './game-result-scene.js';
 
 class BootScene extends Phaser.Scene {
   constructor() {
@@ -169,6 +170,7 @@ const config = {
     SelectBoxerScene,
     MatchIntroScene,
     MatchScene,
+    GameResultScene,
     OverlayUI,
   ],
 };
