@@ -1,4 +1,5 @@
 import { eventBus } from './event-bus.js';
+import { SoundManager } from './sound-manager.js';
 
 export function showComment(text, roundSeconds) {
   eventBus.emit('show-comment', { text, duration: roundSeconds });
@@ -7,7 +8,7 @@ export function showComment(text, roundSeconds) {
 export function speak(text) {
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = 'en-US'; // eller 'sv-SE' för svenska
-  utterance.volume = 1; // 0 till 1
+  utterance.volume = SoundManager.sounds?.commentator?.volume ?? 1; // 0 till 1
   utterance.rate = 0.9; // 0.1 till 10
   utterance.pitch = 1; // 0 till 2
   window.speechSynthesis.speak(utterance);
