@@ -1,4 +1,4 @@
-import { getRankings } from './boxer-stats.js';
+import { getRankings, getMatchPreview } from './boxer-stats.js';
 import { getTestMode, tableAlpha } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
@@ -164,18 +164,49 @@ export class SelectBoxerScene extends Phaser.Scene {
     const allBoxers = getRankings();
     const maxNameLen = allBoxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const namePad = Math.max(15, maxNameLen + 1);
-    const columnWidths = [5, namePad, 5, 5, 5, 5, 5, 5];
-    const totalChars = columnWidths.reduce((a, c) => a + c, 0);
+    const maxRegionLen = allBoxers.reduce(
+      (m, b) => Math.max(m, (b.continent || '').length),
+      0
+    );
+    const regionPad = Math.max(14, maxRegionLen + 1);
+    const rectWidth = width * 0.9;
     const charWidth = 12;
-    const rectWidth = totalChars * charWidth;
+    const totalChars = Math.floor(rectWidth / charWidth);
+    const baseWidths = [5, namePad, regionPad, 5, 5, 5, 5, 5, 5, 10];
+    const baseWidth = baseWidths.reduce((sum, w) => sum + w, 0);
+    const titlePad = Math.max(totalChars - baseWidth, 20);
+    const columnWidths = [
+      baseWidths[0],
+      baseWidths[1],
+      baseWidths[2],
+      baseWidths[3],
+      baseWidths[4],
+      baseWidths[5],
+      baseWidths[6],
+      baseWidths[7],
+      baseWidths[8],
+      titlePad,
+      baseWidths[9],
+    ];
     const rowHeight = 24;
-    const tableLeft = (width - rectWidth) / 2;
+    const tableLeft = width * 0.05;
     this.options.push(
       this.add
-        .rectangle(width / 2, 60, rectWidth, rowHeight, 0x001b44, tableAlpha)
-        .setOrigin(0.5, 0)
+        .rectangle(tableLeft, 60, rectWidth, rowHeight, 0x001b44, tableAlpha)
+        .setOrigin(0, 0)
     );
-    const headers = `${'Rank'.padEnd(columnWidths[0])}${'Name'.padEnd(columnWidths[1])}${'Age'.padEnd(columnWidths[2])}${'M'.padEnd(columnWidths[3])}${'W'.padEnd(columnWidths[4])}${'L'.padEnd(columnWidths[5])}${'D'.padEnd(columnWidths[6])}${'KO'.padEnd(columnWidths[7])}`;
+    const headers =
+      `${'Rank'.padEnd(columnWidths[0])}` +
+      `${'Name'.padEnd(columnWidths[1])}` +
+      `${'Region'.padEnd(columnWidths[2])}` +
+      `${'Age'.padEnd(columnWidths[3])}` +
+      `${'M'.padEnd(columnWidths[4])}` +
+      `${'W'.padEnd(columnWidths[5])}` +
+      `${'L'.padEnd(columnWidths[6])}` +
+      `${'D'.padEnd(columnWidths[7])}` +
+      `${'KO'.padEnd(columnWidths[8])}` +
+      `${'Titles'.padEnd(columnWidths[9])}` +
+      `${'Title bout'.padEnd(columnWidths[10])}`;
     const headerText = this.add.text(tableLeft, 60, headers, {
       font: '20px monospace',
       color: '#ffff00',
@@ -192,11 +223,27 @@ export class SelectBoxerScene extends Phaser.Scene {
       const y = 80 + i * 24;
       this.options.push(
         this.add
-          .rectangle(width / 2, y, rectWidth, rowHeight, 0x001b44, tableAlpha)
-          .setOrigin(0.5, 0)
+          .rectangle(tableLeft, y, rectWidth, rowHeight, 0x001b44, tableAlpha)
+          .setOrigin(0, 0)
       );
-      const line = `${b.ranking.toString().padEnd(columnWidths[0])}${b.name.padEnd(columnWidths[1])}${b.age.toString().padEnd(columnWidths[2])}${b.matches.toString().padEnd(columnWidths[3])}${b.wins.toString().padEnd(columnWidths[4])}${b.losses.toString().padEnd(columnWidths[5])}${b.draws.toString().padEnd(columnWidths[6])}${b.winsByKO.toString().padEnd(columnWidths[7])}`;
+      const titlesStr = b.titles
+        ? b.titles.map((t) => `${t}🏆`).join(' ')
+        : '';
       const isPlayer = b === player;
+      const preview = !isPlayer ? getMatchPreview(player, b) : null;
+      const isTitleBout = preview && preview.titlesOnTheLine.length > 0;
+      const line =
+        `${b.ranking.toString().padEnd(columnWidths[0])}` +
+        `${b.name.padEnd(columnWidths[1])}` +
+        `${(b.continent || '').padEnd(columnWidths[2])}` +
+        `${b.age.toString().padEnd(columnWidths[3])}` +
+        `${b.matches.toString().padEnd(columnWidths[4])}` +
+        `${b.wins.toString().padEnd(columnWidths[5])}` +
+        `${b.losses.toString().padEnd(columnWidths[6])}` +
+        `${b.draws.toString().padEnd(columnWidths[7])}` +
+        `${b.winsByKO.toString().padEnd(columnWidths[8])}` +
+        `${titlesStr.padEnd(columnWidths[9])}` +
+        `${(isTitleBout ? 'Yes' : '').padEnd(columnWidths[10])}`;
       const txt = this.add.text(tableLeft, y, line, {
         font: '20px monospace',
         color: isPlayer ? '#404040' : '#ffffff',
