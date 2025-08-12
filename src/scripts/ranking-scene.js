@@ -46,6 +46,13 @@ export class RankingScene extends Phaser.Scene {
 
     const boxers = getRankings();
     const player = getPlayerBoxer();
+
+    // Avoid immediately reacting to clicks carried over from the previous
+    // scene by delaying when rows become clickable.
+    this.canSelect = false;
+    this.time.delayedCall(300, () => {
+      this.canSelect = true;
+    });
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const namePad = Math.max(15, maxNameLen + 1);
     const maxPrizeLen = boxers.reduce(
@@ -102,6 +109,7 @@ export class RankingScene extends Phaser.Scene {
         .setOrigin(0.5, 0)
         .setInteractive({ useHandCursor: true })
         .on('pointerup', () => {
+          if (!this.canSelect) return;
           this.scene.start('MatchLog', { boxer: b });
         });
       const line =
@@ -125,6 +133,7 @@ export class RankingScene extends Phaser.Scene {
         .setOrigin(0, 0)
         .setInteractive({ useHandCursor: true })
         .on('pointerup', () => {
+          if (!this.canSelect) return;
           this.scene.start('MatchLog', { boxer: b });
         });
 

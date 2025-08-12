@@ -16,6 +16,7 @@ import { recordResult, recordDraw } from './boxer-stats.js';
 import { BOXERS } from './boxers.js';
 import { saveGameState } from './save-system.js';
 import { addMatchLog } from './match-log.js';
+import { getTestMode } from './config.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -245,28 +246,32 @@ export class MatchScene extends Phaser.Scene {
 
     this.paused = true;
     this.showIntro(data.boxer1, data.boxer2);
+    this.debugVisible = getTestMode();
     this.debugText = {
       p1: this.add
-        .text(20, height - 100, '', {
+        .text(20, height - 150, '', {
           font: '16px monospace',
           color: '#ffffff',
           align: 'left',
         })
-        .setOrigin(0, 0),
+        .setOrigin(0, 0)
+        .setVisible(this.debugVisible),
       p2: this.add
-        .text(width - 20, height - 100, '', {
+        .text(width - 20, height - 150, '', {
           font: '16px monospace',
           color: '#ffffff',
           align: 'right',
         })
-        .setOrigin(1, 0),
+        .setOrigin(1, 0)
+        .setVisible(this.debugVisible),
       center: this.add
-        .text(width / 2, height - 100, '', {
+        .text(width / 2, height - 150, '', {
           font: '16px monospace',
           color: '#ffffff',
           align: 'center',
         })
-        .setOrigin(0.5, 0),
+        .setOrigin(0.5, 0)
+        .setVisible(this.debugVisible),
     };
     this.commentManager = new CommentManager(this);
     this.input.keyboard.on('keydown-P', (event) => {
@@ -315,23 +320,25 @@ export class MatchScene extends Phaser.Scene {
       this.lastSecond = currentSecond;
     }
 
-    this.debugText.center.setText(`Distance: ${distance.toFixed(1)}`);
-    const strat1 =
-      typeof this.player1.controller.getLevel === 'function'
-        ? `Strategy: ${this.player1.controller.getLevel()}`
-        : 'Human controlled boxer';
-    const strat2 =
-      typeof this.player2.controller.getLevel === 'function'
-        ? `Strategy: ${this.player2.controller.getLevel()}`
-        : 'Human controlled boxer';
-    const rule1 = `Ruleset: ruleset${this.rulesetId.p1} | ${
-      this.ruleManager1.currentRule() || 'none'
-    }`;
-    const rule2 = `Ruleset: ruleset${this.rulesetId.p2} | ${
-      this.ruleManager2.currentRule() || 'none'
-    }`;
-    this.debugText.p1.setText(`${strat1}\n${rule1}`);
-    this.debugText.p2.setText(`${strat2}\n${rule2}`);
+    if (this.debugVisible) {
+      this.debugText.center.setText(`Distance: ${distance.toFixed(1)}`);
+      const strat1 =
+        typeof this.player1.controller.getLevel === 'function'
+          ? `Strategy: ${this.player1.controller.getLevel()}`
+          : 'Human controlled boxer';
+      const strat2 =
+        typeof this.player2.controller.getLevel === 'function'
+          ? `Strategy: ${this.player2.controller.getLevel()}`
+          : 'Human controlled boxer';
+      const rule1 = `Ruleset: ruleset${this.rulesetId.p1} | ${
+        this.ruleManager1.currentRule() || 'none'
+      }`;
+      const rule2 = `Ruleset: ruleset${this.rulesetId.p2} | ${
+        this.ruleManager2.currentRule() || 'none'
+      }`;
+      this.debugText.p1.setText(`${strat1}\n${rule1}`);
+      this.debugText.p2.setText(`${strat2}\n${rule2}`);
+    }
 
     if (this.paused) return;
 

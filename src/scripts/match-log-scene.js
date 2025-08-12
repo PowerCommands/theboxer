@@ -34,7 +34,6 @@ export class MatchLogScene extends Phaser.Scene {
     this.tableWidth = tableWidth;
     this.rowHeight = rowHeight;
     this.startX = startX;
-    this.tableBottom = height * 0.85;
     const colPercents = [
       0.08,
       0.28,
@@ -82,7 +81,33 @@ export class MatchLogScene extends Phaser.Scene {
         });
       });
       this.startY = headerY + rowHeight + 6;
+      this.viewportHeight = height * 0.85 - this.startY;
+      // Container for all log rows
+      this.content = this.add.container(0, 0);
+      this.scrollY = 0;
       this.renderRows();
+      // Mask the content so it becomes scrollable
+      const maskShape = this.add
+        .rectangle(
+          width / 2,
+          this.startY + this.viewportHeight / 2,
+          tableWidth,
+          this.viewportHeight,
+          0x000000,
+          0
+        )
+        .setOrigin(0.5);
+      const geoMask = maskShape.createGeometryMask();
+      this.content.setMask(geoMask);
+
+      const setScroll = (s) => {
+        this.scrollY = Phaser.Math.Clamp(s, 0, this.maxScroll);
+        this.content.y = -this.scrollY;
+      };
+      const WHEEL_STEP = 40;
+      this.input.on('wheel', (_p, _go, _dx, dy) => {
+        setScroll(this.scrollY + (dy > 0 ? WHEEL_STEP : -WHEEL_STEP));
+      });
     }
 
     const btnX = width / 2;
@@ -113,21 +138,17 @@ export class MatchLogScene extends Phaser.Scene {
   }
 
   renderRows() {
-    if (this.rowObjs) {
-      this.rowObjs.forEach((obj) => obj.destroy());
+    if (this.content) {
+      this.content.removeAll(true);
     }
-    this.rowObjs = [];
     let y = this.startY;
     const width = this.sys.game.config.width;
     const rowHeight = this.rowHeight;
     for (let [index, entry] of this.log.entries()) {
-      if (y > this.tableBottom) {
-        break;
-      }
       const rowRect = this.add
         .rectangle(width / 2, y, this.tableWidth, rowHeight, 0x001b44, tableAlpha)
         .setOrigin(0.5, 0);
-      this.rowObjs.push(rowRect);
+      this.content.add(rowRect);
 
       const toggle = this.add
         .text(this.startX - 15, y, this.expandedRows.has(index) ? '-' : '+', {
@@ -143,7 +164,7 @@ export class MatchLogScene extends Phaser.Scene {
           }
           this.renderRows();
         });
-      this.rowObjs.push(toggle);
+      this.content.add(toggle);
 
       const arenaText = [entry.arena?.Name, entry.arena?.City]
         .filter(Boolean)
@@ -182,25 +203,26 @@ export class MatchLogScene extends Phaser.Scene {
           font: '16px Arial',
           color: '#ffffff',
         });
-        this.rowObjs.push(obj);
+        this.content.add(obj);
       });
       y += rowHeight;
 
       if (this.expandedRows.has(index) && Array.isArray(entry.roundDetails)) {
         for (const rd of entry.roundDetails) {
-          if (y > this.tableBottom) {
-            break;
-          }
           const detail = this.add.text(
             this.colX[2],
             y,
             `R${rd.round}: ${rd.userScore}-${rd.oppScore} (${rd.totalUser}-${rd.totalOpp})`,
             { font: '18px Arial', color: '#cccccc' }
           );
-          this.rowObjs.push(detail);
+          this.content.add(detail);
           y += 20;
         }
       }
     }
+    this.contentHeight = y - this.startY;
+    this.maxScroll = Math.max(0, this.contentHeight - this.viewportHeight);
+    if (this.scrollY > this.maxScroll) this.scrollY = this.maxScroll;
+    this.content.y = -this.scrollY;
   }
 }
