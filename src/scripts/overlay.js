@@ -21,7 +21,7 @@ export class OverlayUI extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
     const infoY = 0;
-    const infoHeight = 140;
+    const infoHeight = 150;
     // Slightly increased transparency for the overlay background
     this.add
       .rectangle(width / 2, infoY, width, infoHeight, 0x808080, 0.4)
