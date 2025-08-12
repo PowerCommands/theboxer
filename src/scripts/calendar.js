@@ -1,4 +1,6 @@
-import { BOXER_DATA } from './boxer-data.js';
+import { BOXERS } from './boxers.js';
+import { recordResult } from './boxer-stats.js';
+import { addMatchLog } from './match-log.js';
 
 function computeRange(matchIndex) {
   const baseDate = new Date(2025, 2, 5); // March 5, 2025
@@ -25,10 +27,10 @@ function pickRandom(pool) {
 export function generateMonthlyMatches(matchIndex, excluded = []) {
   const { start, end } = computeRange(matchIndex);
   const exclude = new Set(excluded);
-  const lowRank = BOXER_DATA.filter(
+  const lowRank = BOXERS.filter(
     (b) => b.ranking >= 50 && !exclude.has(b.name)
   );
-  const highRank = BOXER_DATA.filter(
+  const highRank = BOXERS.filter(
     (b) => b.ranking < 50 && !exclude.has(b.name)
   );
   const matches = [];
@@ -75,12 +77,43 @@ export async function simulateMatch(match, delayMs = 3000) {
       rounds.push(`Round ${r}: ${winner.name} 10-${loserPts}`);
     }
   }
+  const b1RankBefore = match.boxer1.ranking;
+  const b2RankBefore = match.boxer2.ranking;
+  const b1EarnBefore = match.boxer1.earnings || 0;
+  const b2EarnBefore = match.boxer2.earnings || 0;
+  const winnerTitlesBefore = (winner.titles || []).slice();
+  recordResult(winner, loser, method);
+  const prize1 = match.boxer1.earnings - b1EarnBefore;
+  const prize2 = match.boxer2.earnings - b2EarnBefore;
+  const titlesWon = (winner.titles || []).filter(
+    (t) => !winnerTitlesBefore.includes(t)
+  );
+  addMatchLog(match.boxer1.name, {
+    opponent: match.boxer2.name,
+    result: winner === match.boxer1 ? 'Win' : 'Loss',
+    method,
+    prize: prize1,
+    rankingBefore: b1RankBefore,
+    rankingAfter: match.boxer1.ranking,
+  });
+  addMatchLog(match.boxer2.name, {
+    opponent: match.boxer1.name,
+    result: winner === match.boxer2 ? 'Win' : 'Loss',
+    method,
+    prize: prize2,
+    rankingBefore: b2RankBefore,
+    rankingAfter: match.boxer2.ranking,
+  });
   match.result = {
     winner: winner.name,
     loser: loser.name,
     method,
     round,
     rounds,
+    prize: winner === match.boxer1 ? prize1 : prize2,
+    rankingBefore: winner === match.boxer1 ? b1RankBefore : b2RankBefore,
+    rankingAfter: winner.ranking,
+    titlesWon,
   };
   return match.result;
 }

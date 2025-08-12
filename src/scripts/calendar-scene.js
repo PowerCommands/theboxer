@@ -2,12 +2,12 @@ import { generateMonthlyMatches, simulateMatch } from './calendar.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import { getMatchLog } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
+import { formatMoney } from './helpers.js';
 
 export class CalendarScene extends Phaser.Scene {
   constructor() {
     super('Calendar');
     this.matches = [];
-    this.currentIndex = 0;
     this.rows = [];
   }
 
@@ -38,45 +38,95 @@ export class CalendarScene extends Phaser.Scene {
     this.render();
   }
 
-  formatLine(match) {
-    let line = `${match.date} ${match.boxer1.name} vs ${match.boxer2.name}`;
-    if (match.result) {
-      line += ` - ${match.result.winner} ${match.result.method}`;
-    }
-    return line;
+  formatResult(match) {
+    if (!match.result) return '';
+    const { winner, method, round, prize, rankingBefore, rankingAfter, titlesWon } =
+      match.result;
+    const arrow = rankingAfter < rankingBefore ? ' ↑' : '';
+    const titleText = titlesWon && titlesWon.length > 0 ? ` ${titlesWon.join(',')}` : '';
+    return `${winner} ${method} R${round} ${formatMoney(prize)} Rank ${rankingBefore}→${rankingAfter}${arrow}${titleText}`;
   }
 
   render() {
-    this.rows.forEach((r) => r.destroy());
+    this.rows.flat().forEach((r) => r.destroy());
     this.rows = [];
     const width = this.sys.game.config.width;
     const startY = 80;
+    const rowH = 40;
+    const colX = [width * 0.1, width * 0.3, width * 0.5, width * 0.7, width * 0.85, width * 0.95];
+
+    const headers = ['Date', 'Boxer 1', 'Boxer 2', 'Result', 'Sim', 'Play'];
+    const headerRow = headers.map((h, idx) =>
+      this.add
+        .text(colX[idx], startY, h, { font: '24px Arial', color: '#ffff00' })
+        .setOrigin(0.5, 0)
+    );
+    this.rows.push(headerRow);
+
     this.matches.forEach((m, i) => {
-      const txt = this.add
-        .text(width / 2, startY + i * 40, this.formatLine(m), {
-          font: '24px Arial',
-          color: '#ffffff',
-        })
-        .setOrigin(0.5, 0);
-      if (!m.result && i === this.currentIndex) {
-        txt.setColor('#00ff00');
-        txt.setInteractive({ useHandCursor: true });
-        txt.on('pointerup', () => this.handleMatch(m));
+      const y = startY + (i + 1) * rowH;
+      const row = [];
+      row.push(
+        this.add
+          .text(colX[0], y, m.date, { font: '24px Arial', color: '#ffffff' })
+          .setOrigin(0.5, 0)
+      );
+      row.push(
+        this.add
+          .text(colX[1], y, m.boxer1.name, { font: '24px Arial', color: '#ffffff' })
+          .setOrigin(0.5, 0)
+      );
+      row.push(
+        this.add
+          .text(colX[2], y, m.boxer2.name, { font: '24px Arial', color: '#ffffff' })
+          .setOrigin(0.5, 0)
+      );
+      row.push(
+        this.add
+          .text(colX[3], y, this.formatResult(m), {
+            font: '24px Arial',
+            color: '#ffffff',
+          })
+          .setOrigin(0.5, 0)
+      );
+      if (!m.result) {
+        const simTxt = this.add
+          .text(colX[4], y, 'Sim', { font: '24px Arial', color: '#00ff00' })
+          .setOrigin(0.5, 0)
+          .setInteractive({ useHandCursor: true })
+          .on('pointerup', () => this.simulate(m));
+        row.push(simTxt);
+        const playLabel = m.player ? 'Play' : 'Watch';
+        const playTxt = this.add
+          .text(colX[5], y, playLabel, { font: '24px Arial', color: '#00ff00' })
+          .setOrigin(0.5, 0)
+          .setInteractive({ useHandCursor: true })
+          .on('pointerup', () => this.playMatch(m));
+        row.push(playTxt);
       }
-      this.rows.push(txt);
+      this.rows.push(row);
     });
   }
 
-  async handleMatch(match) {
+  async simulate(match) {
+    await simulateMatch(match, 500);
+    this.render();
+  }
+
+  playMatch(match) {
     if (match.player) {
       const matchData = { ...match, red: match.boxer1, blue: match.boxer2 };
       clearPendingMatch();
       this.scene.start('MatchIntroScene', matchData);
       return;
     }
-    await simulateMatch(match, 500);
-    this.currentIndex += 1;
-    this.render();
+    const matchData = {
+      red: match.boxer1,
+      blue: match.boxer2,
+      aiLevel1: 'default',
+      aiLevel2: 'default',
+    };
+    this.scene.start('MatchIntroScene', matchData);
   }
 }
 
