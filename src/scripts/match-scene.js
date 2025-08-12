@@ -720,6 +720,7 @@ export class MatchScene extends Phaser.Scene {
       this.roundTimer.pause();
       this.player1.sprite.anims.pause();
       this.player2.sprite.anims.pause();
+      showComment('Match paused. Press Shift+P to resume.', 5);
     } else {
       this.roundTimer.resume();
       this.player1.sprite.anims.resume();

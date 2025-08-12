@@ -175,5 +175,44 @@ const config = {
 
 window.addEventListener('load', () => {
   console.log('Initializing Phaser.Game with config:', config);
-  new Phaser.Game(config);
+  const game = new Phaser.Game(config);
+  // Expose game instance globally so we can access the scene manager
+  window.game = game;
+
+  // Global listener to open the Options scene with Escape
+  window.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+
+    const activeScenes = game.scene.getScenes(true);
+    // Do nothing if Options is already open
+    if (activeScenes.some((s) => s.scene.key === 'OptionsScene')) return;
+
+    // Ignore overlay scene when determining current scene
+    const candidates = activeScenes.filter(
+      (s) => s.scene.key !== 'OverlayUI'
+    );
+    const current = candidates[candidates.length - 1];
+    if (!current) return;
+    const currentKey = current.scene.key;
+
+    // Pause overlay if it is running so it doesn't intercept input
+    const overlayActive = activeScenes.some(
+      (s) => s.scene.key === 'OverlayUI'
+    );
+    if (overlayActive) {
+      game.scene.pause('OverlayUI');
+    }
+
+    // If a match is in progress, ensure it's paused
+    if (currentKey === 'MatchScene' && !current.paused) {
+      current.togglePause();
+    }
+
+    game.scene.pause(currentKey);
+    game.scene.run('OptionsScene', {
+      fromScene: currentKey,
+      overlayActive,
+    });
+    game.scene.bringToTop('OptionsScene');
+  });
 });
