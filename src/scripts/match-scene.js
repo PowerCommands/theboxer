@@ -72,6 +72,9 @@ export class MatchScene extends Phaser.Scene {
       2
     );
 
+    this.matchIndex = data?.matchIndex;
+    this.returnScene = data?.returnScene || 'Ranking';
+
     const centerX = width / 2;
     const centerY = height / 2;
     const ringLeft = centerX - ringWidth / 2;
@@ -522,6 +525,17 @@ export class MatchScene extends Phaser.Scene {
       roundLog: this.roundLog,
       titlesWon: gained.map((code) => ({ code })),
     };
+    this.matchSummary = {
+      winner: winner.stats.name,
+      loser: loser.stats.name,
+      method: 'KO',
+      round: this.roundTimer.round,
+      prize: winner === this.player1 ? prize1 : prize2,
+      rankingBefore: winner === this.player1 ? rank1 : rank2,
+      rankingAfter: winner.stats.ranking,
+      titlesWon: gained,
+    };
+    this.resultData.matchSummary = this.matchSummary;
   }
 
   determineWinnerByPoints() {
@@ -608,6 +622,17 @@ export class MatchScene extends Phaser.Scene {
         roundLog: this.roundLog,
         titlesWon: [],
       };
+      this.matchSummary = {
+        winner: 'Draw',
+        loser: '',
+        method: 'Draw',
+        round: this.roundTimer.round,
+        prize: 0,
+        rankingBefore: rank1,
+        rankingAfter: b1.ranking,
+        titlesWon: [],
+      };
+      this.resultData.matchSummary = this.matchSummary;
       return;
     }
 
@@ -674,10 +699,26 @@ export class MatchScene extends Phaser.Scene {
       roundLog: this.roundLog,
       titlesWon: gained.map((code) => ({ code })),
     };
+    this.matchSummary = {
+      winner: winner.stats.name,
+      loser: loser.stats.name,
+      method: 'Points',
+      round: this.roundTimer.round,
+      prize: winner === this.player1 ? prize1 : prize2,
+      rankingBefore: winner === this.player1 ? rank1 : rank2,
+      rankingAfter: winner.stats.ranking,
+      titlesWon: gained,
+    };
+    this.resultData.matchSummary = this.matchSummary;
   }
 
   getResultData() {
-    return this.resultData;
+    return {
+      ...this.resultData,
+      matchIndex: this.matchIndex,
+      returnScene: this.returnScene,
+      matchSummary: this.matchSummary,
+    };
   }
 
   setPlayerStrategy(player, level) {
