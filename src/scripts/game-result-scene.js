@@ -2,6 +2,8 @@ import { formatMoney, makeWhiteTransparent } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
 import { updateMatchResult, clearCurrentMatches } from './calendar.js';
 import { advanceMonth } from './game-date.js';
+import { BOXERS } from './boxers.js';
+import { saveGameState } from './save-system.js';
 
 export class GameResultScene extends Phaser.Scene {
   constructor() {
@@ -117,6 +119,7 @@ export class GameResultScene extends Phaser.Scene {
       } else {
         clearCurrentMatches();
         advanceMonth();
+        saveGameState(BOXERS);
         this.scene.start('Ranking');
       }
     };

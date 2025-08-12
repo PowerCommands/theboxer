@@ -3,6 +3,7 @@ import {
   simulateMatch,
   getCurrentMatches,
   setCurrentMatches,
+  getLastParticipants,
 } from './calendar.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import { getMatchLog } from './match-log.js';
@@ -31,6 +32,7 @@ export class CalendarScene extends Phaser.Scene {
       this.matches = stored;
     } else {
       const { matches } = generateMonthlyMatches([
+        ...getLastParticipants(),
         pending.boxer1.name,
         pending.boxer2.name,
       ]);

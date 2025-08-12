@@ -4,6 +4,7 @@ import { addMatchLog } from './match-log.js';
 import { getCurrentDate } from './game-date.js';
 
 let currentMatches = null;
+let lastParticipants = [];
 
 export function getCurrentMatches() {
   return currentMatches;
@@ -19,7 +20,21 @@ export function updateMatchResult(index, result) {
   }
 }
 
+export function getLastParticipants() {
+  return lastParticipants;
+}
+
 export function clearCurrentMatches() {
+  if (currentMatches) {
+    const names = new Set();
+    currentMatches.forEach((m) => {
+      if (m?.boxer1?.name) names.add(m.boxer1.name);
+      if (m?.boxer2?.name) names.add(m.boxer2.name);
+    });
+    lastParticipants = Array.from(names);
+  } else {
+    lastParticipants = [];
+  }
   currentMatches = null;
 }
 
