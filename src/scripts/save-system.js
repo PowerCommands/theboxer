@@ -2,6 +2,7 @@ import { BOXERS, resetBoxers, addBoxer } from './boxers.js';
 import { setPlayerBoxer } from './player-boxer.js';
 import { setMatchLog, resetMatchLog, getAllMatchLogs } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
+import { getCurrentDate, setCurrentDate, resetDate } from './game-date.js';
 
 const SAVE_KEY = 'theBoxer.save.v1';
 const VERSION = 1;
@@ -30,6 +31,7 @@ export function saveGameState(boxers) {
     const payload = {
       version: VERSION,
       lastUpdatedUtc: new Date().toISOString(),
+      currentDate: getCurrentDate().toISOString(),
       boxers: boxers.map((b) => {
         const base = {
           id: b.name,
@@ -74,6 +76,9 @@ export function applyLoadedState(state) {
   if (!state || !Array.isArray(state.boxers)) return;
   setPlayerBoxer(null);
   setMatchLog(state.matchLog || {});
+  if (state.currentDate) {
+    setCurrentDate(new Date(state.currentDate));
+  }
   state.boxers.forEach((saved) => {
     let boxer = BOXERS.find((b) => b.name === saved.id);
     if (!boxer && saved.userCreated) {
@@ -145,6 +150,7 @@ export function resetSavedData() {
   resetBoxers();
   setPlayerBoxer(null);
   resetMatchLog();
+  resetDate();
 }
 
 // Placeholder for future migration logic.

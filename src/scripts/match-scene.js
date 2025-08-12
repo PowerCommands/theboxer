@@ -17,6 +17,7 @@ import { BOXERS } from './boxers.js';
 import { saveGameState } from './save-system.js';
 import { addMatchLog } from './match-log.js';
 import { getTestMode } from './config.js';
+import { getCurrentDate } from './game-date.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -125,10 +126,9 @@ export class MatchScene extends Phaser.Scene {
       let year = data?.year;
       let dateStr = data?.date;
       if (!year || !dateStr) {
-        const logCount = getMatchLog().length;
-        const baseDate = new Date(2025, 2, 5); // March 5, 2025
-        const matchDate = new Date(baseDate);
-        matchDate.setDate(baseDate.getDate() + logCount * 20);
+        const current = getCurrentDate();
+        const matchDate = new Date(current);
+        matchDate.setMonth(current.getMonth() + 1, 5);
         year = matchDate.getFullYear();
         const ds = matchDate.toLocaleDateString('sv-SE', {
           day: 'numeric',

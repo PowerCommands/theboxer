@@ -1,6 +1,7 @@
 import { formatMoney, makeWhiteTransparent } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
 import { updateMatchResult, clearCurrentMatches } from './calendar.js';
+import { advanceMonth } from './game-date.js';
 
 export class GameResultScene extends Phaser.Scene {
   constructor() {
@@ -115,6 +116,7 @@ export class GameResultScene extends Phaser.Scene {
         this.scene.start('Calendar');
       } else {
         clearCurrentMatches();
+        advanceMonth();
         this.scene.start('Ranking');
       }
     };
