@@ -3,6 +3,7 @@ import { setPlayerBoxer } from './player-boxer.js';
 import { setMatchLog, resetMatchLog, getAllMatchLogs } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
 import { getCurrentDate, setCurrentDate, resetDate } from './game-date.js';
+import { resetBankAccount } from './bank-account.js';
 
 const SAVE_KEY = 'theBoxer.save.v1';
 const VERSION = 1;
@@ -155,6 +156,7 @@ export function resetSavedData() {
   setPlayerBoxer(null);
   resetMatchLog();
   resetDate();
+  resetBankAccount();
 }
 
 // Placeholder for future migration logic.

@@ -1,5 +1,7 @@
 import { BOXERS } from './boxers.js';
 import { TITLES } from './title-data.js';
+import { getPlayerBoxer } from './player-boxer.js';
+import { addTransaction } from './bank-account.js';
 
 const TITLE_MAP = TITLES.reduce((acc, t) => {
   acc[t.name] = t;
@@ -80,6 +82,9 @@ function awardEarnings(b1, b2, winner) {
   b2.earnings = (b2.earnings || 0) + b2Prize;
   b1.bank = (b1.bank || 0) + b1Prize;
   b2.bank = (b2.bank || 0) + b2Prize;
+  const player = getPlayerBoxer();
+  if (b1 === player) addTransaction(b1Prize);
+  if (b2 === player) addTransaction(b2Prize);
 }
 
 // Record a win/loss result between two boxers.

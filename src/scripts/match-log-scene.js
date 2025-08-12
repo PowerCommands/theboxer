@@ -3,6 +3,7 @@ import { SoundManager } from './sound-manager.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { tableAlpha } from './config.js';
 import { formatMoney } from './helpers.js';
+import { getBalance } from './bank-account.js';
 
 export class MatchLogScene extends Phaser.Scene {
   constructor() {
@@ -27,8 +28,10 @@ export class MatchLogScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     if (boxer) {
+      const balance =
+        boxer === getPlayerBoxer() ? getBalance() : boxer.bank || 0;
       this.add
-        .text(width / 2, 60, `Bank account balance: ${formatMoney(boxer.bank || 0)}`, {
+        .text(width / 2, 60, `Bank account balance: ${formatMoney(balance)}`, {
           font: '24px Arial',
           color: '#ffffff',
         })
