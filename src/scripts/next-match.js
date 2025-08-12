@@ -8,7 +8,7 @@ function computeDate() {
   const logCount = getMatchLog().length;
   const baseDate = new Date(2025, 2, 5);
   const matchDate = new Date(baseDate);
-  matchDate.setDate(baseDate.getDate() + logCount * 20);
+  matchDate.setMonth(baseDate.getMonth() + logCount);
   const year = matchDate.getFullYear();
   const dateStr = matchDate.toLocaleDateString('sv-SE', {
     day: 'numeric',
