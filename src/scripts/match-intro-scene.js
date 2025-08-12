@@ -2,6 +2,7 @@
 // Phaser 3 scen för “Tale of the Tape” utan timeline-API (manuell kedjning av tweens)
 
 import { makeWhiteTransparent } from './helpers.js';
+import { SoundManager } from './sound-manager.js';
 
 export class MatchIntroScene extends Phaser.Scene {
   constructor() {
@@ -22,6 +23,10 @@ export class MatchIntroScene extends Phaser.Scene {
   }
 
   create() {
+    SoundManager.stopMenuLoop();
+    if (!SoundManager.sounds?.intro?.isPlaying) {
+      SoundManager.playIntro();
+    }
     const data = this.matchData;
     const { width, height } = this.scale;
 
