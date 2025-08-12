@@ -3,6 +3,7 @@ import { appConfig } from './config.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { formatMoney } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
+import { getCurrentDate, formatDate } from './game-date.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import { createGloveButton } from './glove-button.js';
 import {
@@ -37,8 +38,9 @@ export class RankingScene extends Phaser.Scene {
 
     // Position the ranking title near the top
     const headerY = 20;
+    const dateStr = formatDate(getCurrentDate());
     this.add
-      .text(width / 2, headerY, 'Ranking', {
+      .text(width / 2, headerY, `Ranking - ${dateStr}`, {
         font: '32px Arial',
         color: '#ffffff',
       })

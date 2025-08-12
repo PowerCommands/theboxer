@@ -1,14 +1,13 @@
 import { ArenaManager } from './arena-manager.js';
-import { getMatchLog } from './match-log.js';
 import { getMatchPreview } from './boxer-stats.js';
+import { getCurrentDate } from './game-date.js';
 
 let pendingMatch = null;
 
 function computeDate() {
-  const logCount = getMatchLog().length;
-  const baseDate = new Date(2025, 2, 5);
-  const matchDate = new Date(baseDate);
-  matchDate.setMonth(baseDate.getMonth() + logCount);
+  const current = getCurrentDate();
+  const matchDate = new Date(current);
+  matchDate.setMonth(current.getMonth() + 1, 5);
   const year = matchDate.getFullYear();
   const dateStr = matchDate.toLocaleDateString('sv-SE', {
     day: 'numeric',

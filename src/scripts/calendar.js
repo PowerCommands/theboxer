@@ -1,6 +1,7 @@
 import { BOXERS } from './boxers.js';
 import { recordResult } from './boxer-stats.js';
 import { addMatchLog } from './match-log.js';
+import { getCurrentDate } from './game-date.js';
 
 let currentMatches = null;
 
@@ -26,10 +27,10 @@ export function hasPendingMatches() {
   return !!currentMatches?.some((m) => !m.result);
 }
 
-function computeRange(matchIndex) {
-  const baseDate = new Date(2025, 2, 5); // March 5, 2025
-  const upcoming = new Date(baseDate);
-  upcoming.setMonth(baseDate.getMonth() + matchIndex);
+function computeRange() {
+  const current = getCurrentDate();
+  const upcoming = new Date(current);
+  upcoming.setMonth(current.getMonth() + 1, 5);
   const start = new Date(upcoming.getFullYear(), upcoming.getMonth() - 1, 6);
   const end = new Date(upcoming.getFullYear(), upcoming.getMonth(), 4);
   return { start, end };
@@ -48,8 +49,8 @@ function pickRandom(pool) {
   return pool.splice(index, 1)[0];
 }
 
-export function generateMonthlyMatches(matchIndex, excluded = []) {
-  const { start, end } = computeRange(matchIndex);
+export function generateMonthlyMatches(excluded = []) {
+  const { start, end } = computeRange();
   const exclude = new Set(excluded);
   const lowRank = BOXERS.filter(
     (b) => b.ranking >= 50 && !exclude.has(b.name)

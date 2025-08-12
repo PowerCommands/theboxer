@@ -30,7 +30,7 @@ export class CalendarScene extends Phaser.Scene {
     if (stored && stored.length > 0) {
       this.matches = stored;
     } else {
-      const { matches } = generateMonthlyMatches(getMatchLog().length, [
+      const { matches } = generateMonthlyMatches([
         pending.boxer1.name,
         pending.boxer2.name,
       ]);
