@@ -7,9 +7,10 @@ export class SoundManager {
     this.scene = scene;
     const vol = { volume: 0.7 };
     const volLow = { volume: 0.4 };
+    const commentator = { volume: 1, setVolume(v) { this.volume = v; } };
     this.sounds = {
       menuLoop: scene.sound.add('loop-menu', { loop: true, ...vol }),
-      click: scene.sound.add('click-menu', vol+2),
+      click: scene.sound.add('click-menu', vol + 2),
       intro: scene.sound.add('intro', volLow),
       bell: scene.sound.add('bell-signals', vol),
       fight: scene.sound.add('fight', vol),
@@ -20,7 +21,8 @@ export class SoundManager {
       uppercut: scene.sound.add('uppercut', vol),
       cheer: scene.sound.add('crowd-cheering', vol),
       cheerKO: scene.sound.add('crowd-cheering-ko', vol),
-      cinematicIntro: scene.sound.add('cinematic-intro', vol),
+      cinematicIntro: scene.sound.add('cinematic-intro', { ...vol }),
+      commentator,
     };
 
     this.defaultVolumes = {};
