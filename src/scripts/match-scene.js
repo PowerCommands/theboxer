@@ -28,6 +28,7 @@ export class MatchScene extends Phaser.Scene {
 
     this.scene.wake('OverlayUI');
     this.scene.setVisible('OverlayUI', true);
+    eventBus.emit('match-started');
 
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
@@ -182,6 +183,11 @@ export class MatchScene extends Phaser.Scene {
     }
 
     this.healthManager = new HealthManager(this.player1, this.player2);
+    this.healthManager.reset();
+    this.player1.adjustStamina(0);
+    this.player2.adjustStamina(0);
+    this.player1.adjustPower(0);
+    this.player2.adjustPower(0);
     this.roundTimer = new RoundTimer(this);
     const makeMgr = (me, opp) => {
       switch (me.stats.ruleset) {

@@ -14,6 +14,7 @@ export class OverlayUI extends Phaser.Scene {
     this.clickHandler = null;
     this.locationText = null;
     this.nextRoundHandler = null;
+    this.onMatchStarted = null;
   }
 
   create() {
@@ -121,6 +122,32 @@ export class OverlayUI extends Phaser.Scene {
     this.setBarValue(this.bars.p2.health, 1);
 
     this.onTimerTick = (seconds) => this.updateTimerText(seconds);
+    this.onMatchStarted = () => {
+      this.matchOver = false;
+      this.continueText?.setVisible(false);
+      this.hideNextRoundButton();
+      this.updateTimerText(0);
+      this.dateText?.setText('');
+      this.locationText?.setText('');
+      this.roundText?.setText('');
+      this.setBarValue(this.bars.p1.stamina, 1);
+      this.setBarValue(this.bars.p1.power, 1);
+      this.setBarValue(this.bars.p1.health, 1);
+      this.setBarValue(this.bars.p2.stamina, 1);
+      this.setBarValue(this.bars.p2.power, 1);
+      this.setBarValue(this.bars.p2.health, 1);
+      this.hits = { p1: 0, p2: 0 };
+      this.score = { p1: 0, p2: 0 };
+      this.updateHitTexts();
+      if (this.enterHandler) {
+        this.input.keyboard.off('keydown', this.enterHandler);
+        this.enterHandler = null;
+      }
+      if (this.clickHandler) {
+        this.input.off('pointerdown', this.clickHandler);
+        this.clickHandler = null;
+      }
+    };
     this.onRoundStarted = (round) => {
       // Ensure the overlay is always rendered above the match scene.
       this.scene.bringToTop();
@@ -187,6 +214,7 @@ export class OverlayUI extends Phaser.Scene {
     eventBus.on('hit-update', this.onHitUpdate);
     eventBus.on('score-update', this.onScoreUpdate);
     eventBus.on('match-date', this.onMatchDate);
+    eventBus.on('match-started', this.onMatchStarted);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       eventBus.off('timer-tick', this.onTimerTick);
@@ -200,6 +228,7 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('hit-update', this.onHitUpdate);
       eventBus.off('score-update', this.onScoreUpdate);
       eventBus.off('match-date', this.onMatchDate);
+      eventBus.off('match-started', this.onMatchStarted);
     });
   }
 
