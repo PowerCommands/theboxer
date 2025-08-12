@@ -7,6 +7,7 @@ import {
   getPendingMatch,
   clearPendingMatch,
 } from './next-match.js';
+import { createStrategyLevelSelector } from './UIDialogControls.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -119,64 +120,13 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   showStrategyOptions(maxLevel) {
     this.clearOptions();
-
-    const width = this.sys.game.config.width;
-    const height = this.sys.game.config.height;
-
-    // Max måste alltid finnas; om saknas/ogiltigt -> 4. Minst 1.
-    const capRaw = parseInt(maxLevel, 10);
-    const cap = Number.isFinite(capRaw) ? Math.max(1, capRaw) : 4;
-    const start = 1;
-
-    const panelHTML = `
-      <div style="background:rgba(0,0,0,0.6);padding:16px 18px;text-align:center;border-radius:10px;color:#fff;min-width:360px;font-family:Arial,sans-serif;">
-        <div style="font-size:18px;margin-bottom:8px;">
-          Strategy level: <span id="strategy-value" style="color:#fff;">${start}</span>
-        </div>
-        <input id="strategy-slider" type="range" min="1" max="${cap}" step="1" value="${start}" style="width:320px;margin-bottom:12px;">
-        <div style="display:flex;gap:12px;justify-content:center;">
-          <button id="strategy-default" type="button" style="padding:6px 12px;">Default</button>
-          <button id="strategy-select"  type="button" style="padding:6px 12px;">Select</button>
-        </div>
-      </div>
-    `;
-
-    const dom = this.add.dom(width / 2, height / 2).createFromHTML(panelHTML);
-    dom.setOrigin(0.5);
-
-    const slider = dom.getChildByID('strategy-slider');
-    const valueLabel = dom.getChildByID('strategy-value');
-    const defaultBtn = dom.getChildByID('strategy-default');
-    const selectBtn = dom.getChildByID('strategy-select');
-
-    // Säkerställ gränser & startvärde
-    slider.min = '1';
-    slider.max = String(cap);
-    slider.step = '1';
-    slider.value = String(start);
-    valueLabel.textContent = String(start);
-
-    // Live-uppdatering
-    slider.addEventListener('input', () => {
-      valueLabel.textContent = slider.value;
+    const dom = createStrategyLevelSelector(this, {
+      maxLevel,
+      onSelect: (level) => {
+        this.options = (this.options || []).filter((o) => o !== dom);
+        this.selectStrategy(level);
+      },
     });
-
-    // Städa och gå vidare
-    const proceed = (level) => {
-      dom.destroy();
-      this.options = (this.options || []).filter((o) => o !== dom);
-
-      const lvl =
-        level === 'default'
-          ? 'default'
-          : Phaser.Math.Clamp(parseInt(level, 10) || 1, 1, cap);
-
-      this.selectStrategy(lvl);
-    };
-
-    defaultBtn.addEventListener('click', () => proceed('default'));
-    selectBtn.addEventListener('click', () => proceed(slider.value));
-
     (this.options ||= []).push(dom);
   }
 

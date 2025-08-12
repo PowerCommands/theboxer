@@ -1,6 +1,7 @@
 import { eventBus } from './event-bus.js';
 import { appConfig } from './config.js';
 import { SoundManager } from './sound-manager.js';
+import { createStrategyLevelSelector } from './UIDialogControls.js';
 
 export class OverlayUI extends Phaser.Scene {
   constructor() {
@@ -386,13 +387,17 @@ export class OverlayUI extends Phaser.Scene {
     this.hideStrategyOptions();
   }
 
-  showStrategyOptions(maxLevel = 10) {
+  showStrategyOptions(maxLevel = 10, locked = false) {
     const match = this.scene.get('MatchScene');
     if (!match) return;
     const controller = match.player1?.controller;
     if (!controller || typeof controller.getLevel !== 'function') return;
     const defaultLevel = match.player1.stats?.defaultStrategy || 1;
     const current = controller.getLevel();
+
+    this.strategyOptions.forEach((o) => o.destroy());
+    this.strategyOptions = [];
+
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
     const centerX =
@@ -403,53 +408,26 @@ export class OverlayUI extends Phaser.Scene {
       match?.ringBounds
         ? (match.ringBounds.top + match.ringBounds.bottom) / 2
         : height / 2;
-    this.strategyOptions.forEach((o) => o.destroy());
-    this.strategyOptions = [];
 
-    const slider = this.add.dom(centerX, centerY, 'input', {
-      type: 'range',
-      min: '1',
-      max: String(maxLevel),
-      value: String(current),
-      style: 'width:300px',
+    const dom = createStrategyLevelSelector(this, {
+      maxLevel,
+      start: current,
+      selectLabel: 'Ok',
+      defaultLabel: 'Use default',
+      locked,
+      x: centerX,
+      y: centerY,
+      onSelect: (level) => {
+        if (level === 'default') {
+          controller.setLevel(defaultLevel);
+        } else {
+          controller.setLevel(parseInt(level, 10));
+        }
+        SoundManager.playClick();
+        this.hideStrategyOptions();
+      },
     });
-    const valueText = this.add
-      .text(centerX, centerY - 50, String(current), {
-        font: '32px Arial',
-        color: '#ffffff',
-      })
-      .setOrigin(0.5);
-    slider.node.addEventListener('input', () => {
-      valueText.setText(slider.node.value);
-    });
-
-    const makeBtn = (xOffset, label, handler) => {
-      const container = this.add.container(centerX + xOffset, centerY + 60);
-      const bg = this.add.rectangle(0, 0, 200, 40, 0x001b44, 0.4);
-      const txt = this.add
-        .text(0, 0, label, { font: '20px Arial', color: '#ffffff' })
-        .setOrigin(0.5);
-      container.add([bg, txt]);
-      container.setSize(200, 40);
-      container.setInteractive({ useHandCursor: true });
-      container.on('pointerdown', handler);
-      this.strategyOptions.push(container);
-    };
-
-    const btnSpacing = 40;
-    makeBtn(-100 - btnSpacing / 2, 'Ok', () => {
-      controller.setLevel(parseInt(slider.node.value, 10));
-      SoundManager.playClick();
-      this.hideStrategyOptions();
-    });
-    makeBtn(100 + btnSpacing / 2, 'Use default', () => {
-      controller.setLevel(defaultLevel);
-      SoundManager.playClick();
-      this.hideStrategyOptions();
-    });
-
-    this.strategyOptions.push(slider);
-    this.strategyOptions.push(valueText);
+    this.strategyOptions.push(dom);
   }
 
   hideStrategyOptions() {
