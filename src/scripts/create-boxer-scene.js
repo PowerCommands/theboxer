@@ -103,7 +103,7 @@ export class CreateBoxerScene extends Phaser.Scene {
         stamina: state.stamina, power: state.power, health: state.health, speed: state.speed,
         ranking, matches: 0, wins: 0, losses: 0, draws: 0, winsByKO: 0,
         defaultStrategy: defaultStrategyForRanking(ranking),
-        ruleset: state.ruleset, userCreated: true, titles: [], earnings: 0
+        ruleset: state.ruleset, userCreated: true, titles: [], earnings: 0, bank: 0
       };
       addBoxer(boxer);
       setPlayerBoxer(boxer);

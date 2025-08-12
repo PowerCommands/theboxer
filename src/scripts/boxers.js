@@ -23,10 +23,14 @@ function initialEarnings(ranking) {
   return lerp(ranking, 81, 120, 10_000, 50_000);
 }
 
-const INIT_BOXERS = BOXER_DATA.map((b) => ({
-  ...b,
-  earnings: initialEarnings(b.ranking || 100),
-}));
+const INIT_BOXERS = BOXER_DATA.map((b) => {
+  const earn = initialEarnings(b.ranking || 100);
+  return {
+    ...b,
+    earnings: earn,
+    bank: earn,
+  };
+});
 
 // Mutable array of boxers used throughout the game.
 export const BOXERS = INIT_BOXERS.map((b) => ({ ...b }));

@@ -74,8 +74,12 @@ function awardEarnings(b1, b2, winner) {
   const purse = base * beltMult;
   const loserAmt = roundThousand(purse);
   const winnerAmt = winner ? roundThousand(purse * (1 + bonus)) : loserAmt;
-  b1.earnings = (b1.earnings || 0) + (winner === b1 ? winnerAmt : loserAmt);
-  b2.earnings = (b2.earnings || 0) + (winner === b2 ? winnerAmt : loserAmt);
+  const b1Prize = winner === b1 ? winnerAmt : loserAmt;
+  const b2Prize = winner === b2 ? winnerAmt : loserAmt;
+  b1.earnings = (b1.earnings || 0) + b1Prize;
+  b2.earnings = (b2.earnings || 0) + b2Prize;
+  b1.bank = (b1.bank || 0) + b1Prize;
+  b2.bank = (b2.bank || 0) + b2Prize;
 }
 
 // Record a win/loss result between two boxers.
