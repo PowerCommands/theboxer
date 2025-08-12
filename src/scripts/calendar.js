@@ -98,7 +98,7 @@ function boxerWeight(boxer) {
   return Math.max(0, sum - penalty);
 }
 
-export async function simulateMatch(match, delayMs = 3000) {
+export async function simulateMatch(match, delayMs = 1000) {
   await new Promise((resolve) => setTimeout(resolve, delayMs));
   const w1 = boxerWeight(match.boxer1);
   const w2 = boxerWeight(match.boxer2);
@@ -156,12 +156,4 @@ export async function simulateMatch(match, delayMs = 3000) {
     titlesWon,
   };
   return match.result;
-}
-
-export async function simulateAll(matches, delayMs = 1000) {
-  const results = [];
-  for (const m of matches) {
-    results.push(await simulateMatch(m, delayMs));
-  }
-  return results;
 }

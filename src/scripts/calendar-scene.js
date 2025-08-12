@@ -124,7 +124,7 @@ export class CalendarScene extends Phaser.Scene {
   async simulatePendingMatches() {
     const pending = this.matches.filter((m) => !m.result && !m.player);
     for (const m of pending) {
-      await simulateMatch(m, 3000);
+      await simulateMatch(m, 1000);
       this.render();
     }
   }
