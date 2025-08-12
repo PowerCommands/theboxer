@@ -43,6 +43,7 @@ export function saveGameState(boxers) {
           winsByKO: b.winsByKO,
           titles: b.titles || [],
           earnings: b.earnings || 0,
+          bank: b.bank || 0,
         };
         if (b.userCreated) {
           return {
@@ -59,6 +60,7 @@ export function saveGameState(boxers) {
             defaultStrategy: b.defaultStrategy,
             ruleset: b.ruleset,
             earnings: b.earnings || 0,
+            bank: b.bank || 0,
           };
         }
         return base;
@@ -105,6 +107,7 @@ export function applyLoadedState(state) {
         userCreated: true,
         titles: saved.titles ?? [],
         earnings: saved.earnings ?? 0,
+        bank: saved.bank ?? saved.earnings ?? 0,
       };
       addBoxer(boxer);
       setPlayerBoxer(boxer);
@@ -119,6 +122,7 @@ export function applyLoadedState(state) {
     boxer.winsByKO = saved.winsByKO ?? boxer.winsByKO;
     boxer.titles = saved.titles ?? boxer.titles ?? [];
     boxer.earnings = saved.earnings ?? boxer.earnings ?? 0;
+    boxer.bank = saved.bank ?? boxer.bank ?? boxer.earnings ?? 0;
     if (saved.userCreated) {
       boxer.userCreated = true;
       boxer.nickName = saved.nickName ?? boxer.nickName;

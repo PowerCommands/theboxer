@@ -26,6 +26,15 @@ export class MatchLogScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
+    if (boxer) {
+      this.add
+        .text(width / 2, 60, `Bank account balance: ${formatMoney(boxer.bank || 0)}`, {
+          font: '24px Arial',
+          color: '#ffffff',
+        })
+        .setOrigin(0.5, 0);
+    }
+
     this.log = getMatchLog(boxer?.name);
     this.expandedRows = new Set();
     const tableWidth = width * 0.95;
