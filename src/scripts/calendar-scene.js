@@ -119,13 +119,25 @@ export class CalendarScene extends Phaser.Scene {
     });
   }
 
+  async simulatePendingMatches() {
+    const pending = this.matches.filter((m) => !m.result && !m.player);
+    for (const m of pending) {
+      await simulateMatch(m, 3000);
+      this.render();
+    }
+  }
+
   async simulate(match) {
+    if (match.player) {
+      await this.simulatePendingMatches();
+    }
     await simulateMatch(match, 500);
     this.render();
   }
 
-  playMatch(match, index) {
+  async playMatch(match, index) {
     if (match.player) {
+      await this.simulatePendingMatches();
       const matchData = {
         ...match,
         red: match.boxer1,
