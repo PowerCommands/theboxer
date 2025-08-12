@@ -2,6 +2,30 @@ import { BOXERS } from './boxers.js';
 import { recordResult } from './boxer-stats.js';
 import { addMatchLog } from './match-log.js';
 
+let currentMatches = null;
+
+export function getCurrentMatches() {
+  return currentMatches;
+}
+
+export function setCurrentMatches(matches) {
+  currentMatches = matches;
+}
+
+export function updateMatchResult(index, result) {
+  if (currentMatches && currentMatches[index]) {
+    currentMatches[index].result = result;
+  }
+}
+
+export function clearCurrentMatches() {
+  currentMatches = null;
+}
+
+export function hasPendingMatches() {
+  return !!currentMatches?.some((m) => !m.result);
+}
+
 function computeRange(matchIndex) {
   const baseDate = new Date(2025, 2, 5); // March 5, 2025
   const upcoming = new Date(baseDate);

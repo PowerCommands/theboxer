@@ -1,4 +1,9 @@
-import { generateMonthlyMatches, simulateMatch } from './calendar.js';
+import {
+  generateMonthlyMatches,
+  simulateMatch,
+  getCurrentMatches,
+  setCurrentMatches,
+} from './calendar.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import { getMatchLog } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
@@ -21,12 +26,18 @@ export class CalendarScene extends Phaser.Scene {
       return;
     }
 
-    const { matches } = generateMonthlyMatches(getMatchLog().length, [
-      pending.boxer1.name,
-      pending.boxer2.name,
-    ]);
-    // Player match is always last
-    this.matches = [...matches, { ...pending, player: true }];
+    const stored = getCurrentMatches();
+    if (stored && stored.length > 0) {
+      this.matches = stored;
+    } else {
+      const { matches } = generateMonthlyMatches(getMatchLog().length, [
+        pending.boxer1.name,
+        pending.boxer2.name,
+      ]);
+      // Player match is always last
+      this.matches = [...matches, { ...pending, player: true }];
+      setCurrentMatches(this.matches);
+    }
 
     this.title = this.add
       .text(width / 2, 20, 'Upcoming Matches', {
@@ -101,7 +112,7 @@ export class CalendarScene extends Phaser.Scene {
           .text(colX[5], y, playLabel, { font: '24px Arial', color: '#00ff00' })
           .setOrigin(0.5, 0)
           .setInteractive({ useHandCursor: true })
-          .on('pointerup', () => this.playMatch(m));
+          .on('pointerup', () => this.playMatch(m, i));
         row.push(playTxt);
       }
       this.rows.push(row);
@@ -113,18 +124,27 @@ export class CalendarScene extends Phaser.Scene {
     this.render();
   }
 
-  playMatch(match) {
+  playMatch(match, index) {
     if (match.player) {
-      const matchData = { ...match, red: match.boxer1, blue: match.boxer2 };
+      const matchData = {
+        ...match,
+        red: match.boxer1,
+        blue: match.boxer2,
+        matchIndex: index,
+        returnScene: 'Ranking',
+      };
       clearPendingMatch();
       this.scene.start('MatchIntroScene', matchData);
       return;
     }
     const matchData = {
+      ...match,
       red: match.boxer1,
       blue: match.boxer2,
       aiLevel1: 'default',
       aiLevel2: 'default',
+      matchIndex: index,
+      returnScene: 'Calendar',
     };
     this.scene.start('MatchIntroScene', matchData);
   }

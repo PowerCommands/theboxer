@@ -1,5 +1,6 @@
 import { formatMoney, makeWhiteTransparent } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
+import { updateMatchResult, clearCurrentMatches } from './calendar.js';
 
 export class GameResultScene extends Phaser.Scene {
   constructor() {
@@ -100,11 +101,25 @@ export class GameResultScene extends Phaser.Scene {
       .setOrigin(0.5)
       .setInteractive({ useHandCursor: true });
 
-    const goRanking = () => {
-      this.scene.start('Ranking');
+    const goNext = () => {
+      if (
+        typeof this.resultData.matchIndex === 'number' &&
+        this.resultData.matchSummary
+      ) {
+        updateMatchResult(
+          this.resultData.matchIndex,
+          this.resultData.matchSummary
+        );
+      }
+      if (this.resultData.returnScene === 'Calendar') {
+        this.scene.start('Calendar');
+      } else {
+        clearCurrentMatches();
+        this.scene.start('Ranking');
+      }
     };
-    cont.once('pointerup', goRanking);
-    this.input.keyboard.once('keydown', goRanking);
+    cont.once('pointerup', goNext);
+    this.input.keyboard.once('keydown', goNext);
   }
 }
 
