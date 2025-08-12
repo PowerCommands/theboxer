@@ -7,7 +7,7 @@ import {
   getPendingMatch,
   clearPendingMatch,
 } from './next-match.js';
-import { createStrategyLevelSelector } from './UIDialogControls.js';
+import { createStrategyLevelSelector, createRoundSelector } from './UIDialogControls.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -287,7 +287,6 @@ export class SelectBoxerScene extends Phaser.Scene {
       this.choice.push(boxer);
       this.selectedStrategy2 = 'default';
       this.step = 3;
-      this.instruction.setText('Choose number of rounds (1-13)');
       this.showRoundOptions();
       return;
     }
@@ -318,7 +317,6 @@ export class SelectBoxerScene extends Phaser.Scene {
       } else {
         this.selectedStrategy2 = 'default';
         this.step = 5;
-        this.instruction.setText('Choose number of rounds (1-13)');
         this.showRoundOptions();
       }
     }
@@ -342,23 +340,18 @@ export class SelectBoxerScene extends Phaser.Scene {
       // test mode: opponent strategy selection
       this.selectedStrategy2 = level;
       this.step = 5;
-      this.instruction.setText('Choose number of rounds (1-13)');
       this.showRoundOptions();
     }
   }
 
-  showRoundOptions() {
+  showRoundOptions(maxRounds = 13) {
     this.clearOptions();
-    for (let i = 1; i <= 13; i++) {
-      const y = 60 + i * 25;
-      const txt = this.add.text(50, y, `${i}`, {
-        font: '20px Arial',
-        color: '#ffffff',
-      });
-      txt.setInteractive({ useHandCursor: true });
-      txt.on('pointerdown', () => this.selectRounds(i));
-      this.options.push(txt);
-    }
+    this.instruction.setText(`Choose number of rounds (1-${maxRounds})`);
+    const dom = createRoundSelector(this, {
+      maxRounds,
+      onSelect: (val) => this.selectRounds(val),
+    });
+    this.options.push(dom);
   }
 
   selectRounds(num) {

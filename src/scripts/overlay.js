@@ -257,7 +257,9 @@ export class OverlayUI extends Phaser.Scene {
 
   showRound(number) {
     if (!this.roundText) return;
-    this.roundText.setText(`Round ${number}`);
+    const matchScene = this.scene.get('MatchScene');
+    const total = matchScene?.maxRounds ?? number;
+    this.roundText.setText(`Round ${number} (scheduled for ${total} rounds)`);
   }
 
   setNames(p1, p2) {

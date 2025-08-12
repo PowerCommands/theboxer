@@ -123,8 +123,9 @@ export class MatchIntroScene extends Phaser.Scene {
       })
       .setOrigin(0.5);
     infoContainer.add(dateText);
+    const totalRounds = Phaser.Math.Clamp(data?.rounds || 1, 1, 13);
     const scheduleText = this.add
-      .text(0, 60, 'Scheduled for 3 rounds', {
+      .text(0, 60, `Scheduled for ${totalRounds} rounds`, {
         fontFamily: 'Arial',
         fontSize: '22px',
         color: '#FFFFFF',
