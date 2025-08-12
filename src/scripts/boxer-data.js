@@ -1004,7 +1004,8 @@ export const BOXER_DATA = [
     "winsByKO": 10,
     "age": 37,
     "defaultStrategy": 3,
-    "ruleset": 3
+    "ruleset": 3,
+    "titles": ["EBU"]
   },
   {
     "name": "Victor Taylor",
@@ -1309,7 +1310,8 @@ export const BOXER_DATA = [
     "winsByKO": 3,
     "age": 23,
     "defaultStrategy": 5,
-    "ruleset": 3
+    "ruleset": 3,
+    "titles": ["SABC"]
   },
   {
     "name": "Yosef Adams",
@@ -1366,7 +1368,8 @@ export const BOXER_DATA = [
     "winsByKO": 18,
     "age": 18,
     "defaultStrategy": 3,
-    "ruleset": 3
+    "ruleset": 3,
+    "titles": ["NABF"]
   },
   {
     "name": "Alex Smith",
@@ -1442,8 +1445,7 @@ export const BOXER_DATA = [
     "winsByKO": 3,
     "age": 30,
     "defaultStrategy": 3,
-    "ruleset": 2,
-    "titles": ["SABC"]
+    "ruleset": 2
   },
   {
     "name": "George Baker",
@@ -1614,8 +1616,7 @@ export const BOXER_DATA = [
     "winsByKO": 2,
     "age": 22,
     "defaultStrategy": 5,
-    "ruleset": 2,
-    "titles": ["NABF"]
+    "ruleset": 2
   },
   {
     "name": "George Johnson",
@@ -1711,8 +1712,7 @@ export const BOXER_DATA = [
     "winsByKO": 2,
     "age": 24,
     "defaultStrategy": 4,
-    "ruleset": 2,
-    "titles": ["EBU"]
+    "ruleset": 2
   },
   {
     "name": "Mr. Sandman",
@@ -1769,7 +1769,8 @@ export const BOXER_DATA = [
     "winsByKO": 10,
     "age": 23,
     "defaultStrategy": 5,
-    "ruleset": 2
+    "ruleset": 2,
+    "titles": ["WBO"]
   },
   {
     "name": "Liam Zimmerman",
@@ -1904,6 +1905,6 @@ export const BOXER_DATA = [
     "ruleset": 3,
     "ranking": 1,
     "defaultStrategy": 5,
-    "titles": ["WBA", "WBC", "WBO"]
+    "titles": ["WBA", "WBC"]
   }
 ];
