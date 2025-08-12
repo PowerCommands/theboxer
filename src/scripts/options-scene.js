@@ -6,10 +6,14 @@ import { getTestMode, setTestMode } from './config.js';
 // Phaser laddas globalt via script-tag
 
 export class OptionsScene extends Phaser.Scene {
-  constructor() { super('OptionsScene'); }
+  constructor() {
+    super('OptionsScene');
+  }
 
-  create() {
+  create(data) {
     this._leaving = false;
+    this.returnScene = data?.fromScene;
+    this.overlayActive = data?.overlayActive;
 
     const W = this.scale.width;
     const H = this.scale.height;
@@ -141,9 +145,17 @@ export class OptionsScene extends Phaser.Scene {
     });
 
     const back = () => {
-      if (this._leaving) return;   // skydda mot dubbelklick
+      if (this._leaving) return; // skydda mot dubbelklick
       this._leaving = true;
-      this.scene.start('StartScene');
+      this.scene.stop();
+      if (this.overlayActive) {
+        this.scene.resume('OverlayUI');
+      }
+      if (this.returnScene) {
+        this.scene.resume(this.returnScene);
+      } else {
+        this.scene.start('StartScene');
+      }
     };
     makeLink('Back', panelX + panelW * 0.78, back);
 
