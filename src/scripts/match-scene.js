@@ -456,6 +456,8 @@ export class MatchScene extends Phaser.Scene {
     const rank2 = b2.ranking;
     const before1 = b1.earnings || 0;
     const before2 = b2.earnings || 0;
+    const titles1Before = (b1.titles || []).slice();
+    const titles2Before = (b2.titles || []).slice();
     recordResult(winner.stats, loser.stats, 'KO');
     const prize1 = b1.earnings - before1;
     const prize2 = b2.earnings - before2;
@@ -502,6 +504,24 @@ export class MatchScene extends Phaser.Scene {
       roundDetails: roundDetails2,
     });
     saveGameState(BOXERS);
+    const winnerBefore = winner === this.player1 ? titles1Before : titles2Before;
+    const gained = (winner.stats.titles || []).filter((t) => !winnerBefore.includes(t));
+    this.resultData = {
+      b1: {
+        name: b1.name,
+        prize: prize1,
+        rankingBefore: rank1,
+        rankingAfter: b1.ranking,
+      },
+      b2: {
+        name: b2.name,
+        prize: prize2,
+        rankingBefore: rank2,
+        rankingAfter: b2.ranking,
+      },
+      roundLog: this.roundLog,
+      titlesWon: gained.map((code) => ({ code })),
+    };
   }
 
   determineWinnerByPoints() {
@@ -515,6 +535,8 @@ export class MatchScene extends Phaser.Scene {
     const score2 = this.score.p2;
     const before1 = b1.earnings || 0;
     const before2 = b2.earnings || 0;
+    const titles1Before = (b1.titles || []).slice();
+    const titles2Before = (b2.titles || []).slice();
     const roundDetails1 = this.roundLog.map((r) => ({
       round: r.round,
       userScore: r.p1Score,
@@ -570,6 +592,22 @@ export class MatchScene extends Phaser.Scene {
         roundDetails: roundDetails2,
       });
       saveGameState(BOXERS);
+      this.resultData = {
+        b1: {
+          name: b1.name,
+          prize: prize1,
+          rankingBefore: rank1,
+          rankingAfter: b1.ranking,
+        },
+        b2: {
+          name: b2.name,
+          prize: prize2,
+          rankingBefore: rank2,
+          rankingAfter: b2.ranking,
+        },
+        roundLog: this.roundLog,
+        titlesWon: [],
+      };
       return;
     }
 
@@ -618,6 +656,28 @@ export class MatchScene extends Phaser.Scene {
       roundDetails: roundDetails2,
     });
     saveGameState(BOXERS);
+    const winnerBefore = winner === this.player1 ? titles1Before : titles2Before;
+    const gained = (winner.stats.titles || []).filter((t) => !winnerBefore.includes(t));
+    this.resultData = {
+      b1: {
+        name: b1.name,
+        prize: prize1,
+        rankingBefore: rank1,
+        rankingAfter: b1.ranking,
+      },
+      b2: {
+        name: b2.name,
+        prize: prize2,
+        rankingBefore: rank2,
+        rankingAfter: b2.ranking,
+      },
+      roundLog: this.roundLog,
+      titlesWon: gained.map((code) => ({ code })),
+    };
+  }
+
+  getResultData() {
+    return this.resultData;
   }
 
   setPlayerStrategy(player, level) {
