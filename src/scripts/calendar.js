@@ -158,7 +158,7 @@ export async function simulateMatch(match, delayMs = 3000) {
   return match.result;
 }
 
-export async function simulateAll(matches, delayMs = 3000) {
+export async function simulateAll(matches, delayMs = 1000) {
   const results = [];
   for (const m of matches) {
     results.push(await simulateMatch(m, delayMs));
