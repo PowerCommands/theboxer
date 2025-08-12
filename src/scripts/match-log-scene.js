@@ -91,7 +91,7 @@ export class MatchLogScene extends Phaser.Scene {
         .rectangle(
           width / 2,
           this.startY + this.viewportHeight / 2,
-          tableWidth,
+          tableWidth + 40,
           this.viewportHeight,
           0x000000,
           0

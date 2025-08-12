@@ -336,9 +336,19 @@ export class OverlayUI extends Phaser.Scene {
     if (this.matchOver) return;
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
+    const match = this.scene.get('MatchScene');
+    const centerX =
+      match?.ringBounds
+        ? (match.ringBounds.left + match.ringBounds.right) / 2
+        : width / 2;
+    const centerY =
+      match?.ringBounds
+        ? (match.ringBounds.top + match.ringBounds.bottom) / 2
+        : height / 2;
+    this.scene.bringToTop();
     if (!this.nextRoundText) {
       this.nextRoundText = this.add
-        .text(width / 2, height / 2, 'Next round', {
+        .text(centerX, centerY, 'Next round', {
           font: '32px Arial',
           color: '#ffffff',
         })
@@ -346,14 +356,13 @@ export class OverlayUI extends Phaser.Scene {
         .setInteractive({ useHandCursor: true })
         .setDepth(1);
     } else {
-      this.nextRoundText.setVisible(true);
+      this.nextRoundText.setVisible(true).setPosition(centerX, centerY);
     }
     if (this.nextRoundHandler) {
       this.input.off('pointerup', this.nextRoundHandler);
     }
     this.nextRoundHandler = () => this.triggerNextRound();
     this.input.once('pointerup', this.nextRoundHandler);
-    const match = this.scene.get('MatchScene');
     if (match?.isP1AI) {
       this.showStrategyOptions(10);
     }
@@ -386,10 +395,18 @@ export class OverlayUI extends Phaser.Scene {
     const current = controller.getLevel();
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
+    const centerX =
+      match?.ringBounds
+        ? (match.ringBounds.left + match.ringBounds.right) / 2
+        : width / 2;
+    const centerY =
+      match?.ringBounds
+        ? (match.ringBounds.top + match.ringBounds.bottom) / 2
+        : height / 2;
     this.strategyOptions.forEach((o) => o.destroy());
     this.strategyOptions = [];
 
-    const slider = this.add.dom(width / 2, height / 2, 'input', {
+    const slider = this.add.dom(centerX, centerY, 'input', {
       type: 'range',
       min: '1',
       max: String(maxLevel),
@@ -397,7 +414,7 @@ export class OverlayUI extends Phaser.Scene {
       style: 'width:300px',
     });
     const valueText = this.add
-      .text(width / 2, height / 2 - 50, String(current), {
+      .text(centerX, centerY - 50, String(current), {
         font: '32px Arial',
         color: '#ffffff',
       })
@@ -406,8 +423,8 @@ export class OverlayUI extends Phaser.Scene {
       valueText.setText(slider.node.value);
     });
 
-    const makeBtn = (x, label, handler) => {
-      const container = this.add.container(x, height / 2 + 60);
+    const makeBtn = (xOffset, label, handler) => {
+      const container = this.add.container(centerX + xOffset, centerY + 60);
       const bg = this.add.rectangle(0, 0, 200, 40, 0x001b44, 0.4);
       const txt = this.add
         .text(0, 0, label, { font: '20px Arial', color: '#ffffff' })
@@ -420,12 +437,12 @@ export class OverlayUI extends Phaser.Scene {
     };
 
     const btnSpacing = 40;
-    makeBtn(width / 2 - 100 - btnSpacing / 2, 'Ok', () => {
+    makeBtn(-100 - btnSpacing / 2, 'Ok', () => {
       controller.setLevel(parseInt(slider.node.value, 10));
       SoundManager.playClick();
       this.hideStrategyOptions();
     });
-    makeBtn(width / 2 + 100 + btnSpacing / 2, 'Use default', () => {
+    makeBtn(100 + btnSpacing / 2, 'Use default', () => {
       controller.setLevel(defaultLevel);
       SoundManager.playClick();
       this.hideStrategyOptions();
