@@ -5,6 +5,7 @@ import { SoundManager } from './sound-manager.js';
 import { scheduleMatch, getPendingMatch } from './next-match.js';
 import { createPlaybookLevelSelector, createRoundSelector } from './UIDialogControls.js';
 import { createGloveButton } from './glove-button.js';
+import { RULESETS } from './ruleset-data.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -14,6 +15,8 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.options = [];
     this.selectedPlaybook1 = null;
     this.selectedPlaybook2 = null;
+    this.selectedFightPlan1 = null;
+    this.selectedFightPlan2 = null;
     this.isBoxer1Human = false;
     this.selectedRounds = null;
   }
@@ -127,11 +130,19 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   showPlaybookOptions(maxLevel) {
     this.clearOptions();
+    const boxer = this.choice[this.choice.length - 1];
+    const availablePlans = Object.values(RULESETS).filter(
+      (p) => !p.perk || boxer.perks?.some((r) => r.Name === p.perk)
+    );
     const dom = createPlaybookLevelSelector(this, {
       maxLevel,
-      onSelect: (level) => {
+      start: boxer?.defaultPlaybook || 1,
+      fightPlans: availablePlans,
+      startFightPlan: boxer.ruleset,
+      defaultFightPlan: boxer.ruleset,
+      onSelect: (sel) => {
         this.options = (this.options || []).filter((o) => o !== dom);
-        this.selectPlaybook(level);
+        this.selectPlaybook(sel);
       },
     });
     (this.options ||= []).push(dom);
@@ -269,6 +280,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.isBoxer1Human = mode === 'human';
     if (this.isBoxer1Human) {
       this.selectedPlaybook1 = 'default';
+      this.selectedFightPlan1 = 'default';
       this.step = 2;
       this.instruction.setText('Choose your opponent');
       this.showOpponentOptions();
@@ -293,6 +305,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     if (!getTestMode() && this.step === 2) {
       this.choice.push(boxer);
       this.selectedPlaybook2 = 'default';
+      this.selectedFightPlan2 = 'default';
       this.step = 3;
       this.showRoundOptions();
       return;
@@ -311,6 +324,7 @@ export class SelectBoxerScene extends Phaser.Scene {
           this.showPlaybookOptions(10);
         } else {
           this.selectedPlaybook1 = 'default';
+          this.selectedFightPlan1 = 'default';
           this.step = 2;
           this.instruction.setText('Choose your opponent');
           this.showOpponentOptions();
@@ -323,29 +337,33 @@ export class SelectBoxerScene extends Phaser.Scene {
         this.showPlaybookOptions(10);
       } else {
         this.selectedPlaybook2 = 'default';
+        this.selectedFightPlan2 = 'default';
         this.step = 5;
         this.showRoundOptions();
       }
     }
   }
 
-  selectPlaybook(level) {
+  selectPlaybook({ level, fightPlan }) {
     SoundManager.playClick();
     if (this.step === 1) {
       // non-test mode: player playbook selection
       this.selectedPlaybook1 = level;
+      this.selectedFightPlan1 = fightPlan;
       this.step = 2;
       this.instruction.setText('Choose your opponent');
       this.showOpponentOptions();
     } else if (this.step === 2) {
       // test mode: player playbook selection
       this.selectedPlaybook1 = level;
+      this.selectedFightPlan1 = fightPlan;
       this.step = 3;
       this.instruction.setText('Choose your opponent');
       this.showBoxerOptions();
     } else if (this.step === 4) {
       // test mode: opponent playbook selection
       this.selectedPlaybook2 = level;
+      this.selectedFightPlan2 = fightPlan;
       this.step = 5;
       this.showRoundOptions();
     }
@@ -364,6 +382,12 @@ export class SelectBoxerScene extends Phaser.Scene {
   selectRounds(num) {
     this.selectedRounds = num;
     const [boxer1, boxer2] = this.choice;
+    if (this.selectedFightPlan1 && this.selectedFightPlan1 !== 'default') {
+      boxer1.ruleset = this.selectedFightPlan1;
+    }
+    if (this.selectedFightPlan2 && this.selectedFightPlan2 !== 'default') {
+      boxer2.ruleset = this.selectedFightPlan2;
+    }
     const rounds = this.selectedRounds ?? 1;
     const aiLevel1 = this.isBoxer1Human
       ? null
@@ -383,6 +407,8 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.choice = [];
     this.selectedPlaybook1 = null;
     this.selectedPlaybook2 = null;
+    this.selectedFightPlan1 = null;
+    this.selectedFightPlan2 = null;
     this.selectedRounds = null;
     this.isBoxer1Human = false;
     if (!getTestMode() && getPlayerBoxer()) {
