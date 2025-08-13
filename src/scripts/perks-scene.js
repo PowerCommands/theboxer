@@ -113,14 +113,16 @@ export class PerksScene extends Phaser.Scene {
 
     updateButtons();
 
+    const goBack = () => {
+      this.scene.start('MatchLog', { boxer: player });
+    };
     this.add
       .text(20, height - 40, 'Back', {
         font: '24px Arial',
         color: '#ffff00',
       })
       .setInteractive({ useHandCursor: true })
-      .on('pointerdown', () => {
-        this.scene.start('MatchLog', { boxer: player });
-      });
+      .on('pointerdown', goBack);
+    this.input.keyboard.on('keydown-BACKSPACE', goBack);
   }
 }

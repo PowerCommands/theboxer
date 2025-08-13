@@ -171,6 +171,7 @@ export class OptionsScene extends Phaser.Scene {
 
     this.input.keyboard.on('keydown-ESC', back);
     this.input.keyboard.on('keydown-ENTER', back);
+    this.input.keyboard.on('keydown-BACKSPACE', back);
 
     // Städa alla lyssnare vid shutdown (säkerhetsnät)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {

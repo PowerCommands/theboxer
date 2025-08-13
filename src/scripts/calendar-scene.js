@@ -9,6 +9,7 @@ import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import { getMatchLog } from './match-log.js';
 import { SoundManager } from './sound-manager.js';
 import { formatMoney } from './helpers.js';
+import { createGloveButton } from './glove-button.js';
 
 export class CalendarScene extends Phaser.Scene {
   constructor() {
@@ -19,6 +20,7 @@ export class CalendarScene extends Phaser.Scene {
 
   create() {
     const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
     SoundManager.playMenuLoop();
     const pending = getPendingMatch();
     if (!pending) {
@@ -49,6 +51,12 @@ export class CalendarScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     this.render();
+
+    const back = () => {
+      this.scene.start('Ranking');
+    };
+    createGloveButton(this, 150, height * 0.93, 'Cancel', back, { width: 300 });
+    this.input.keyboard.on('keydown-BACKSPACE', back);
   }
 
   formatResult(match) {
