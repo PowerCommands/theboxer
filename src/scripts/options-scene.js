@@ -172,9 +172,7 @@ export class OptionsScene extends Phaser.Scene {
       .setInteractive({ useHandCursor: true })
       .on('pointerdown', back);
 
-    this.input.keyboard.on('keydown-ESC', back);
-    this.input.keyboard.on('keydown-ENTER', back);
-    this.input.keyboard.on('keydown-BACKSPACE', back);
+    this.input.keyboard.on('keydown-ESC', back);    
 
     // Städa alla lyssnare vid shutdown (säkerhetsnät)
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
