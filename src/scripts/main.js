@@ -7,6 +7,7 @@ import { CreateBoxerScene } from './create-boxer-scene.js';
 import { MatchLogScene } from './match-log-scene.js';
 import { StartScene } from './start-scene.js';
 import { OptionsScene } from './options-scene.js';
+import { MatchSetupScene } from './match-setup-scene.js';
 import { PerksScene } from './perks-scene.js';
 import { BackdropManager } from './backdrop-manager.js';
 import { MatchIntroScene } from './match-intro-scene.js';
@@ -179,6 +180,7 @@ const config = {
     PerksScene,
     CreateBoxerScene,
     OptionsScene,
+    MatchSetupScene,
     SelectBoxerScene,
     CalendarScene,
     MatchIntroScene,
