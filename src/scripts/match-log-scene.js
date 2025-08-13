@@ -63,12 +63,12 @@ export class MatchLogScene extends Phaser.Scene {
         if (boxer === getPlayerBoxer()) {
           const addBtn = this.add.container(x, perksY);
           addBtn.add(
-            this.add.image(0, 0, 'fight_card').setDisplaySize(32, 32)
+            this.add.image(0, 0, 'fight_card').setDisplaySize(64, 64)
           );
           addBtn.add(
-            this.add.image(0, 0, 'perk_add').setDisplaySize(28, 28)
+            this.add.image(0, 0, 'perk_add').setDisplaySize(54, 54)
           );
-          addBtn.setSize(32, 32);
+          addBtn.setSize(64, 64);
           addBtn
             .setInteractive({ useHandCursor: true })
             .on('pointerdown', () => {
@@ -77,15 +77,15 @@ export class MatchLogScene extends Phaser.Scene {
         }
         headerY = perksY + 80;
       } else if (boxer === getPlayerBoxer()) {
-        const x = startX + 32;
+        const x = startX + 64;
         const addBtn = this.add.container(x, perksY);
         addBtn.add(
-          this.add.image(0, 0, 'fight_card').setDisplaySize(32, 32)
+          this.add.image(0, 0, 'fight_card').setDisplaySize(64, 64)
         );
         addBtn.add(
-          this.add.image(0, 0, 'perk_add').setDisplaySize(28, 28)
+          this.add.image(0, 0, 'perk_add').setDisplaySize(54, 54)
         );
-        addBtn.setSize(32, 32);
+        addBtn.setSize(64, 64);
         addBtn
           .setInteractive({ useHandCursor: true })
           .on('pointerdown', () => {
