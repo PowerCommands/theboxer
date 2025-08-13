@@ -38,31 +38,6 @@ export class MatchLogScene extends Phaser.Scene {
           color: '#ffffff',
         })
         .setOrigin(0, 0);
-      if (boxer === getPlayerBoxer()) {
-        const btnX = balanceText.x + balanceText.displayWidth + 52;
-        const btnY = 60 + 32;
-        const addBtn = this.add.container(btnX, btnY);
-        addBtn.add(
-          this.add.image(0, 0, 'fight_card').setDisplaySize(64, 64)
-        );
-        addBtn.add(
-          this.add.image(0, 0, 'perk_add').setDisplaySize(54, 54)
-        );
-        addBtn.add(
-          this.add
-            .text(-50, 0, 'Buy perks', {
-              font: '20px Arial',
-              color: '#ffff00',
-            })
-            .setOrigin(1, 0.5)
-        );
-        addBtn.setSize(64, 64);
-        addBtn
-          .setInteractive({ useHandCursor: true })
-          .on('pointerdown', () => {
-            this.scene.start('PerksScene');
-          });
-      }
       const perksY = 120;
       if (boxer.perks && boxer.perks.length) {
         let x = startX + 32;
@@ -74,6 +49,29 @@ export class MatchLogScene extends Phaser.Scene {
         headerY = perksY + 80;
       } else if (boxer === getPlayerBoxer()) {
         headerY = 120;
+      }
+      if (boxer === getPlayerBoxer()) {
+        const addBtn = this.add.container(width - startX - 32, perksY);
+        addBtn.add(
+          this.add.image(0, 0, 'fight_card').setDisplaySize(64, 64)
+        );
+        addBtn.add(
+          this.add.image(0, 0, 'perk_add').setDisplaySize(54, 54)
+        );
+        addBtn.add(
+          this.add
+            .text(-40, 0, 'Buy perks', {
+              font: '20px Arial',
+              color: '#ffff00',
+            })
+            .setOrigin(1, 0.5)
+        );
+        addBtn.setSize(64, 64);
+        addBtn
+          .setInteractive({ useHandCursor: true })
+          .on('pointerdown', () => {
+            this.scene.start('PerksScene');
+          });
       }
     }
 
