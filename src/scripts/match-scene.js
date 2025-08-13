@@ -1,6 +1,6 @@
 import { Boxer } from './boxer.js';
-import { StrategyAIController } from './strategy-ai-controller.js';
-import { getMaxStrategyLevel } from './player-boxer.js';
+import { PlaybookAIController } from './playbook-ai-controller.js';
+import { getMaxPlaybookLevel } from './player-boxer.js';
 import { KeyboardController } from './controllers.js';
 import { createBoxerAnimations } from './animation-factory.js';
 import { eventBus } from './event-bus.js';
@@ -45,13 +45,13 @@ export class MatchScene extends Phaser.Scene {
     createBoxerAnimations(this, BOXER_PREFIXES.P2);
 
     // Player 1 may be human or AI controlled; player 2 always AI
-    let level1 = data.boxer1?.defaultStrategy || 1;
+    let level1 = data.boxer1?.defaultPlaybook || 1;
     if (data.aiLevel1 && data.aiLevel1 !== 'default') {
       level1 = parseInt(data.aiLevel1, 10) || level1;
     }
-    level1 = Math.min(level1, getMaxStrategyLevel(data.boxer1));
+    level1 = Math.min(level1, getMaxPlaybookLevel(data.boxer1));
     const controller1 = data?.aiLevel1
-      ? new StrategyAIController(level1, 1)
+      ? new PlaybookAIController(level1, 1)
       : new KeyboardController(this, {
           block: 'S',
           jabRight: 'E',
@@ -67,9 +67,9 @@ export class MatchScene extends Phaser.Scene {
           right: 'D',
         });
     this.isP1AI = !!data?.aiLevel1;
-    const controller2 = new StrategyAIController(
+    const controller2 = new PlaybookAIController(
       data?.aiLevel2 === 'default'
-        ? data.boxer2?.defaultStrategy || 1
+        ? data.boxer2?.defaultPlaybook || 1
         : data?.aiLevel2 || 1,
       2
     );
@@ -326,13 +326,13 @@ export class MatchScene extends Phaser.Scene {
 
     if (this.debugVisible) {
       this.debugText.center.setText(`Distance: ${distance.toFixed(1)}`);
-      const strat1 =
+      const pb1 =
         typeof this.player1.controller.getLevel === 'function'
-          ? `Strategy: ${this.player1.controller.getLevel()}`
+          ? `Playbook: ${this.player1.controller.getLevel()}`
           : 'Human controlled boxer';
-      const strat2 =
+      const pb2 =
         typeof this.player2.controller.getLevel === 'function'
-          ? `Strategy: ${this.player2.controller.getLevel()}`
+          ? `Playbook: ${this.player2.controller.getLevel()}`
           : 'Human controlled boxer';
       const rule1 = `Ruleset: ruleset${this.rulesetId.p1} | ${
         this.ruleManager1.currentRule() || 'none'
@@ -340,8 +340,8 @@ export class MatchScene extends Phaser.Scene {
       const rule2 = `Ruleset: ruleset${this.rulesetId.p2} | ${
         this.ruleManager2.currentRule() || 'none'
       }`;
-      this.debugText.p1.setText(`${strat1}\n${rule1}`);
-      this.debugText.p2.setText(`${strat2}\n${rule2}`);
+      this.debugText.p1.setText(`${pb1}\n${rule1}`);
+      this.debugText.p2.setText(`${pb2}\n${rule2}`);
     }
 
     if (this.paused) return;
@@ -403,8 +403,8 @@ export class MatchScene extends Phaser.Scene {
     });
     this.roundHits.p1 = 0;
     this.roundHits.p2 = 0;
-    this.ruleManager1.resetStrategyChanges();
-    this.ruleManager2.resetStrategyChanges();
+    this.ruleManager1.resetPlaybookChanges();
+    this.ruleManager2.resetPlaybookChanges();
     this.paused = true;
     this.resetBoxers();
     if (round >= this.maxRounds) {
@@ -722,7 +722,7 @@ export class MatchScene extends Phaser.Scene {
     };
   }
 
-  setPlayerStrategy(player, level) {
+  setPlayerPlaybook(player, level) {
     const ctrl = player === 1 ? this.player1.controller : this.player2.controller;
     if (ctrl && ctrl.setLevel) ctrl.setLevel(level);
   }

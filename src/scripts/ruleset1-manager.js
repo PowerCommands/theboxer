@@ -1,4 +1,4 @@
-import { STRATEGIES_P1, STRATEGIES_P2 } from './ai-strategies.js';
+import { PLAYBOOKS_P1, PLAYBOOKS_P2 } from './ai-playbooks.js';
 import { showComment } from './comment-manager.js';
 
 export class RuleSet1Manager {
@@ -7,7 +7,7 @@ export class RuleSet1Manager {
     this.opp = opponentBoxer;
     this.activeRule = null;
     this.activeUntil = 0;
-    this.lastStrategyMinute = -1;
+    this.lastPlaybookMinute = -1;
     this.name = 'ruleset1';
   }
 
@@ -28,15 +28,15 @@ export class RuleSet1Manager {
 
   canShift(currentSecond) {
     const minute = Math.floor(currentSecond / 60);
-    if (this.lastStrategyMinute !== minute) {
-      this.lastStrategyMinute = minute;
+    if (this.lastPlaybookMinute !== minute) {
+      this.lastPlaybookMinute = minute;
       return true;
     }
     return false;
   }
 
-  resetStrategyChanges() {
-    this.lastStrategyMinute = -1;
+  resetPlaybookChanges() {
+    this.lastPlaybookMinute = -1;
   }
 
   currentRule() {
@@ -46,8 +46,8 @@ export class RuleSet1Manager {
   getActions() {
     const ctrl = this.self.controller;
     if (typeof ctrl.getLevel === 'function') {
-      const strategies = ctrl.boxerId === 2 ? STRATEGIES_P2 : STRATEGIES_P1;
-      return strategies[ctrl.getLevel() - 1].actions;
+      const playbooks = ctrl.boxerId === 2 ? PLAYBOOKS_P2 : PLAYBOOKS_P1;
+      return playbooks[ctrl.getLevel() - 1].actions;
     }
     return null;
   }

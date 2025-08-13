@@ -1,4 +1,4 @@
-import { STRATEGIES_P1, STRATEGIES_P2 } from './ai-strategies.js';
+import { PLAYBOOKS_P1, PLAYBOOKS_P2 } from './ai-playbooks.js';
 import { showComment } from './comment-manager.js';
 
 export class RuleManager {
@@ -8,7 +8,7 @@ export class RuleManager {
     this.activeRule = null;
     this.activeUntil = 0;
     this.boxerRules = { p1: null, p2: null };
-    this.lastStrategyMinute = { p1: -1, p2: -1 };
+    this.lastPlaybookMinute = { p1: -1, p2: -1 };
   }
 
   fill(actions, start, seq) {
@@ -28,16 +28,16 @@ export class RuleManager {
 
   canShift(boxer, currentSecond) {
     const minute = Math.floor(currentSecond / 60);
-    if (this.lastStrategyMinute[boxer] !== minute) {
-      this.lastStrategyMinute[boxer] = minute;
+    if (this.lastPlaybookMinute[boxer] !== minute) {
+      this.lastPlaybookMinute[boxer] = minute;
       return true;
     }
     return false;
   }
 
-  resetStrategyChanges() {
-    this.lastStrategyMinute.p1 = -1;
-    this.lastStrategyMinute.p2 = -1;
+  resetPlaybookChanges() {
+    this.lastPlaybookMinute.p1 = -1;
+    this.lastPlaybookMinute.p2 = -1;
   }
 
   evaluate(currentSecond) {
@@ -62,8 +62,8 @@ export class RuleManager {
         try{
           const ctrl = boxer.controller;
           if (typeof ctrl.getLevel === 'function') {
-            const strategies = boxer === this.b1 ? STRATEGIES_P1 : STRATEGIES_P2;
-            return strategies[ctrl.getLevel() - 1].actions;
+            const playbooks = boxer === this.b1 ? PLAYBOOKS_P1 : PLAYBOOKS_P2;
+            return playbooks[ctrl.getLevel() - 1].actions;
           }          
         }
         catch(exception){

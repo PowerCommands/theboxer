@@ -1,4 +1,4 @@
-export function createStrategyLevelSelector(
+export function createPlaybookLevelSelector(
   scene,
   {
     maxLevel = 10,
@@ -23,12 +23,12 @@ export function createStrategyLevelSelector(
   const panelHTML = `
     <div style="background:rgba(0,0,0,0.6);padding:16px 18px;text-align:center;border-radius:10px;color:#fff;min-width:360px;font-family:Arial,sans-serif;">
       <div style="font-size:18px;margin-bottom:8px;">
-        Strategy level: <span id="strategy-value" style="color:#fff;">${startVal}</span>
+        Playbook level: <span id="playbook-value" style="color:#fff;">${startVal}</span>
       </div>
-      <input id="strategy-slider" type="range" min="1" max="${cap}" step="1" value="${startVal}" style="width:320px;margin-bottom:12px;" ${locked ? 'disabled' : ''}>
+      <input id="playbook-slider" type="range" min="1" max="${cap}" step="1" value="${startVal}" style="width:320px;margin-bottom:12px;" ${locked ? 'disabled' : ''}>
       <div style="display:flex;gap:12px;justify-content:center;">
-        ${locked ? '' : `<button id="strategy-default" type="button" style="padding:6px 12px;">${defaultLabel}</button>`}
-        <button id="strategy-select" type="button" style="padding:6px 12px;">${selectLabel}</button>
+        ${locked ? '' : `<button id="playbook-default" type="button" style="padding:6px 12px;">${defaultLabel}</button>`}
+        <button id="playbook-select" type="button" style="padding:6px 12px;">${selectLabel}</button>
       </div>
     </div>
   `;
@@ -36,10 +36,10 @@ export function createStrategyLevelSelector(
   const dom = scene.add.dom(posX, posY).createFromHTML(panelHTML);
   dom.setOrigin(0.5);
 
-  const slider = dom.getChildByID('strategy-slider');
-  const valueLabel = dom.getChildByID('strategy-value');
-  const selectBtn = dom.getChildByID('strategy-select');
-  const defaultBtn = dom.getChildByID('strategy-default');
+  const slider = dom.getChildByID('playbook-slider');
+  const valueLabel = dom.getChildByID('playbook-value');
+  const selectBtn = dom.getChildByID('playbook-select');
+  const defaultBtn = dom.getChildByID('playbook-default');
 
   slider.min = '1';
   slider.max = String(cap);

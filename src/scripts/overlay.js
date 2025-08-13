@@ -1,8 +1,8 @@
 import { eventBus } from './event-bus.js';
 import { appConfig, getTestMode } from './config.js';
 import { SoundManager } from './sound-manager.js';
-import { createStrategyLevelSelector } from './UIDialogControls.js';
-import { getMaxStrategyLevel, hasChangePerk } from './player-boxer.js';
+import { createPlaybookLevelSelector } from './UIDialogControls.js';
+import { getMaxPlaybookLevel, hasChangePerk } from './player-boxer.js';
 
 export class OverlayUI extends Phaser.Scene {
   constructor() {
@@ -11,7 +11,7 @@ export class OverlayUI extends Phaser.Scene {
     this.nextRoundText = null;
     this.continueText = null;
     this.matchOver = false;
-    this.strategyOptions = [];
+    this.playbookOptions = [];
     this.enterHandler = null;
     this.clickHandler = null;
     this.locationText = null;
@@ -370,7 +370,7 @@ export class OverlayUI extends Phaser.Scene {
     this.input.once('pointerup', this.nextRoundHandler);
     if (match?.isP1AI) {
       const locked = !getTestMode() && !hasChangePerk(match.player1);
-      this.showStrategyOptions(getMaxStrategyLevel(match.player1), locked);
+      this.showPlaybookOptions(getMaxPlaybookLevel(match.player1), locked);
     }
   }
 
@@ -379,7 +379,7 @@ export class OverlayUI extends Phaser.Scene {
       this.nextRoundHandler = null;
     }
     if (this.nextRoundText) this.nextRoundText.setVisible(false);
-    this.hideStrategyOptions();
+    this.hidePlaybookOptions();
     eventBus.emit('next-round');
   }
 
@@ -389,20 +389,20 @@ export class OverlayUI extends Phaser.Scene {
       this.input.off('pointerup', this.nextRoundHandler);
       this.nextRoundHandler = null;
     }
-    this.hideStrategyOptions();
+    this.hidePlaybookOptions();
   }
 
-  showStrategyOptions(maxLevel = 10, locked = false) {
+  showPlaybookOptions(maxLevel = 10, locked = false) {
     const match = this.scene.get('MatchScene');
     if (!match) return;
-    maxLevel = Math.min(maxLevel, getMaxStrategyLevel(match.player1));
+    maxLevel = Math.min(maxLevel, getMaxPlaybookLevel(match.player1));
     const controller = match.player1?.controller;
     if (!controller || typeof controller.getLevel !== 'function') return;
-    const defaultLevel = match.player1.stats?.defaultStrategy || 1;
+    const defaultLevel = match.player1.stats?.defaultPlaybook || 1;
     const current = controller.getLevel();
 
-    this.strategyOptions.forEach((o) => o.destroy());
-    this.strategyOptions = [];
+    this.playbookOptions.forEach((o) => o.destroy());
+    this.playbookOptions = [];
 
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
@@ -415,7 +415,7 @@ export class OverlayUI extends Phaser.Scene {
         ? (match.ringBounds.top + match.ringBounds.bottom) / 2
         : height / 2;
 
-    const dom = createStrategyLevelSelector(this, {
+    const dom = createPlaybookLevelSelector(this, {
       maxLevel,
       start: current,
       selectLabel: 'Ok',
@@ -430,14 +430,14 @@ export class OverlayUI extends Phaser.Scene {
           controller.setLevel(parseInt(level, 10));
         }
         SoundManager.playClick();
-        this.hideStrategyOptions();
+        this.hidePlaybookOptions();
       },
     });
-    this.strategyOptions.push(dom);
+    this.playbookOptions.push(dom);
   }
 
-  hideStrategyOptions() {
-    this.strategyOptions.forEach((o) => o.destroy());
-    this.strategyOptions = [];
+  hidePlaybookOptions() {
+    this.playbookOptions.forEach((o) => o.destroy());
+    this.playbookOptions = [];
   }
 }

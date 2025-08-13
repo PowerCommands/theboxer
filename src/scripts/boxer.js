@@ -44,7 +44,7 @@ export class Boxer {
     this.maxStamina = this.stamina;
     this.maxHealth = stats.health || 1;
     this.health = this.maxHealth;
-    this.defaultStrategy = stats.defaultStrategy || 1;
+    this.defaultPlaybook = stats.defaultPlaybook || 1;
     this.userCreated = stats.userCreated || false;
     this.perks = stats.perks || [];
     // slightly smaller boxer sprites

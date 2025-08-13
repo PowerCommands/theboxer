@@ -59,7 +59,7 @@ export function saveGameState(boxers) {
             power: b.power,
             health: b.health,
             speed: b.speed,
-            defaultStrategy: b.defaultStrategy,
+            defaultPlaybook: b.defaultPlaybook,
             ruleset: b.ruleset,
             earnings: b.earnings || 0,
             bank: b.bank || 0,
@@ -105,7 +105,7 @@ export function applyLoadedState(state) {
         losses: saved.losses ?? 0,
         draws: saved.draws ?? 0,
         winsByKO: saved.winsByKO ?? 0,
-        defaultStrategy: saved.defaultStrategy ?? 1,
+        defaultPlaybook: saved.defaultPlaybook ?? 1,
         ruleset: saved.ruleset ?? 1,
         userCreated: true,
         titles: saved.titles ?? [],
@@ -138,8 +138,8 @@ export function applyLoadedState(state) {
       boxer.power = saved.power ?? boxer.power;
       boxer.health = saved.health ?? boxer.health;
       boxer.speed = saved.speed ?? boxer.speed;
-      boxer.defaultStrategy =
-        saved.defaultStrategy ?? boxer.defaultStrategy;
+      boxer.defaultPlaybook =
+        saved.defaultPlaybook ?? boxer.defaultPlaybook;
       boxer.ruleset = saved.ruleset ?? boxer.ruleset;
       setPlayerBoxer(boxer);
     }

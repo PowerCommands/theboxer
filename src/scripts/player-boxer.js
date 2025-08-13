@@ -14,16 +14,16 @@ export function getPlayerBoxer() {
   return playerBoxer;
 }
 
-export function getStrategyPerkLevel(boxer = playerBoxer) {
+export function getPlaybookPerkLevel(boxer = playerBoxer) {
   if (!boxer?.perks) return 0;
   return boxer.perks
-    .filter((p) => p.Name === 'Strategy')
+    .filter((p) => p.Name === 'Playbook')
     .reduce((max, p) => Math.max(max, p.Level), 0);
 }
 
-export function getMaxStrategyLevel(boxer = playerBoxer) {
+export function getMaxPlaybookLevel(boxer = playerBoxer) {
   if (getTestMode()) return 10;
-  const lvl = getStrategyPerkLevel(boxer);
+  const lvl = getPlaybookPerkLevel(boxer);
   if (lvl >= 3) return 10;
   if (lvl === 2) return 6;
   if (lvl === 1) return 3;

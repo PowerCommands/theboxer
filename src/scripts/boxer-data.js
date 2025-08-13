@@ -16,7 +16,7 @@ export const BOXER_DATA = [
     "age": 29,
     "ruleset": 1,
     "ranking": 100,
-    "defaultStrategy": 4
+    "defaultPlaybook": 4
   },
   {
     "name": "Von Kaiser",
@@ -35,7 +35,7 @@ export const BOXER_DATA = [
     "age": 36,
     "ruleset": 1,
     "ranking": 99,
-    "defaultStrategy": 3
+    "defaultPlaybook": 3
   },
   {
     "name": "Ty Nixon",
@@ -53,7 +53,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 7,
     "age": 26,
-    "defaultStrategy": 1,
+    "defaultPlaybook": 1,
     "ruleset": 1
   },
   {
@@ -72,7 +72,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 4,
     "age": 37,
-    "defaultStrategy": 1,
+    "defaultPlaybook": 1,
     "ruleset": 3
   },
   {
@@ -91,7 +91,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 13,
     "age": 24,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 3
   },
   {
@@ -110,7 +110,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 1,
     "age": 32,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 2
   },
   {
@@ -129,7 +129,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 7,
     "age": 38,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 1
   },
   {
@@ -148,7 +148,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 8,
     "age": 28,
-    "defaultStrategy": 1,
+    "defaultPlaybook": 1,
     "ruleset": 2
   },
   {
@@ -167,7 +167,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 11,
     "age": 36,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 3
   },
   {
@@ -186,7 +186,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 7,
     "age": 35,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 2
   },
   {
@@ -205,7 +205,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 6,
     "age": 20,
-    "defaultStrategy": 1,
+    "defaultPlaybook": 1,
     "ruleset": 3
   },
   {
@@ -224,7 +224,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 12,
     "age": 26,
-    "defaultStrategy": 1,
+    "defaultPlaybook": 1,
     "ruleset": 1
   },
   {
@@ -243,7 +243,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 8,
     "age": 18,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 1
   },
   {
@@ -262,7 +262,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 1,
     "age": 21,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 2
   },
   {
@@ -281,7 +281,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 1,
     "age": 22,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 2
   },
   {
@@ -300,7 +300,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 4,
     "age": 24,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 1
   },
   {
@@ -319,7 +319,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 12,
     "age": 37,
-    "defaultStrategy": 1,
+    "defaultPlaybook": 1,
     "ruleset": 1
   },
   {
@@ -338,7 +338,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 3,
     "age": 29,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -357,7 +357,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 6,
     "age": 30,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -376,7 +376,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 9,
     "age": 18,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 3
   },
   {
@@ -395,7 +395,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 7,
     "age": 36,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -414,7 +414,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 3,
     "age": 28,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -433,7 +433,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 3,
     "age": 24,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 1
   },
   {
@@ -452,7 +452,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 4,
     "age": 39,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -471,7 +471,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 4,
     "age": 29,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -490,7 +490,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 3,
     "age": 32,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 3
   },
   {
@@ -509,7 +509,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 1,
     "age": 34,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 3
   },
   {
@@ -528,7 +528,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 5,
     "age": 34,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -547,7 +547,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 5,
     "age": 24,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -566,7 +566,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 14,
     "age": 40,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 1
   },
   {
@@ -586,7 +586,7 @@ export const BOXER_DATA = [
     "age": 23,
     "ruleset": 1,
     "ranking": 70,
-    "defaultStrategy": 2
+    "defaultPlaybook": 2
   },
   {
     "name": "Owen Young",
@@ -604,7 +604,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 8,
     "age": 26,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -623,7 +623,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 8,
     "age": 22,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -642,7 +642,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 3,
     "age": 36,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -661,7 +661,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 6,
     "age": 24,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 1
   },
   {
@@ -680,7 +680,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 4,
     "age": 31,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 3
   },
   {
@@ -699,7 +699,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 5,
     "age": 22,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -718,7 +718,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 6,
     "age": 36,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 1
   },
   {
@@ -737,7 +737,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 7,
     "age": 22,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -756,7 +756,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 13,
     "age": 20,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -776,7 +776,7 @@ export const BOXER_DATA = [
     "age": 27,
     "ruleset": 2,
     "ranking": 60,
-    "defaultStrategy": 3
+    "defaultPlaybook": 3
   },
   {
     "name": "Ty Johnson",
@@ -794,7 +794,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 7,
     "age": 22,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -813,7 +813,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 13,
     "age": 30,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 1
   },
   {
@@ -832,7 +832,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 5,
     "age": 34,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -851,7 +851,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 3,
     "age": 23,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -870,7 +870,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 12,
     "age": 24,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -889,7 +889,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 16,
     "age": 22,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -908,7 +908,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 10,
     "age": 30,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 2
   },
   {
@@ -927,7 +927,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 8,
     "age": 27,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -946,7 +946,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 9,
     "age": 37,
-    "defaultStrategy": 2,
+    "defaultPlaybook": 2,
     "ruleset": 3
   },
   {
@@ -966,7 +966,7 @@ export const BOXER_DATA = [
     "age": 21,
     "ruleset": 2,
     "ranking": 50,
-    "defaultStrategy": 2
+    "defaultPlaybook": 2
   },
   {
     "name": "Pete Vargas",
@@ -984,7 +984,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 5,
     "age": 21,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -1003,7 +1003,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 10,
     "age": 37,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 3,
     "titles": ["EBU"]
   },
@@ -1023,7 +1023,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 9,
     "age": 23,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -1042,7 +1042,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 10,
     "age": 24,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -1061,7 +1061,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 10,
     "age": 34,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 3
   },
   {
@@ -1080,7 +1080,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 8,
     "age": 18,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 2
   },
   {
@@ -1099,7 +1099,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 16,
     "age": 23,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 1
   },
   {
@@ -1118,7 +1118,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 4,
     "age": 19,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 2
   },
   {
@@ -1137,7 +1137,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 10,
     "age": 22,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 1,
     "titles": ["OPBF"]
   },
@@ -1158,7 +1158,7 @@ export const BOXER_DATA = [
     "age": 32,
     "ruleset": 3,
     "ranking": 40,
-    "defaultStrategy": 4
+    "defaultPlaybook": 4
   },
   {
     "name": "Yosef Evans",
@@ -1176,7 +1176,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 2,
     "age": 19,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 2
   },
   {
@@ -1195,7 +1195,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 7,
     "age": 37,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2
   },
   {
@@ -1214,7 +1214,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 12,
     "age": 22,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 3
   },
   {
@@ -1233,7 +1233,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 3,
     "age": 22,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 3
   },
   {
@@ -1252,7 +1252,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 7,
     "age": 27,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2
   },
   {
@@ -1271,7 +1271,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 3,
     "age": 39,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2
   },
   {
@@ -1290,7 +1290,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 4,
     "age": 37,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 3
   },
   {
@@ -1309,7 +1309,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 3,
     "age": 23,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 3,
     "titles": ["SABC"]
   },
@@ -1329,7 +1329,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 9,
     "age": 24,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 2
   },
   {
@@ -1349,7 +1349,7 @@ export const BOXER_DATA = [
     "age": 27,
     "ruleset": 2,
     "ranking": 30,
-    "defaultStrategy": 5
+    "defaultPlaybook": 5
   },
   {
     "name": "Frank Irving",
@@ -1367,7 +1367,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 18,
     "age": 18,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 3,
     "titles": ["NABF"]
   },
@@ -1387,7 +1387,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 5,
     "age": 19,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -1406,7 +1406,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 3,
     "age": 40,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -1425,7 +1425,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 22,
     "age": 18,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 1
   },
   {
@@ -1444,7 +1444,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 3,
     "age": 30,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 2
   },
   {
@@ -1463,7 +1463,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 23,
     "age": 28,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 2
   },
   {
@@ -1482,7 +1482,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 12,
     "age": 30,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 3
   },
   {
@@ -1501,7 +1501,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 7,
     "age": 29,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 1
   },
   {
@@ -1520,7 +1520,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 2,
     "age": 26,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 1
   },
   {
@@ -1540,7 +1540,7 @@ export const BOXER_DATA = [
     "age": 37,
     "ruleset": 1,
     "ranking": 20,
-    "defaultStrategy": 6
+    "defaultPlaybook": 6
   },
   {
     "name": "Kevin Johnson",
@@ -1558,7 +1558,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 5,
     "age": 40,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 3
   },
   {
@@ -1577,7 +1577,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 9,
     "age": 22,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 3
   },
   {
@@ -1596,7 +1596,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 11,
     "age": 24,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 3
   },
   {
@@ -1615,7 +1615,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 2,
     "age": 22,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2
   },
   {
@@ -1634,7 +1634,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 4,
     "age": 18,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1,
     "titles": ["ABU"]
   },
@@ -1654,7 +1654,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 12,
     "age": 29,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -1673,7 +1673,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 5,
     "age": 19,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 2
   },
   {
@@ -1692,7 +1692,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 8,
     "age": 22,
-    "defaultStrategy": 3,
+    "defaultPlaybook": 3,
     "ruleset": 1
   },
   {
@@ -1711,7 +1711,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 2,
     "age": 24,
-    "defaultStrategy": 4,
+    "defaultPlaybook": 4,
     "ruleset": 2
   },
   {
@@ -1731,7 +1731,7 @@ export const BOXER_DATA = [
     "age": 30,
     "ruleset": 3,
     "ranking": 10,
-    "defaultStrategy": 4
+    "defaultPlaybook": 4
   },
   {
     "name": "Oscar Moore",
@@ -1749,7 +1749,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 12,
     "age": 20,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2
   },
   {
@@ -1768,7 +1768,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 10,
     "age": 23,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2,
     "titles": ["WBO"]
   },
@@ -1788,7 +1788,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 8,
     "age": 35,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2
   },
   {
@@ -1807,7 +1807,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 2,
     "age": 28,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 2
   },
   {
@@ -1826,7 +1826,7 @@ export const BOXER_DATA = [
     "draws": 2,
     "winsByKO": 11,
     "age": 37,
-    "defaultStrategy": 6,
+    "defaultPlaybook": 6,
     "ruleset": 2,
     "titles": ["IBF"]
   },
@@ -1846,7 +1846,7 @@ export const BOXER_DATA = [
     "draws": 0,
     "winsByKO": 9,
     "age": 23,
-    "defaultStrategy": 7,
+    "defaultPlaybook": 7,
     "ruleset": 1
   },
   {
@@ -1865,7 +1865,7 @@ export const BOXER_DATA = [
     "draws": 1,
     "winsByKO": 16,
     "age": 31,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 2
   },
   {
@@ -1884,7 +1884,7 @@ export const BOXER_DATA = [
     "draws": 3,
     "winsByKO": 16,
     "age": 20,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "ruleset": 1
   },
   {
@@ -1904,7 +1904,7 @@ export const BOXER_DATA = [
     "age": 23,
     "ruleset": 3,
     "ranking": 1,
-    "defaultStrategy": 5,
+    "defaultPlaybook": 5,
     "titles": ["WBA", "WBC"]
   }
 ];
