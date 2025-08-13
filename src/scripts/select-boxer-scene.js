@@ -52,12 +52,21 @@ export class SelectBoxerScene extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const filter = (this.filterText || '').toLowerCase();
     const player = getPlayerBoxer();
-    const selectedIds = this.choice.map((c) => c.id);
-    const boxers = getRankings().filter((b) => {
+    const selectedNames = this.choice.map((c) => c.name);
+    let boxers = getRankings().filter((b) => {
       if (!getTestMode() && b === player) return false;
-      if (selectedIds.includes(b.id)) return false;
+      if (selectedNames.includes(b.name)) return false;
       return b.name.toLowerCase().includes(filter);
     });
+    if (!getTestMode() && player) {
+      const playerRank = player.ranking;
+      boxers = boxers.filter((b) => {
+        if (b.ranking < playerRank) {
+          return b.ranking >= playerRank - 3;
+        }
+        return true;
+      });
+    }
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const columnWidths = [5, Math.max(15, maxNameLen + 1), 5, 5, 5, 5, 5, 5];
     const charWidth = 12;
