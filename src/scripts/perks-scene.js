@@ -47,7 +47,7 @@ export class PerksScene extends Phaser.Scene {
     const renderTransactions = () => {
       txTexts.forEach((t) => t.destroy());
       txTexts = [];
-      const txStartX = leftMargin + 500;
+      const txStartX = leftMargin + 700;
       txTexts.push(
         this.add.text(txStartX, startY - 40, 'Transactions', {
           font: '24px Arial',
@@ -56,9 +56,12 @@ export class PerksScene extends Phaser.Scene {
       );
       getTransactions()
         .slice()
-        .forEach((amt, idx) => {
+        .forEach((tx, idx) => {
+          const text = `${tx.description ? tx.description + ': ' : ''}${formatMoney(
+            tx.amount
+          )}`;
           txTexts.push(
-            this.add.text(txStartX, startY + idx * 30, formatMoney(amt), {
+            this.add.text(txStartX, startY + idx * 30, text, {
               font: '20px Arial',
               color: '#ffffff',
             })
@@ -121,7 +124,7 @@ export class PerksScene extends Phaser.Scene {
               (p) => p.Name === perk.Name && p.Level === perk.Level - 1
             );
           if (!prereq) return;
-          addTransaction(-perk.Price);
+          addTransaction(-perk.Price, `Buy perk ${perk.Name}`);
           player.bank = (player.bank || 0) - perk.Price;
         }
         player.perks.push({ ...perk });

@@ -6,7 +6,15 @@ function loadTransactions() {
     const raw = localStorage.getItem(BANK_KEY);
     if (!raw) return [];
     const data = JSON.parse(raw);
-    return Array.isArray(data) ? data : [];
+    if (!Array.isArray(data)) return [];
+    return data.map((t) => {
+      if (typeof t === 'number') {
+        return { amount: t, description: '' };
+      }
+      const amt = typeof t?.amount === 'number' ? t.amount : 0;
+      const desc = typeof t?.description === 'string' ? t.description : '';
+      return { amount: amt, description: desc };
+    });
   } catch (err) {
     return [];
   }
@@ -21,9 +29,9 @@ function saveTransactions(txs) {
   }
 }
 
-export function addTransaction(amount) {
+export function addTransaction(amount, description = '') {
   const txs = loadTransactions();
-  txs.push(amount);
+  txs.push({ amount, description });
   saveTransactions(txs);
 }
 
@@ -32,7 +40,7 @@ export function getTransactions() {
 }
 
 export function getBalance() {
-  return loadTransactions().reduce((sum, v) => sum + v, 0);
+  return loadTransactions().reduce((sum, v) => sum + (v.amount || 0), 0);
 }
 
 export function resetBankAccount() {

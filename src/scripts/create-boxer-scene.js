@@ -1,6 +1,9 @@
 // create-boxer-scene.js
 import { BOXERS, addBoxer } from './boxers.js';
 import { setPlayerBoxer } from './player-boxer.js';
+import { addTransaction } from './bank-account.js';
+import { getTestMode } from './config.js';
+import { formatMoney } from './helpers.js';
 
 function defaultPlaybookForRanking(ranking) {
   if (ranking >= 80)  return Math.floor(Math.random() * 4) + 1;
@@ -43,7 +46,8 @@ export class CreateBoxerScene extends Phaser.Scene {
       age: 18,
       difficulty: 0,  // 0=Easy,1=Normal,2=Hard
       ruleset: 1,
-      health: 0, stamina: 0, power: 0, speed: 0
+      health: 0, stamina: 0, power: 0, speed: 0,
+      startMoney: 0,
     };
 
     const diffTextOf  = (d) => ['Easy','Normal','Hard'][d] || 'Easy';
@@ -66,6 +70,7 @@ export class CreateBoxerScene extends Phaser.Scene {
     const rowH  = 40;
     const leftX = panelX + 24;
     const valX  = panelX + panelW * 0.60 - 200; // ~200px närmare etiketterna
+    const testMode = getTestMode();
 
     // ----- Länkar längst ned skapas FÖRST (så vi kan toggla Create under slider-drag) -----
     const linkStyle = { fontFamily:'Arial', fontSize:'28px', color:'#FFD166', fontStyle:'bold' };
@@ -102,11 +107,14 @@ export class CreateBoxerScene extends Phaser.Scene {
         stamina: state.stamina, power: state.power, health: state.health, speed: state.speed,
         ranking, matches: 0, wins: 0, losses: 0, draws: 0, winsByKO: 0,
         defaultPlaybook: defaultPlaybookForRanking(ranking),
-        ruleset: state.ruleset, userCreated: true, titles: [], earnings: 0, bank: 0,
+        ruleset: state.ruleset, userCreated: true, titles: [], earnings: 0, bank: state.startMoney || 0,
         perks: [],
       };
       addBoxer(boxer);
       setPlayerBoxer(boxer);
+      if (state.startMoney > 0) {
+        addTransaction(state.startMoney, 'Creation bonus');
+      }
 
       this._domInputs.forEach(d => { try { d.destroy(); } catch(_){} });
       this._domInputs.length = 0;
@@ -260,6 +268,20 @@ export class CreateBoxerScene extends Phaser.Scene {
       set:(v)=>{ state.difficulty=v; },
       showRightText:(v)=>diffTextOf(v)
     });
+
+    if (testMode) {
+      makeSlider({
+        label: 'Start money',
+        min: 0,
+        max: 1000000,
+        step: 1000,
+        get: () => state.startMoney,
+        set: (v) => {
+          state.startMoney = Math.round(v);
+        },
+        showRightText: (v) => formatMoney(Math.round(v)),
+      });
+    }
 
     // Fight plan selection removed: new boxers start with default ruleset 1
 
