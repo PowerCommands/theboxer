@@ -68,6 +68,14 @@ export class MatchLogScene extends Phaser.Scene {
           addBtn.add(
             this.add.image(0, 0, 'perk_add').setDisplaySize(54, 54)
           );
+          addBtn.add(
+            this.add
+              .text(-50, 0, 'Buy perks', {
+                font: '20px Arial',
+                color: '#ffff00',
+              })
+              .setOrigin(1, 0.5)
+          );
           addBtn.setSize(64, 64);
           addBtn
             .setInteractive({ useHandCursor: true })
@@ -84,6 +92,14 @@ export class MatchLogScene extends Phaser.Scene {
         );
         addBtn.add(
           this.add.image(0, 0, 'perk_add').setDisplaySize(54, 54)
+        );
+        addBtn.add(
+          this.add
+            .text(-50, 0, 'Buy perks', {
+              font: '20px Arial',
+              color: '#ffff00',
+            })
+            .setOrigin(1, 0.5)
         );
         addBtn.setSize(64, 64);
         addBtn
