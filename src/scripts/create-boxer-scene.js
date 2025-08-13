@@ -48,7 +48,6 @@ export class CreateBoxerScene extends Phaser.Scene {
 
     const diffTextOf  = (d) => ['Easy','Normal','Hard'][d] || 'Easy';
     const diffKeyOf   = (d) => ['easy','normal','hard'][d] || 'easy';
-    const rulesetsFor = (d) => (d===0 ? [1,2,3] : d===1 ? [1,2] : [1]);
     const fmt1        = (v) => (Math.round(v*10)/10).toFixed(1);
 
     const allowedPoints = () => {
@@ -258,34 +257,11 @@ export class CreateBoxerScene extends Phaser.Scene {
     makeSlider({
       label:'Difficulty', min:0, max:2, step:1,
       get:()=>state.difficulty,
-      set:(v)=>{ state.difficulty=v; const allowed = rulesetsFor(v); if (!allowed.includes(state.ruleset)) state.ruleset = allowed[0]; rulesetValue?.setText(String(state.ruleset)); },
+      set:(v)=>{ state.difficulty=v; },
       showRightText:(v)=>diffTextOf(v)
     });
 
-    // Ruleset ◀/▶
-    let rulesetValue = null;
-    {
-      const cy = y + rowH / 2;
-      this.add.text(leftX, cy, 'Ruleset', { fontFamily:'Arial', fontSize:'20px', color:'#FFFFFF' }).setOrigin(0,0.5);
-
-      const left  = this.add.text(valX - 22, cy, '◀', { fontFamily:'Arial', fontSize:'22px', color:'#FFD166' })
-        .setOrigin(0.5).setInteractive({ useHandCursor:true });
-      rulesetValue = this.add.text(valX, cy, String(state.ruleset), {
-        fontFamily:'Arial', fontSize:'20px', color:'#FFD166'
-      }).setOrigin(0,0.5).setInteractive({ useHandCursor:true });
-      const right = this.add.text(valX + rulesetValue.width + 14, cy, '▶', { fontFamily:'Arial', fontSize:'22px', color:'#FFD166' })
-        .setOrigin(0.5).setInteractive({ useHandCursor:true });
-
-      const redraw = () => { rulesetValue.setText(String(state.ruleset)); right.x = rulesetValue.x + rulesetValue.width + 14; };
-      const prev   = () => { const arr = rulesetsFor(state.difficulty); const i = Math.max(0, arr.indexOf(state.ruleset)); state.ruleset = arr[(i-1+arr.length)%arr.length]; redraw(); };
-      const next   = () => { const arr = rulesetsFor(state.difficulty); const i = Math.max(0, arr.indexOf(state.ruleset)); state.ruleset = arr[(i+1)%arr.length]; redraw(); };
-
-      left.on('pointerdown', prev);
-      right.on('pointerdown', next);
-      rulesetValue.on('pointerdown', next);
-      redraw();
-      y += rowH;
-    }
+    // Fight plan selection removed: new boxers start with default ruleset 1
 
     // Points kvar
     const pointsText = this.add.text(leftX, y + 6, '', { fontFamily:'Arial', fontSize:'20px', color:'#BEE3DB' }).setOrigin(0,0);

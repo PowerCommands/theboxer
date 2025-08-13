@@ -3,6 +3,7 @@ import { appConfig, getTestMode } from './config.js';
 import { SoundManager } from './sound-manager.js';
 import { createPlaybookLevelSelector } from './UIDialogControls.js';
 import { getMaxPlaybookLevel, hasChangePerk } from './player-boxer.js';
+import { RULESETS } from './ruleset-data.js';
 
 export class OverlayUI extends Phaser.Scene {
   constructor() {
@@ -400,6 +401,12 @@ export class OverlayUI extends Phaser.Scene {
     if (!controller || typeof controller.getLevel !== 'function') return;
     const defaultLevel = match.player1.stats?.defaultPlaybook || 1;
     const current = controller.getLevel();
+    const boxer = match.player1;
+    const availablePlans = Object.values(RULESETS).filter(
+      (p) => !p.perk || boxer.perks?.some((r) => r.Name === p.perk)
+    );
+    const defaultPlan = boxer.stats.defaultRuleset || boxer.stats.ruleset;
+    const currentPlan = boxer.stats.ruleset;
 
     this.playbookOptions.forEach((o) => o.destroy());
     this.playbookOptions = [];
@@ -423,12 +430,18 @@ export class OverlayUI extends Phaser.Scene {
       locked,
       x: centerX,
       y: centerY,
-      onSelect: (level) => {
+      fightPlans: availablePlans,
+      startFightPlan: currentPlan,
+      defaultFightPlan: defaultPlan,
+      onSelect: ({ level, fightPlan }) => {
         if (level === 'default') {
           controller.setLevel(Math.min(defaultLevel, maxLevel));
         } else {
           controller.setLevel(parseInt(level, 10));
         }
+        const planId =
+          fightPlan === 'default' ? defaultPlan : fightPlan || currentPlan;
+        match.applyFightPlan(match.player1, match.player2, planId);
         SoundManager.playClick();
         this.hidePlaybookOptions();
       },

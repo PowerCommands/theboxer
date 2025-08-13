@@ -19,6 +19,7 @@ import { saveGameState } from './save-system.js';
 import { addMatchLog } from './match-log.js';
 import { getTestMode } from './config.js';
 import { getCurrentDate } from './game-date.js';
+import { RULESETS } from './ruleset-data.js';
 
 export class MatchScene extends Phaser.Scene {
   constructor() {
@@ -194,19 +195,11 @@ export class MatchScene extends Phaser.Scene {
     this.player1.adjustPower(0);
     this.player2.adjustPower(0);
     this.roundTimer = new RoundTimer(this);
-    const makeMgr = (me, opp) => {
-      switch (me.stats.ruleset) {
-        case 1:
-          return new RuleSet1Manager(me, opp);
-        case 2:
-          return new RuleSet2Manager(me, opp);
-        default:
-          return new RuleSet3Manager(me, opp);
-      }
-    };
-    this.ruleManager1 = makeMgr(this.player1, this.player2);
-    this.ruleManager2 = makeMgr(this.player2, this.player1);
-    this.rulesetId = { p1: this.player1.stats.ruleset, p2: this.player2.stats.ruleset };
+    this.rulesetId = { p1: 0, p2: 0 };
+    this.ruleManager1 = null;
+    this.ruleManager2 = null;
+    this.applyFightPlan(this.player1, this.player2, this.player1.stats.ruleset);
+    this.applyFightPlan(this.player2, this.player1, this.player2.stats.ruleset);
     this.roundLength = 180;
     this.lastSecond = -1;
     this.hits = { p1: 0, p2: 0 };
@@ -334,12 +327,12 @@ export class MatchScene extends Phaser.Scene {
         typeof this.player2.controller.getLevel === 'function'
           ? `Playbook: ${this.player2.controller.getLevel()}`
           : 'Human controlled boxer';
-      const rule1 = `Ruleset: ruleset${this.rulesetId.p1} | ${
-        this.ruleManager1.currentRule() || 'none'
-      }`;
-      const rule2 = `Ruleset: ruleset${this.rulesetId.p2} | ${
-        this.ruleManager2.currentRule() || 'none'
-      }`;
+      const rule1 = `Fight plan: ${
+        RULESETS[this.rulesetId.p1]?.name || ''
+      } | ${this.ruleManager1.currentRule() || 'none'}`;
+      const rule2 = `Fight plan: ${
+        RULESETS[this.rulesetId.p2]?.name || ''
+      } | ${this.ruleManager2.currentRule() || 'none'}`;
       this.debugText.p1.setText(`${pb1}\n${rule1}`);
       this.debugText.p2.setText(`${pb2}\n${rule2}`);
     }
@@ -351,6 +344,74 @@ export class MatchScene extends Phaser.Scene {
 
     this.hitManager.handleHit(this.player1, this.player2, 'p2');
     this.hitManager.handleHit(this.player2, this.player1, 'p1');
+  }
+
+  createRuleManager(me, opp, id) {
+    switch (id) {
+      case 1:
+        return new RuleSet1Manager(me, opp);
+      case 2:
+        return new RuleSet2Manager(me, opp);
+      default:
+        return new RuleSet3Manager(me, opp);
+    }
+  }
+
+  applyFightPlan(boxer, opponent, id) {
+    if (boxer.stats.defaultRuleset == null) {
+      boxer.stats.defaultRuleset = id;
+    }
+    if (boxer._fightPlanBonus) {
+      const { ability, value } = boxer._fightPlanBonus;
+      switch (ability) {
+        case 'stamina':
+          boxer.maxStamina -= value;
+          boxer.adjustStamina(-value);
+          break;
+        case 'power':
+          boxer.maxPower -= value;
+          boxer.adjustPower(-value);
+          break;
+        case 'health':
+          boxer.maxHealth -= value;
+          boxer.adjustHealth(-value);
+          break;
+        case 'speed':
+          boxer.speed -= 100 * value;
+          break;
+      }
+    }
+    const cfg = RULESETS[id];
+    boxer._fightPlanBonus = cfg?.bonus ? { ...cfg.bonus } : null;
+    if (cfg?.bonus) {
+      const { ability, value } = cfg.bonus;
+      switch (ability) {
+        case 'stamina':
+          boxer.maxStamina += value;
+          boxer.adjustStamina(value);
+          break;
+        case 'power':
+          boxer.maxPower += value;
+          boxer.adjustPower(value);
+          break;
+        case 'health':
+          boxer.maxHealth += value;
+          boxer.adjustHealth(value);
+          break;
+        case 'speed':
+          boxer.speed += 100 * value;
+          break;
+      }
+    }
+    const mgr = this.createRuleManager(boxer, opponent, id);
+    if (boxer === this.player1) {
+      this.ruleManager1 = mgr;
+      this.rulesetId.p1 = id;
+    } else {
+      this.ruleManager2 = mgr;
+      this.rulesetId.p2 = id;
+    }
+    boxer.stats.ruleset = id;
   }
 
   resetBoxers() {
