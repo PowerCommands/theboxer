@@ -277,7 +277,7 @@ export class RankingScene extends Phaser.Scene {
     } else {
       const btnY = tableBottom + 50;
       const goToSetup = () => {
-        this.scene.start('SelectBoxer');
+        this.scene.start('MatchSetup');
       };
       createGloveButton(this, width / 2, btnY, 'Next fight', goToSetup);
       this.input.keyboard.on('keydown-ENTER', goToSetup);
