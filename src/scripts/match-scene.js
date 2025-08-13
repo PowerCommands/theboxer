@@ -220,9 +220,13 @@ export class MatchScene extends Phaser.Scene {
       eventBus.off('next-round');
     });
 
+    const name1 = data?.boxer1?.name || '';
+    const name2 = data?.boxer2?.name || '';
+    const rank1 = data?.boxer1?.ranking;
+    const rank2 = data?.boxer2?.ranking;
     eventBus.emit('set-names', {
-      p1: data?.boxer1?.name || '',
-      p2: data?.boxer2?.name || '',
+      p1: rank1 != null ? name1 + ' (' + rank1 + ')' : name1,
+      p2: rank2 != null ? name2 + ' (' + rank2 + ')' : name2,
     });
     eventBus.emit('set-titles', {
       p1: (data?.boxer1?.titles || []).map((t) => `${t}🏆`).join(' '),
