@@ -29,3 +29,8 @@ export function getMaxStrategyLevel(boxer = playerBoxer) {
   if (lvl === 1) return 3;
   return 1;
 }
+
+export function hasChangePerk(boxer = playerBoxer) {
+  if (!boxer?.perks) return false;
+  return boxer.perks.some((p) => p.Name === 'Change');
+}
