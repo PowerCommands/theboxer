@@ -76,7 +76,21 @@ export function generateMonthlyMatches(excluded = []) {
   const matches = [];
   function addMatch(pool) {
     const boxer1 = pickRandom(pool);
-    const boxer2 = pickRandom(pool);
+    // Find opponents within 10 ranking steps
+    const candidates = [];
+    for (let i = 0; i < pool.length; i++) {
+      if (Math.abs(pool[i].ranking - boxer1.ranking) <= 10) {
+        candidates.push(i);
+      }
+    }
+    let boxer2;
+    if (candidates.length > 0) {
+      const idx = candidates[Math.floor(Math.random() * candidates.length)];
+      boxer2 = pool.splice(idx, 1)[0];
+    } else {
+      // Fallback to any opponent to avoid deadlocks
+      boxer2 = pickRandom(pool);
+    }
     exclude.add(boxer1.name);
     exclude.add(boxer2.name);
     matches.push({

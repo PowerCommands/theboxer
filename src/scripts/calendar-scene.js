@@ -7,6 +7,7 @@ import {
 } from './calendar.js';
 import { getPendingMatch, clearPendingMatch } from './next-match.js';
 import { getMatchLog } from './match-log.js';
+import { getMatchPreview } from './boxer-stats.js';
 import { SoundManager } from './sound-manager.js';
 import { formatMoney } from './helpers.js';
 
@@ -201,6 +202,10 @@ export class CalendarScene extends Phaser.Scene {
       this.scene.start('MatchIntroScene', matchData);
       return;
     }
+    const { purse, winnerBonus, titlesOnTheLine } = getMatchPreview(
+      match.boxer1,
+      match.boxer2
+    );
     const matchData = {
       ...match,
       red: match.boxer1,
@@ -209,6 +214,9 @@ export class CalendarScene extends Phaser.Scene {
       aiLevel2: 'default',
       matchIndex: index,
       returnScene: 'Calendar',
+      purse,
+      winnerBonus,
+      titlesOnTheLine,
     };
     this.scene.start('MatchIntroScene', matchData);
   }
