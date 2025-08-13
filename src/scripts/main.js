@@ -65,6 +65,7 @@ class BootScene extends Phaser.Scene {
         `assets/Perks/${p.Name.toLowerCase()}-level${p.Level}.png`
       );
     });
+    this.load.image('perk_add', 'assets/Perks/add.png');
     // Load idle animation frames for the boxers
     for (let i = 0; i < 10; i++) {
       const frame = i.toString().padStart(3, '0');
