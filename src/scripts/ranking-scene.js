@@ -283,19 +283,26 @@ export class RankingScene extends Phaser.Scene {
       this.input.keyboard.on('keydown-ENTER', goToSetup);
       this.input.keyboard.on('keydown-SPACE', goToSetup);
       const perksY = btnY + 100;
-      this.add
-        .image(width / 2, perksY, 'perk_add')
+      const perkImage = this.add
+        .image(0, perksY, 'perk_add')
         .setDisplaySize(80, 80)
         .setInteractive({ useHandCursor: true })
         .on('pointerup', () => {
           this.scene.start('PerksScene');
         });
-      this.add
-        .text(width / 2, perksY + 50, 'Buy perks', {
+      const perkText = this.add
+        .text(0, perksY, 'Buy perks', {
           font: '24px Arial',
           color: '#ffff00',
         })
-        .setOrigin(0.5, 0);
+        .setOrigin(0.5, 0.5);
+      const gap = 10;
+      const totalWidth = perkImage.displayWidth + gap + perkText.width;
+      const startX = width / 2 - totalWidth / 2;
+      perkImage.setX(startX + perkImage.displayWidth / 2);
+      perkText.setX(
+        perkImage.x + perkImage.displayWidth / 2 + gap + perkText.width / 2
+      );
     }
   }
 }
