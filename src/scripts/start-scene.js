@@ -1,6 +1,7 @@
 // start-scene.js
 import { loadGameState } from './save-system.js';
 import { SoundManager } from './sound-manager.js';
+import { appConfig } from './config.js';
 
 // Phaser laddas globalt
 
@@ -91,12 +92,11 @@ export class StartScene extends Phaser.Scene {
     this.input.keyboard.on('keydown-ENTER', () => this.activateFocused());
     this.input.keyboard.on('keydown-SPACE', () => this.activateFocused());
 
-    // Footer (valfritt)
-    if (window.BUILD_VERSION) {
-      this.add.text(width - 10, height - 10, window.BUILD_VERSION, {
-        font: '16px Arial', color: '#ffffff', alpha: 0.3
-      }).setOrigin(1, 1);
-    }
+    // Show current version in the bottom-right corner
+    this.add.text(width - 10, height - 10, `v${appConfig.version}`, {
+      font: '16px Arial',
+      color: '#ffffff',
+    }).setOrigin(1, 1);
 
     // Städning vid SHUTDOWN
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
