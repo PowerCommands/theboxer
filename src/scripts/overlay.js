@@ -1,8 +1,8 @@
 import { eventBus } from './event-bus.js';
-import { appConfig } from './config.js';
+import { appConfig, getTestMode } from './config.js';
 import { SoundManager } from './sound-manager.js';
 import { createStrategyLevelSelector } from './UIDialogControls.js';
-import { getMaxStrategyLevel } from './player-boxer.js';
+import { getMaxStrategyLevel, hasChangePerk } from './player-boxer.js';
 
 export class OverlayUI extends Phaser.Scene {
   constructor() {
@@ -369,7 +369,8 @@ export class OverlayUI extends Phaser.Scene {
     this.nextRoundHandler = () => this.triggerNextRound();
     this.input.once('pointerup', this.nextRoundHandler);
     if (match?.isP1AI) {
-      this.showStrategyOptions(getMaxStrategyLevel(match.player1));
+      const locked = !getTestMode() && !hasChangePerk(match.player1);
+      this.showStrategyOptions(getMaxStrategyLevel(match.player1), locked);
     }
   }
 
