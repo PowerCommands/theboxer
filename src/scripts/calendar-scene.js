@@ -80,12 +80,19 @@ export class CalendarScene extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const startY = 80;
     const rowH = 40;
-    const colX = [width * 0.1, width * 0.3, width * 0.5, width * 0.7, width * 0.85, width * 0.95];
+    const colX = [
+      width * 0.08,
+      width * 0.26,
+      width * 0.44,
+      width * 0.6,
+      width * 0.78,
+      width * 0.9,
+    ];
 
-    const headers = ['Date', 'Boxer 1', 'Boxer 2', 'Result', 'Sim', 'Play'];
+    const headers = ['Date', 'Boxer 1', 'Boxer 2', 'Titles', 'Result', 'Action'];
     const headerRow = headers.map((h, idx) =>
       this.add
-        .text(colX[idx], startY, h, { font: '24px Arial', color: '#ffff00' })
+        .text(colX[idx], startY, h, { font: '20px Arial', color: '#ffff00' })
         .setOrigin(0.5, 0)
     );
     this.rows.push(headerRow);
@@ -93,44 +100,63 @@ export class CalendarScene extends Phaser.Scene {
     this.matches.forEach((m, i) => {
       const y = startY + (i + 1) * rowH;
       const row = [];
+      if (m.result) {
+        const resultLine = `${m.date} ${m.boxer1.name} vs ${m.boxer2.name} ${this.formatResult(
+          m
+        )}`;
+        row.push(
+          this.add
+            .text(width / 2, y, resultLine, { font: '20px Arial', color: '#ffffff' })
+            .setOrigin(0.5, 0)
+        );
+        this.rows.push(row);
+        return;
+      }
       row.push(
         this.add
-          .text(colX[0], y, m.date, { font: '24px Arial', color: '#ffffff' })
+          .text(colX[0], y, m.date, { font: '20px Arial', color: '#ffffff' })
           .setOrigin(0.5, 0)
       );
       row.push(
         this.add
-          .text(colX[1], y, m.boxer1.name, { font: '24px Arial', color: '#ffffff' })
+          .text(colX[1], y, m.boxer1.name, { font: '20px Arial', color: '#ffffff' })
           .setOrigin(0.5, 0)
       );
       row.push(
         this.add
-          .text(colX[2], y, m.boxer2.name, { font: '24px Arial', color: '#ffffff' })
+          .text(colX[2], y, m.boxer2.name, { font: '20px Arial', color: '#ffffff' })
+          .setOrigin(0.5, 0)
+      );
+      const titles = Array.from(
+        new Set([...(m.boxer1.titles || []), ...(m.boxer2.titles || [])])
+      )
+        .map((t) => `${t}🏆`)
+        .join(' ');
+      row.push(
+        this.add
+          .text(colX[3], y, titles, { font: '20px Arial', color: '#ffffff' })
           .setOrigin(0.5, 0)
       );
       row.push(
         this.add
-          .text(colX[3], y, this.formatResult(m), {
-            font: '24px Arial',
+          .text(colX[4], y, this.formatResult(m), {
+            font: '20px Arial',
             color: '#ffffff',
           })
           .setOrigin(0.5, 0)
       );
-      if (!m.result) {
-        const simTxt = this.add
-          .text(colX[4], y, 'Sim', { font: '24px Arial', color: '#00ff00' })
-          .setOrigin(0.5, 0)
-          .setInteractive({ useHandCursor: true })
-          .on('pointerup', () => this.simulate(m));
-        row.push(simTxt);
-        const playLabel = m.player ? 'Play' : 'Watch';
-        const playTxt = this.add
-          .text(colX[5], y, playLabel, { font: '24px Arial', color: '#00ff00' })
-          .setOrigin(0.5, 0)
-          .setInteractive({ useHandCursor: true })
-          .on('pointerup', () => this.playMatch(m, i));
-        row.push(playTxt);
-      }
+      const simTxt = this.add
+        .text(colX[5] - 15, y, '🎲', { font: '20px Arial', color: '#00ff00' })
+        .setOrigin(0.5, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => this.simulate(m));
+      row.push(simTxt);
+      const playTxt = this.add
+        .text(colX[5] + 15, y, '🥊', { font: '20px Arial', color: '#00ff00' })
+        .setOrigin(0.5, 0)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => this.playMatch(m, i));
+      row.push(playTxt);
       this.rows.push(row);
     });
   }
