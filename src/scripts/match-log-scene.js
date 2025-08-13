@@ -14,6 +14,7 @@ export class MatchLogScene extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
     SoundManager.playMenuLoop();
+    const startX = width * 0.025;
     const boxer = data?.boxer || getPlayerBoxer();
     const header = boxer
       ? `${boxer.name} (${boxer.wins || 0} Win ${boxer.losses || 0} Loss ${
@@ -21,26 +22,26 @@ export class MatchLogScene extends Phaser.Scene {
         } KO)`
       : 'Match log';
     this.add
-      .text(width / 2, 20, header, {
+      .text(startX, 20, header, {
         font: '28px Arial',
         color: '#ffffff',
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(0, 0);
 
     let headerY = 80;
     if (boxer) {
       const balance =
         boxer === getPlayerBoxer() ? getBalance() : boxer.bank || 0;
       const balanceText = this.add
-        .text(width / 2, 60, `Bank account balance: ${formatMoney(balance)}`, {
+        .text(startX, 60, `Bank account balance: ${formatMoney(balance)}`, {
           font: '24px Arial',
           color: '#ffffff',
         })
-        .setOrigin(0.5, 0);
+        .setOrigin(0, 0);
       if (boxer === getPlayerBoxer()) {
         this.add
           .text(
-            balanceText.x + balanceText.displayWidth / 2 + 20,
+            balanceText.x + balanceText.displayWidth + 20,
             60,
             'Buy Perks',
             { font: '24px Arial', color: '#ffff00' }
@@ -51,14 +52,45 @@ export class MatchLogScene extends Phaser.Scene {
             this.scene.start('PerksScene');
           });
       }
+      const perksY = 120;
       if (boxer.perks && boxer.perks.length) {
-        const perksY = 120;
-        let x = width / 2 - (boxer.perks.length * 80) / 2;
+        let x = startX + 32;
         boxer.perks.forEach((perk) => {
           const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
           this.add.image(x, perksY, key).setDisplaySize(64, 64);
           x += 80;
         });
+        if (boxer === getPlayerBoxer()) {
+          const addBtn = this.add.container(x, perksY);
+          addBtn.add(
+            this.add.image(0, 0, 'fight_card').setDisplaySize(32, 32)
+          );
+          addBtn.add(
+            this.add.image(0, 0, 'perk_add').setDisplaySize(28, 28)
+          );
+          addBtn.setSize(32, 32);
+          addBtn
+            .setInteractive({ useHandCursor: true })
+            .on('pointerdown', () => {
+              this.scene.start('PerksScene');
+            });
+        }
+        headerY = perksY + 80;
+      } else if (boxer === getPlayerBoxer()) {
+        const x = startX + 32;
+        const addBtn = this.add.container(x, perksY);
+        addBtn.add(
+          this.add.image(0, 0, 'fight_card').setDisplaySize(32, 32)
+        );
+        addBtn.add(
+          this.add.image(0, 0, 'perk_add').setDisplaySize(28, 28)
+        );
+        addBtn.setSize(32, 32);
+        addBtn
+          .setInteractive({ useHandCursor: true })
+          .on('pointerdown', () => {
+            this.scene.start('PerksScene');
+          });
         headerY = perksY + 80;
       }
     }
@@ -66,7 +98,6 @@ export class MatchLogScene extends Phaser.Scene {
     this.log = getMatchLog(boxer?.name);
     this.expandedRows = new Set();
     const tableWidth = width * 0.95;
-    const startX = width * 0.025;
     const rowHeight = 24;
     this.tableWidth = tableWidth;
     this.rowHeight = rowHeight;
