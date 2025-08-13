@@ -43,7 +43,7 @@ export class OptionsScene extends Phaser.Scene {
     const trackW = Math.min(480, panelW - 260);
     const trackX = panelX + panelW - trackW - 110; // högerjusterat spår
 
-    const makeSlider = (label, initial, onChange) => {
+    const makeSlider = (label, initial, onChange, addToList = true) => {
       const cy = y + rowH / 2;
 
       this.add.text(leftLabelX, cy, label, {
@@ -88,9 +88,16 @@ export class OptionsScene extends Phaser.Scene {
       });
 
       draw(Phaser.Math.Clamp(initial, 0, 1));
-      sliders.push({ setValue });
+      if (addToList) sliders.push({ setValue });
       y += rowH;
+      return { setValue };
     };
+
+    const mainInitial = Phaser.Math.Clamp(entries[0]?.[1]?.volume ?? 1.0, 0, 1);
+    const mainSlider = makeSlider('Main Volume', mainInitial, (v) => {
+      sliders.forEach(s => s.setValue(v));
+    }, false);
+    y += 10;
 
     entries.forEach(([key, snd]) => {
       const init = Phaser.Math.Clamp(snd?.volume ?? 1.0, 0, 1);
@@ -138,10 +145,13 @@ export class OptionsScene extends Phaser.Scene {
       resetSavedData();
       // Rita om sliders med aktuella volymer efter reset
       let i = 0;
-      entries.forEach(([k]) => {
+      let firstVal = 1;
+      entries.forEach(([k], idx) => {
         const v = Phaser.Math.Clamp(sounds[k]?.volume ?? 1.0, 0, 1);
+        if (idx === 0) firstVal = v;
         sliders[i++].setValue(v);
       });
+      mainSlider.setValue(firstVal);
     });
 
     const back = () => {
