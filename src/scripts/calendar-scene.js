@@ -101,7 +101,7 @@ export class CalendarScene extends Phaser.Scene {
       const y = startY + (i + 1) * rowH;
       const row = [];
       if (m.result) {
-        const resultLine = `${m.date} ${m.boxer1.name} vs ${m.boxer2.name} ${this.formatResult(
+        const resultLine = `${m.date} ${m.boxer1.name} (${m.boxer1.ranking}) vs ${m.boxer2.name} (${m.boxer2.ranking}) ${this.formatResult(
           m
         )}`;
         row.push(
@@ -119,12 +119,22 @@ export class CalendarScene extends Phaser.Scene {
       );
       row.push(
         this.add
-          .text(colX[1], y, m.boxer1.name, { font: '20px Arial', color: '#ffffff' })
+          .text(
+            colX[1],
+            y,
+            `${m.boxer1.name} (${m.boxer1.ranking})`,
+            { font: '20px Arial', color: '#ffffff' }
+          )
           .setOrigin(0.5, 0)
       );
       row.push(
         this.add
-          .text(colX[2], y, m.boxer2.name, { font: '20px Arial', color: '#ffffff' })
+          .text(
+            colX[2],
+            y,
+            `${m.boxer2.name} (${m.boxer2.ranking})`,
+            { font: '20px Arial', color: '#ffffff' }
+          )
           .setOrigin(0.5, 0)
       );
       const titles = Array.from(
