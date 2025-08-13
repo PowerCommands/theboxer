@@ -19,9 +19,9 @@ export class OptionsScene extends Phaser.Scene {
     const H = this.scale.height;
 
     // ----- Panel: 30 px från toppen, stor ram -----
-    const panelX = Math.max(16, W * 0.05);
     const panelY = 30;
-    const panelW = Math.min(W - panelX * 2, 900);
+    const panelW = Math.min(W - 32, 900);
+    const panelX = (W - panelW) / 2;
     const panelH = H - panelY - 30;
 
     const frame = this.add.graphics();

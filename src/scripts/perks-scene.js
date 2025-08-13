@@ -1,6 +1,6 @@
 import { PERKS } from './perks-data.js';
 import { getPlayerBoxer } from './player-boxer.js';
-import { addTransaction, getBalance } from './bank-account.js';
+import { addTransaction, getBalance, getTransactions } from './bank-account.js';
 import { getTestMode } from './config.js';
 import { formatMoney } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
@@ -37,10 +37,34 @@ export class PerksScene extends Phaser.Scene {
       )
       .setOrigin(0.5, 0);
 
-    const startY = 120;
+    const startY = 140; // shifted down 20px
     const spacing = 120;
+    const leftMargin = width * 0.05;
     const testMode = getTestMode();
     const buttons = [];
+    let txTexts = [];
+
+    const renderTransactions = () => {
+      txTexts.forEach((t) => t.destroy());
+      txTexts = [];
+      const txStartX = leftMargin + 500;
+      txTexts.push(
+        this.add.text(txStartX, startY - 40, 'Transactions', {
+          font: '24px Arial',
+          color: '#ffffff',
+        })
+      );
+      getTransactions()
+        .slice()
+        .forEach((amt, idx) => {
+          txTexts.push(
+            this.add.text(txStartX, startY + idx * 30, formatMoney(amt), {
+              font: '20px Arial',
+              color: '#ffffff',
+            })
+          );
+        });
+    };
 
     const updateButtons = () => {
       buttons.forEach(({ btn, perk }) => {
@@ -73,16 +97,16 @@ export class PerksScene extends Phaser.Scene {
     PERKS.forEach((perk, idx) => {
       const y = startY + idx * spacing;
       const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
-      this.add.image(width / 2 - 200, y, key).setDisplaySize(100, 100);
+      this.add.image(leftMargin + 50, y, key).setDisplaySize(100, 100);
       const label = `${perk.Name} Level ${perk.Level} - ${formatMoney(
         perk.Price
       )}`;
-      this.add.text(width / 2 - 100, y - 40, label, {
+      this.add.text(leftMargin + 150, y - 40, label, {
         font: '24px Arial',
         color: '#ffffff',
       });
       const btn = this.add
-        .text(width / 2 + 200, y, '', {
+        .text(leftMargin + 450, y, '', {
           font: '24px Arial',
           color: '#ffff00',
         })
@@ -106,12 +130,14 @@ export class PerksScene extends Phaser.Scene {
           `Bank account balance: ${formatMoney(getBalance())}`
         );
         updateButtons();
+        renderTransactions();
       });
 
       buttons.push({ btn, perk });
     });
 
     updateButtons();
+    renderTransactions();
 
     const goBack = () => {
       this.scene.start('Ranking');
