@@ -1,6 +1,7 @@
 import { PERKS } from './perks-data.js';
 import { getPlayerBoxer } from './player-boxer.js';
 import { addTransaction, getBalance } from './bank-account.js';
+import { getTestMode } from './config.js';
 import { formatMoney } from './helpers.js';
 import { SoundManager } from './sound-manager.js';
 import { saveGameState } from './save-system.js';
@@ -38,6 +39,7 @@ export class PerksScene extends Phaser.Scene {
 
     const startY = 120;
     const spacing = 120;
+    const testMode = getTestMode();
     PERKS.forEach((perk, idx) => {
       const y = startY + idx * spacing;
       const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
@@ -61,7 +63,7 @@ export class PerksScene extends Phaser.Scene {
         .text(
           width / 2 + 200,
           y,
-          owned ? 'Owned' : prevOwned ? 'Buy' : 'Locked',
+          owned ? 'Owned' : prevOwned || testMode ? 'Buy' : 'Locked',
           {
             font: '24px Arial',
             color: '#ffff00',
@@ -69,20 +71,22 @@ export class PerksScene extends Phaser.Scene {
         )
         .setOrigin(0.5, 0)
         .setInteractive({ useHandCursor: true });
-      if (owned || !prevOwned) {
+      if (owned || (!prevOwned && !testMode)) {
         btn.disableInteractive().setTint(0x888888);
       } else {
         btn.on('pointerdown', () => {
-          if (getBalance() < perk.Price) return;
-          const prereq =
-            perk.Level === 1 ||
-            player.perks.some(
-              (p) => p.Name === perk.Name && p.Level === perk.Level - 1
-            );
-          if (!prereq) return;
+          if (!testMode) {
+            if (getBalance() < perk.Price) return;
+            const prereq =
+              perk.Level === 1 ||
+              player.perks.some(
+                (p) => p.Name === perk.Name && p.Level === perk.Level - 1
+              );
+            if (!prereq) return;
+            addTransaction(-perk.Price);
+            player.bank = (player.bank || 0) - perk.Price;
+          }
           player.perks.push({ ...perk });
-          addTransaction(-perk.Price);
-          player.bank = (player.bank || 0) - perk.Price;
           saveGameState(BOXERS);
           balanceText.setText(
             `Bank account balance: ${formatMoney(getBalance())}`

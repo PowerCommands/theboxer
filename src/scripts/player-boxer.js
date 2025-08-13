@@ -1,4 +1,5 @@
 import { getBalance } from './bank-account.js';
+import { getTestMode } from './config.js';
 
 let playerBoxer = null;
 
@@ -21,6 +22,7 @@ export function getStrategyPerkLevel(boxer = playerBoxer) {
 }
 
 export function getMaxStrategyLevel(boxer = playerBoxer) {
+  if (getTestMode()) return 10;
   const lvl = getStrategyPerkLevel(boxer);
   if (lvl >= 3) return 10;
   if (lvl === 2) return 6;
