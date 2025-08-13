@@ -22,7 +22,7 @@ export class MatchLogScene extends Phaser.Scene {
       : 'Match log';
     this.add
       .text(width / 2, 20, header, {
-        font: '32px Arial',
+        font: '28px Arial',
         color: '#ffffff',
       })
       .setOrigin(0.5, 0);
@@ -52,7 +52,7 @@ export class MatchLogScene extends Phaser.Scene {
           });
       }
       if (boxer.perks && boxer.perks.length) {
-        const perksY = 100;
+        const perksY = 120;
         let x = width / 2 - (boxer.perks.length * 80) / 2;
         boxer.perks.forEach((perk) => {
           const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
