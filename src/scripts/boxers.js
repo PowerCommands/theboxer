@@ -29,6 +29,7 @@ const INIT_BOXERS = BOXER_DATA.map((b) => {
     ...b,
     earnings: earn,
     bank: earn,
+    perks: [],
   };
 });
 

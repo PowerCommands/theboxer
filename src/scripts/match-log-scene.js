@@ -27,15 +27,40 @@ export class MatchLogScene extends Phaser.Scene {
       })
       .setOrigin(0.5, 0);
 
+    let headerY = 80;
     if (boxer) {
       const balance =
         boxer === getPlayerBoxer() ? getBalance() : boxer.bank || 0;
-      this.add
+      const balanceText = this.add
         .text(width / 2, 60, `Bank account balance: ${formatMoney(balance)}`, {
           font: '24px Arial',
           color: '#ffffff',
         })
         .setOrigin(0.5, 0);
+      if (boxer === getPlayerBoxer()) {
+        this.add
+          .text(
+            balanceText.x + balanceText.displayWidth / 2 + 20,
+            60,
+            'Buy Perks',
+            { font: '24px Arial', color: '#ffff00' }
+          )
+          .setOrigin(0, 0)
+          .setInteractive({ useHandCursor: true })
+          .on('pointerdown', () => {
+            this.scene.start('PerksScene');
+          });
+      }
+      if (boxer.perks && boxer.perks.length) {
+        const perksY = 100;
+        let x = width / 2 - (boxer.perks.length * 80) / 2;
+        boxer.perks.forEach((perk) => {
+          const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
+          this.add.image(x, perksY, key).setDisplaySize(64, 64);
+          x += 80;
+        });
+        headerY = perksY + 80;
+      }
     }
 
     this.log = getMatchLog(boxer?.name);
@@ -63,7 +88,6 @@ export class MatchLogScene extends Phaser.Scene {
       accum += p * tableWidth;
       return x;
     });
-    const headerY = 80;
     this.add
       .rectangle(width / 2, headerY, tableWidth, rowHeight, 0x001b44, tableAlpha)
       .setOrigin(0.5, 0);

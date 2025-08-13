@@ -7,9 +7,11 @@ import { CreateBoxerScene } from './create-boxer-scene.js';
 import { MatchLogScene } from './match-log-scene.js';
 import { StartScene } from './start-scene.js';
 import { OptionsScene } from './options-scene.js';
+import { PerksScene } from './perks-scene.js';
 import { BackdropManager } from './backdrop-manager.js';
 import { MatchIntroScene } from './match-intro-scene.js';
 import { TITLES } from './title-data.js';
+import { PERKS } from './perks-data.js';
 import { GameResultScene } from './game-result-scene.js';
 import { CalendarScene } from './calendar-scene.js';
 
@@ -55,6 +57,13 @@ class BootScene extends Phaser.Scene {
     this.load.image('computer', 'assets/arena/computer.png');
     TITLES.forEach((t) => {
       this.load.image(t.name, `assets/titles/${t.name.toLowerCase()}.png`);
+    });
+    PERKS.forEach((p) => {
+      const key = `${p.Name.toLowerCase()}-level${p.Level}`;
+      this.load.image(
+        key,
+        `assets/Perks/${p.Name.toLowerCase()}-level${p.Level}.png`
+      );
     });
     // Load idle animation frames for the boxers
     for (let i = 0; i < 10; i++) {
@@ -166,6 +175,7 @@ const config = {
     StartScene,
     RankingScene,
     MatchLogScene,
+    PerksScene,
     CreateBoxerScene,
     OptionsScene,
     SelectBoxerScene,
