@@ -13,6 +13,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.step = 1;
     this.choice = [];
     this.options = [];
+    this.filterText = '';
     this.selectedPlaybook1 = null;
     this.selectedPlaybook2 = null;
     this.selectedFightPlan1 = null;
@@ -25,11 +26,11 @@ export class SelectBoxerScene extends Phaser.Scene {
     const width = this.sys.game.config.width;
     const height = this.sys.game.config.height;
     this.instruction = this.add
-      .text(width / 2, 20, '', {
+      .text(20, 20, '', {
         font: '24px Arial',
         color: '#ffffff',
       })
-      .setOrigin(0.5, 0);
+      .setOrigin(0, 0);
 
     if (getTestMode()) {
       // checkbox to toggle human control for boxer1 in test mode
@@ -76,13 +77,32 @@ export class SelectBoxerScene extends Phaser.Scene {
   showBoxerOptions() {
     this.clearOptions();
     const width = this.sys.game.config.width;
-    const boxers = getRankings();
+    const filter = (this.filterText || '').toLowerCase();
+    const boxers = getRankings().filter((b) =>
+      b.name.toLowerCase().includes(filter)
+    );
     const maxNameLen = boxers.reduce((m, b) => Math.max(m, b.name.length), 4);
     const columnWidths = [5, Math.max(15, maxNameLen + 1), 5, 5, 5, 5, 5, 5];
     const charWidth = 12;
     const rectWidth = columnWidths.reduce((a, c) => a + c, 0) * charWidth;
     const tableLeft = (width - rectWidth) / 2;
     const rowHeight = 24;
+    const filterDom = this.add
+      .dom(width - 220, 20)
+      .createFromHTML(
+        `<input type="text" placeholder="Filter boxers" style="width:200px;padding:4px;font-size:16px;" />`
+      );
+    filterDom.setOrigin(0, 0);
+    const filterEl =
+      filterDom.node.tagName === 'INPUT' ? filterDom.node : filterDom.node.querySelector('input');
+    if (filterEl) {
+      filterEl.value = this.filterText;
+      filterEl.addEventListener('input', () => {
+        this.filterText = filterEl.value;
+        this.showBoxerOptions();
+      });
+    }
+    this.options.push(filterDom);
     this.options.push(
       this.add
         .rectangle(width / 2, 60, rectWidth, rowHeight, 0x001b44, tableAlpha)
@@ -411,6 +431,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     this.selectedFightPlan2 = null;
     this.selectedRounds = null;
     this.isBoxer1Human = false;
+    this.filterText = '';
     if (!getTestMode() && getPlayerBoxer()) {
       this.choice = [getPlayerBoxer()];
       this.step = 0;
