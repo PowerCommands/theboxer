@@ -54,8 +54,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     const player = getPlayerBoxer();
     const selectedNames = this.choice.map((c) => c.name);
     let boxers = getRankings().filter((b) => {
-      if (!getTestMode() && b === player) return false;
-      if (selectedNames.includes(b.name)) return false;
+      if (b !== player && selectedNames.includes(b.name)) return false;
       return b.name.toLowerCase().includes(filter);
     });
     if (!getTestMode() && player) {
@@ -124,12 +123,15 @@ export class SelectBoxerScene extends Phaser.Scene {
         `${b.losses.toString().padEnd(columnWidths[5])}` +
         `${b.draws.toString().padEnd(columnWidths[6])}` +
         `${b.winsByKO.toString().padEnd(columnWidths[7])}`;
+      const isPlayer = !getTestMode() && b === player;
       const txt = this.add.text(tableLeft, y, line, {
-        font: '20px monospace',
-        color: '#ffffff',
+        font: `${isPlayer ? 'bold ' : ''}20px monospace`,
+        color: isPlayer ? '#555555' : '#ffffff',
       });
-      txt.setInteractive({ useHandCursor: true });
-      txt.on('pointerdown', () => this.selectBoxer(b));
+      if (!isPlayer) {
+        txt.setInteractive({ useHandCursor: true });
+        txt.on('pointerdown', () => this.selectBoxer(b));
+      }
       this.options.push(txt);
     });
   }
