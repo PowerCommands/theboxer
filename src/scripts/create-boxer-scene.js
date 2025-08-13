@@ -2,7 +2,7 @@
 import { BOXERS, addBoxer } from './boxers.js';
 import { setPlayerBoxer } from './player-boxer.js';
 
-function defaultStrategyForRanking(ranking) {
+function defaultPlaybookForRanking(ranking) {
   if (ranking >= 80)  return Math.floor(Math.random() * 4) + 1;
   if (ranking >= 50)  return Math.floor(Math.random() * 3) + 2;
   if (ranking >= 11)  return Math.floor(Math.random() * 4) + 3;
@@ -102,7 +102,7 @@ export class CreateBoxerScene extends Phaser.Scene {
         age: state.age,
         stamina: state.stamina, power: state.power, health: state.health, speed: state.speed,
         ranking, matches: 0, wins: 0, losses: 0, draws: 0, winsByKO: 0,
-        defaultStrategy: defaultStrategyForRanking(ranking),
+        defaultPlaybook: defaultPlaybookForRanking(ranking),
         ruleset: state.ruleset, userCreated: true, titles: [], earnings: 0, bank: 0,
         perks: [],
       };
