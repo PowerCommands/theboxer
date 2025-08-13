@@ -1,6 +1,6 @@
 import { getRankings, getMatchPreview } from './boxer-stats.js';
 import { getTestMode, tableAlpha } from './config.js';
-import { getPlayerBoxer } from './player-boxer.js';
+import { getPlayerBoxer, getMaxStrategyLevel } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
 import { scheduleMatch, getPendingMatch } from './next-match.js';
 import { createStrategyLevelSelector, createRoundSelector } from './UIDialogControls.js';
@@ -264,7 +264,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     } else {
       this.step = 1;
       this.instruction.setText('Choose Player 1 strategy');
-      this.showStrategyOptions(10);
+      this.showStrategyOptions(getMaxStrategyLevel());
     }
   }
 

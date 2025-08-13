@@ -2,6 +2,7 @@ import { eventBus } from './event-bus.js';
 import { appConfig } from './config.js';
 import { SoundManager } from './sound-manager.js';
 import { createStrategyLevelSelector } from './UIDialogControls.js';
+import { getMaxStrategyLevel } from './player-boxer.js';
 
 export class OverlayUI extends Phaser.Scene {
   constructor() {
@@ -368,7 +369,7 @@ export class OverlayUI extends Phaser.Scene {
     this.nextRoundHandler = () => this.triggerNextRound();
     this.input.once('pointerup', this.nextRoundHandler);
     if (match?.isP1AI) {
-      this.showStrategyOptions(10);
+      this.showStrategyOptions(getMaxStrategyLevel(match.player1));
     }
   }
 
@@ -393,6 +394,7 @@ export class OverlayUI extends Phaser.Scene {
   showStrategyOptions(maxLevel = 10, locked = false) {
     const match = this.scene.get('MatchScene');
     if (!match) return;
+    maxLevel = Math.min(maxLevel, getMaxStrategyLevel(match.player1));
     const controller = match.player1?.controller;
     if (!controller || typeof controller.getLevel !== 'function') return;
     const defaultLevel = match.player1.stats?.defaultStrategy || 1;
@@ -422,7 +424,7 @@ export class OverlayUI extends Phaser.Scene {
       y: centerY,
       onSelect: (level) => {
         if (level === 'default') {
-          controller.setLevel(defaultLevel);
+          controller.setLevel(Math.min(defaultLevel, maxLevel));
         } else {
           controller.setLevel(parseInt(level, 10));
         }

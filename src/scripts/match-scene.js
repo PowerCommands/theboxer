@@ -1,5 +1,6 @@
 import { Boxer } from './boxer.js';
 import { StrategyAIController } from './strategy-ai-controller.js';
+import { getMaxStrategyLevel } from './player-boxer.js';
 import { KeyboardController } from './controllers.js';
 import { createBoxerAnimations } from './animation-factory.js';
 import { eventBus } from './event-bus.js';
@@ -44,13 +45,13 @@ export class MatchScene extends Phaser.Scene {
     createBoxerAnimations(this, BOXER_PREFIXES.P2);
 
     // Player 1 may be human or AI controlled; player 2 always AI
+    let level1 = data.boxer1?.defaultStrategy || 1;
+    if (data.aiLevel1 && data.aiLevel1 !== 'default') {
+      level1 = parseInt(data.aiLevel1, 10) || level1;
+    }
+    level1 = Math.min(level1, getMaxStrategyLevel(data.boxer1));
     const controller1 = data?.aiLevel1
-      ? new StrategyAIController(
-          data.aiLevel1 === 'default'
-            ? data.boxer1?.defaultStrategy || 1
-            : data.aiLevel1,
-          1
-        )
+      ? new StrategyAIController(level1, 1)
       : new KeyboardController(this, {
           block: 'S',
           jabRight: 'E',

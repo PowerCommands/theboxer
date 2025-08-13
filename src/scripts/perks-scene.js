@@ -52,18 +52,34 @@ export class PerksScene extends Phaser.Scene {
       const owned = player?.perks?.some(
         (p) => p.Name === perk.Name && p.Level === perk.Level
       );
+      const prevOwned =
+        perk.Level === 1 ||
+        player?.perks?.some(
+          (p) => p.Name === perk.Name && p.Level === perk.Level - 1
+        );
       const btn = this.add
-        .text(width / 2 + 200, y, owned ? 'Owned' : 'Buy', {
-          font: '24px Arial',
-          color: '#ffff00',
-        })
+        .text(
+          width / 2 + 200,
+          y,
+          owned ? 'Owned' : prevOwned ? 'Buy' : 'Locked',
+          {
+            font: '24px Arial',
+            color: '#ffff00',
+          }
+        )
         .setOrigin(0.5, 0)
         .setInteractive({ useHandCursor: true });
-      if (owned) {
+      if (owned || !prevOwned) {
         btn.disableInteractive().setTint(0x888888);
       } else {
         btn.on('pointerdown', () => {
           if (getBalance() < perk.Price) return;
+          const prereq =
+            perk.Level === 1 ||
+            player.perks.some(
+              (p) => p.Name === perk.Name && p.Level === perk.Level - 1
+            );
+          if (!prereq) return;
           player.perks.push({ ...perk });
           addTransaction(-perk.Price);
           player.bank = (player.bank || 0) - perk.Price;
