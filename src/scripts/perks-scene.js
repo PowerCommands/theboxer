@@ -40,6 +40,36 @@ export class PerksScene extends Phaser.Scene {
     const startY = 120;
     const spacing = 120;
     const testMode = getTestMode();
+    const buttons = [];
+
+    const updateButtons = () => {
+      buttons.forEach(({ btn, perk }) => {
+        const owned = player?.perks?.some(
+          (p) => p.Name === perk.Name && p.Level === perk.Level
+        );
+        const prevOwned =
+          perk.Level === 1 ||
+          player?.perks?.some(
+            (p) => p.Name === perk.Name && p.Level === perk.Level - 1
+          );
+        if (owned) {
+          btn.setText('Owned').disableInteractive().setTint(0x888888);
+        } else if (!prevOwned && !testMode) {
+          btn.setText('Locked').disableInteractive().setTint(0x888888);
+        } else if (!testMode && getBalance() < perk.Price) {
+          btn
+            .setText('Not enough money')
+            .disableInteractive()
+            .setTint(0x888888);
+        } else {
+          btn
+            .setText('Buy')
+            .setInteractive({ useHandCursor: true })
+            .clearTint();
+        }
+      });
+    };
+
     PERKS.forEach((perk, idx) => {
       const y = startY + idx * spacing;
       const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
@@ -51,50 +81,37 @@ export class PerksScene extends Phaser.Scene {
         font: '24px Arial',
         color: '#ffffff',
       });
-      const owned = player?.perks?.some(
-        (p) => p.Name === perk.Name && p.Level === perk.Level
-      );
-      const prevOwned =
-        perk.Level === 1 ||
-        player?.perks?.some(
-          (p) => p.Name === perk.Name && p.Level === perk.Level - 1
-        );
       const btn = this.add
-        .text(
-          width / 2 + 200,
-          y,
-          owned ? 'Owned' : prevOwned || testMode ? 'Buy' : 'Locked',
-          {
-            font: '24px Arial',
-            color: '#ffff00',
-          }
-        )
-        .setOrigin(0.5, 0)
-        .setInteractive({ useHandCursor: true });
-      if (owned || (!prevOwned && !testMode)) {
-        btn.disableInteractive().setTint(0x888888);
-      } else {
-        btn.on('pointerdown', () => {
-          if (!testMode) {
-            if (getBalance() < perk.Price) return;
-            const prereq =
-              perk.Level === 1 ||
-              player.perks.some(
-                (p) => p.Name === perk.Name && p.Level === perk.Level - 1
-              );
-            if (!prereq) return;
-            addTransaction(-perk.Price);
-            player.bank = (player.bank || 0) - perk.Price;
-          }
-          player.perks.push({ ...perk });
-          saveGameState(BOXERS);
-          balanceText.setText(
-            `Bank account balance: ${formatMoney(getBalance())}`
-          );
-          btn.setText('Owned').disableInteractive().setTint(0x888888);
-        });
-      }
+        .text(width / 2 + 200, y, '', {
+          font: '24px Arial',
+          color: '#ffff00',
+        })
+        .setOrigin(0.5, 0);
+
+      btn.on('pointerdown', () => {
+        if (!testMode) {
+          if (getBalance() < perk.Price) return;
+          const prereq =
+            perk.Level === 1 ||
+            player.perks.some(
+              (p) => p.Name === perk.Name && p.Level === perk.Level - 1
+            );
+          if (!prereq) return;
+          addTransaction(-perk.Price);
+          player.bank = (player.bank || 0) - perk.Price;
+        }
+        player.perks.push({ ...perk });
+        saveGameState(BOXERS);
+        balanceText.setText(
+          `Bank account balance: ${formatMoney(getBalance())}`
+        );
+        updateButtons();
+      });
+
+      buttons.push({ btn, perk });
     });
+
+    updateButtons();
 
     this.add
       .text(20, height - 40, 'Back', {
