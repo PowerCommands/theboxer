@@ -44,5 +44,10 @@ export function getBalance() {
 }
 
 export function resetBankAccount() {
-  saveTransactions([]);
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.removeItem(BANK_KEY);
+  } catch (err) {
+    // ignore
+  }
 }

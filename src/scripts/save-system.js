@@ -160,7 +160,7 @@ export function resetSavedData() {
   setPlayerBoxer(null);
   resetMatchLog();
   resetDate();
-  resetBankAccount();
+  resetBankAccount(); // also clear stored bank transactions
 }
 
 // Placeholder for future migration logic.
