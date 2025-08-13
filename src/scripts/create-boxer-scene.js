@@ -311,6 +311,7 @@ export class CreateBoxerScene extends Phaser.Scene {
 
     // Hotkeys
     this.input.keyboard.on('keydown-ESC',   goBack);
+    this.input.keyboard.on('keydown-BACKSPACE', goBack);
     this.input.keyboard.on('keydown-ENTER', doCreate);
 
     // Städning

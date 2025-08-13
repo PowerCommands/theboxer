@@ -282,7 +282,17 @@ export class RankingScene extends Phaser.Scene {
       createGloveButton(this, width / 2, btnY, 'Next fight', goToSetup);
       this.input.keyboard.on('keydown-ENTER', goToSetup);
       this.input.keyboard.on('keydown-SPACE', goToSetup);
+      const perksY = btnY + 100;
+      createGloveButton(this, width / 2, perksY, 'Buy perks', () => {
+        this.scene.start('PerksScene');
+      });
     }
+
+    const back = () => {
+      this.scene.start('StartScene');
+    };
+    createGloveButton(this, 150, height * 0.93, 'Back', back, { width: 300 });
+    this.input.keyboard.on('keydown-BACKSPACE', back);
   }
 }
 

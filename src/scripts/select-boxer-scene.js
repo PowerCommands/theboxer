@@ -4,6 +4,7 @@ import { getPlayerBoxer, getMaxPlaybookLevel } from './player-boxer.js';
 import { SoundManager } from './sound-manager.js';
 import { scheduleMatch, getPendingMatch } from './next-match.js';
 import { createPlaybookLevelSelector, createRoundSelector } from './UIDialogControls.js';
+import { createGloveButton } from './glove-button.js';
 
 export class SelectBoxerScene extends Phaser.Scene {
   constructor() {
@@ -19,6 +20,7 @@ export class SelectBoxerScene extends Phaser.Scene {
 
   create() {
     const width = this.sys.game.config.width;
+    const height = this.sys.game.config.height;
     this.instruction = this.add
       .text(width / 2, 20, '', {
         font: '24px Arial',
@@ -57,6 +59,12 @@ export class SelectBoxerScene extends Phaser.Scene {
     // reused.  Reset everything so that the boxer options can be
     // selected again.
     this.resetSelection();
+
+    const back = () => {
+      this.scene.start('Ranking');
+    };
+    createGloveButton(this, 150, height * 0.93, 'Back', back, { width: 300 });
+    this.input.keyboard.on('keydown-BACKSPACE', back);
   }
 
   showBoxerOptions() {
@@ -132,7 +140,7 @@ export class SelectBoxerScene extends Phaser.Scene {
     const height = this.sys.game.config.height;
     const spacing = 40;
     const startX = (width - (300 * 2 + spacing)) / 2 + 150;
-    const centerY = height / 2;
+    const centerY = height * 0.4;
 
     const makeOption = (x, label, icon, handler) => {
       const container = this.add.container(x, centerY);
