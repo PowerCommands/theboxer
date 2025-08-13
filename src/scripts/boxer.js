@@ -46,6 +46,7 @@ export class Boxer {
     this.health = this.maxHealth;
     this.defaultStrategy = stats.defaultStrategy || 1;
     this.userCreated = stats.userCreated || false;
+    this.perks = stats.perks || [];
     // slightly smaller boxer sprites
     this.sprite.setScale(350 / this.sprite.height);
     // boxer1 faces right, boxer2 faces left
