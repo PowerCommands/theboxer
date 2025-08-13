@@ -123,8 +123,11 @@ export class GameResultScene extends Phaser.Scene {
         this.scene.start('Ranking');
       }
     };
-    cont.once('pointerup', goNext);
-    this.input.keyboard.once('keydown', goNext);
+    // Require a fresh click or key press so the result screen isn't skipped
+    cont.once('pointerdown', goNext);
+    this.input.keyboard.once('keyup', () => {
+      this.input.keyboard.once('keydown', goNext);
+    });
   }
 }
 
