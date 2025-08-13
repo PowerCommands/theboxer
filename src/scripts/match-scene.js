@@ -224,6 +224,10 @@ export class MatchScene extends Phaser.Scene {
       p1: data?.boxer1?.name || '',
       p2: data?.boxer2?.name || '',
     });
+    eventBus.emit('set-titles', {
+      p1: (data?.boxer1?.titles || []).map((t) => `${t}🏆`).join(' '),
+      p2: (data?.boxer2?.titles || []).map((t) => `${t}🏆`).join(' '),
+    });
     eventBus.emit('hit-update', { p1: 0, p2: 0 });
     eventBus.emit('score-update', { p1: 0, p2: 0 });
     this.events.on('boxer-ko', (b) => this.handleKO(b));

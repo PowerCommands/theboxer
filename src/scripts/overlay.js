@@ -102,6 +102,17 @@ export class OverlayUI extends Phaser.Scene {
       }),
     };
 
+    this.titleText = {
+      p1: this.add.text(20, infoY + 110, '', {
+        font: '16px Arial',
+        color: '#ffffff',
+      }),
+      p2: this.add.text(width - 170, infoY + 110, '', {
+        font: '16px Arial',
+        color: '#ffffff',
+      }),
+    };
+
     // track hits and round-score totals
     this.hits = { p1: 0, p2: 0 };
     this.score = { p1: 0, p2: 0 };
@@ -142,6 +153,7 @@ export class OverlayUI extends Phaser.Scene {
       this.hits = { p1: 0, p2: 0 };
       this.score = { p1: 0, p2: 0 };
       this.updateHitTexts();
+      this.setTitles('', '');
       if (this.enterHandler) {
         this.input.keyboard.off('keydown', this.enterHandler);
         this.enterHandler = null;
@@ -205,6 +217,7 @@ export class OverlayUI extends Phaser.Scene {
         this.locationText.setText(parts);
       }
     };
+    this.onSetTitles = ({ p1, p2 }) => this.setTitles(p1, p2);
 
     eventBus.on('timer-tick', this.onTimerTick);
     eventBus.on('round-started', this.onRoundStarted);
@@ -218,6 +231,7 @@ export class OverlayUI extends Phaser.Scene {
     eventBus.on('score-update', this.onScoreUpdate);
     eventBus.on('match-date', this.onMatchDate);
     eventBus.on('match-started', this.onMatchStarted);
+    eventBus.on('set-titles', this.onSetTitles);
 
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
       eventBus.off('timer-tick', this.onTimerTick);
@@ -232,6 +246,7 @@ export class OverlayUI extends Phaser.Scene {
       eventBus.off('score-update', this.onScoreUpdate);
       eventBus.off('match-date', this.onMatchDate);
       eventBus.off('match-started', this.onMatchStarted);
+      eventBus.off('set-titles', this.onSetTitles);
     });
   }
 
@@ -269,6 +284,13 @@ export class OverlayUI extends Phaser.Scene {
     if (this.nameText) {
       this.nameText.p1.setText(p1);
       this.nameText.p2.setText(p2);
+    }
+  }
+
+  setTitles(p1, p2) {
+    if (this.titleText) {
+      this.titleText.p1.setText(p1);
+      this.titleText.p2.setText(p2);
     }
   }
 
