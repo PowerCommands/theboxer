@@ -63,7 +63,10 @@ export class SelectBoxerScene extends Phaser.Scene {
     const back = () => {
       this.scene.start('Ranking');
     };
-    createGloveButton(this, 150, height * 0.93, 'Back', back, { width: 300 });
+    this.add
+      .text(20, height - 40, 'Back', { font: '24px Arial', color: '#ffff00' })
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', back);
     this.input.keyboard.on('keydown-BACKSPACE', back);
   }
 

@@ -116,7 +116,10 @@ export class CreateBoxerScene extends Phaser.Scene {
       this.scene.start('Ranking');
     };
 
-    const backLink = makeLink('Back', panelX + panelW * 0.25, () => goBack());
+    this.add
+      .text(20, H - 40, 'Back', { font: '24px Arial', color: '#ffff00' })
+      .setInteractive({ useHandCursor: true })
+      .on('pointerdown', goBack);
 
     let createLink = null; // IMPORTANT: deklarerad innan setCreateEnabled används
     const setCreateEnabled = (enabled) => {

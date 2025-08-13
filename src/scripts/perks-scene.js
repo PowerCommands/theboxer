@@ -114,7 +114,7 @@ export class PerksScene extends Phaser.Scene {
     updateButtons();
 
     const goBack = () => {
-      this.scene.start('MatchLog', { boxer: player });
+      this.scene.start('Ranking');
     };
     this.add
       .text(20, height - 40, 'Back', {

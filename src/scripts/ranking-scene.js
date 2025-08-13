@@ -283,16 +283,20 @@ export class RankingScene extends Phaser.Scene {
       this.input.keyboard.on('keydown-ENTER', goToSetup);
       this.input.keyboard.on('keydown-SPACE', goToSetup);
       const perksY = btnY + 100;
-      createGloveButton(this, width / 2, perksY, 'Buy perks', () => {
-        this.scene.start('PerksScene');
-      });
+      this.add
+        .image(width / 2, perksY, 'perk_add')
+        .setDisplaySize(80, 80)
+        .setInteractive({ useHandCursor: true })
+        .on('pointerup', () => {
+          this.scene.start('PerksScene');
+        });
+      this.add
+        .text(width / 2, perksY + 50, 'Buy perks', {
+          font: '24px Arial',
+          color: '#ffff00',
+        })
+        .setOrigin(0.5, 0);
     }
-
-    const back = () => {
-      this.scene.start('StartScene');
-    };
-    createGloveButton(this, 150, height * 0.93, 'Back', back, { width: 300 });
-    this.input.keyboard.on('keydown-BACKSPACE', back);
   }
 }
 
