@@ -1,5 +1,5 @@
 import { MatchScene } from './match-scene.js';
-import { MatchSetupScene } from './match-setup-scene.js';
+import { SelectBoxerScene } from './select-boxer-scene.js';
 import { OverlayUI } from './overlay.js';
 import { RankingScene } from './ranking-scene.js';
 import { SoundManager } from './sound-manager.js';
@@ -179,7 +179,7 @@ const config = {
     PerksScene,
     CreateBoxerScene,
     OptionsScene,
-    MatchSetupScene,
+    SelectBoxerScene,
     CalendarScene,
     MatchIntroScene,
     MatchScene,
