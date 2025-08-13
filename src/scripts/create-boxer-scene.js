@@ -311,9 +311,7 @@ export class CreateBoxerScene extends Phaser.Scene {
     updatePointsAndCreateState();
 
     // Hotkeys
-    this.input.keyboard.on('keydown-ESC',   goBack);
-    this.input.keyboard.on('keydown-BACKSPACE', goBack);
-    this.input.keyboard.on('keydown-ENTER', doCreate);
+    this.input.keyboard.on('keydown-ESC',   goBack);    
 
     // Städning
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
