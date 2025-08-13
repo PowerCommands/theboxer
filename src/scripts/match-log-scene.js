@@ -39,54 +39,9 @@ export class MatchLogScene extends Phaser.Scene {
         })
         .setOrigin(0, 0);
       if (boxer === getPlayerBoxer()) {
-        this.add
-          .text(
-            balanceText.x + balanceText.displayWidth + 20,
-            60,
-            'Buy Perks',
-            { font: '24px Arial', color: '#ffff00' }
-          )
-          .setOrigin(0, 0)
-          .setInteractive({ useHandCursor: true })
-          .on('pointerdown', () => {
-            this.scene.start('PerksScene');
-          });
-      }
-      const perksY = 120;
-      if (boxer.perks && boxer.perks.length) {
-        let x = startX + 32;
-        boxer.perks.forEach((perk) => {
-          const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
-          this.add.image(x, perksY, key).setDisplaySize(64, 64);
-          x += 80;
-        });
-        if (boxer === getPlayerBoxer()) {
-          const addBtn = this.add.container(x, perksY);
-          addBtn.add(
-            this.add.image(0, 0, 'fight_card').setDisplaySize(64, 64)
-          );
-          addBtn.add(
-            this.add.image(0, 0, 'perk_add').setDisplaySize(54, 54)
-          );
-          addBtn.add(
-            this.add
-              .text(-50, 0, 'Buy perks', {
-                font: '20px Arial',
-                color: '#ffff00',
-              })
-              .setOrigin(1, 0.5)
-          );
-          addBtn.setSize(64, 64);
-          addBtn
-            .setInteractive({ useHandCursor: true })
-            .on('pointerdown', () => {
-              this.scene.start('PerksScene');
-            });
-        }
-        headerY = perksY + 80;
-      } else if (boxer === getPlayerBoxer()) {
-        const x = startX + 64;
-        const addBtn = this.add.container(x, perksY);
+        const btnX = balanceText.x + balanceText.displayWidth + 52;
+        const btnY = 60 + 32;
+        const addBtn = this.add.container(btnX, btnY);
         addBtn.add(
           this.add.image(0, 0, 'fight_card').setDisplaySize(64, 64)
         );
@@ -107,7 +62,18 @@ export class MatchLogScene extends Phaser.Scene {
           .on('pointerdown', () => {
             this.scene.start('PerksScene');
           });
+      }
+      const perksY = 120;
+      if (boxer.perks && boxer.perks.length) {
+        let x = startX + 32;
+        boxer.perks.forEach((perk) => {
+          const key = `${perk.Name.toLowerCase()}-level${perk.Level}`;
+          this.add.image(x, perksY, key).setDisplaySize(64, 64);
+          x += 80;
+        });
         headerY = perksY + 80;
+      } else if (boxer === getPlayerBoxer()) {
+        headerY = 120;
       }
     }
 
