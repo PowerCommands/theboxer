@@ -30,13 +30,19 @@ export class GameResultScene extends Phaser.Scene {
       ? this.resultData.roundLog
       : [];
     let y = 80;
-    rounds.forEach((r) => {
-      const line = `Round ${r.round}: ${r.p1Score}-${r.p2Score} (${r.totalP1}-${r.totalP2})`;
-      this.add.text(width / 2, y, line, {
-        font: '24px Arial',
-        color: '#ffffff',
-      }).setOrigin(0.5);
-      y += 30;
+    rounds.forEach((r, i) => {
+      let line;
+      if (typeof r === 'string') {
+        line = r;
+      } else if (r && typeof r === 'object') {
+        line = `Round ${r.round}: ${r.p1Score}-${r.p2Score} (${r.totalP1}-${r.totalP2})`;
+      }
+      if (line) {
+        this.add
+          .text(width / 2, y, line, { font: '24px Arial', color: '#ffffff' })
+          .setOrigin(0.5);
+        y += 30;
+      }
     });
     y += 20;
 
