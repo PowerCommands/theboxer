@@ -1,6 +1,6 @@
 export const appConfig = {
   name: 'The Boxer',
-  version: '0.0.005'
+  version: '0.0.006'
 };
 
 // Default transparency for UI tables (1.0 = fully opaque)
