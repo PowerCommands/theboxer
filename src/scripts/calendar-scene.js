@@ -54,9 +54,15 @@ export class CalendarScene extends Phaser.Scene {
       .setOrigin(0.5, 0);
 
     // Player match info and action buttons
-    const infoY = height * 0.82;
+    const infoY = height * 0.82 - 50;
+    this.playerTitles = this.add
+      .text(width / 2, infoY, '', { font: '24px Arial', color: '#ffff00' })
+      .setOrigin(0.5, 0);
     this.playerInfo = this.add
-      .text(width / 2, infoY, '', { font: '24px Arial', color: '#ffffff' })
+      .text(width / 2, infoY + 24, '', { font: '24px Arial', color: '#ffffff' })
+      .setOrigin(0.5, 0);
+    this.playerDetails = this.add
+      .text(width / 2, infoY + 48, '', { font: '20px Arial', color: '#ffffff' })
       .setOrigin(0.5, 0);
     const btnY = height * 0.9;
     this.simBtn = this.add
@@ -75,6 +81,12 @@ export class CalendarScene extends Phaser.Scene {
       .setOrigin(0.5, 0.5)
       .setInteractive({ useHandCursor: true })
       .on('pointerup', () => this.playMatch(this.playerMatch, this.playerIndex));
+
+    this.tooltip = this.add
+      .text(0, 0, '', { font: '18px Arial', color: '#ffff00', backgroundColor: '#000000' })
+      .setOrigin(0.5, 1)
+      .setDepth(1000)
+      .setVisible(false);
 
     this.render();
 
@@ -187,20 +199,37 @@ export class CalendarScene extends Phaser.Scene {
       const simTxt = this.add
         .text(colX[5] - 15, y, '🎲', { font: '20px Arial', color: '#00ff00' })
         .setOrigin(0.5, 0)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => this.simulate(m));
+        .setInteractive({ useHandCursor: true });
+      simTxt
+        .on('pointerup', () => this.simulate(m))
+        .on('pointerover', () => this.showTooltip('Simulate match', simTxt))
+        .on('pointerout', () => this.hideTooltip());
       row.push(simTxt);
       const playTxt = this.add
-        .text(colX[5] + 15, y, '🥊', { font: '20px Arial', color: '#00ff00' })
+        .text(colX[5] + 15, y, '📺', { font: '20px Arial', color: '#00ff00' })
         .setOrigin(0.5, 0)
-        .setInteractive({ useHandCursor: true })
-        .on('pointerup', () => this.playMatch(m, i));
+        .setInteractive({ useHandCursor: true });
+      playTxt
+        .on('pointerup', () => this.playMatch(m, i))
+        .on('pointerover', () => this.showTooltip('View match', playTxt))
+        .on('pointerout', () => this.hideTooltip());
       row.push(playTxt);
       this.rows.push(row);
       rowIdx++;
     });
 
     this.renderPlayerInfo();
+  }
+
+  showTooltip(text, obj) {
+    if (!this.tooltip) return;
+    this.tooltip.setText(text);
+    this.tooltip.setPosition(obj.x, obj.y - 5);
+    this.tooltip.setVisible(true);
+  }
+
+  hideTooltip() {
+    if (this.tooltip) this.tooltip.setVisible(false);
   }
 
   async simulatePendingMatches() {
@@ -254,9 +283,19 @@ export class CalendarScene extends Phaser.Scene {
 
   renderPlayerInfo() {
     if (!this.playerInfo || !this.playerMatch) return;
+    const titles = Array.isArray(this.playerMatch.titlesOnTheLine)
+      ? this.playerMatch.titlesOnTheLine.map((t) => `${t.code}🏆`).join(' ')
+      : '';
+    this.playerTitles.setText(titles);
+    this.playerTitles.setVisible(titles.length > 0);
+
     const info = `${this.playerMatch.date} ${this.playerMatch.boxer1.name} (${this.playerMatch.boxer1.ranking}) vs ${this.playerMatch.boxer2.name} (${this.playerMatch.boxer2.ranking})`;
     const result = this.formatResult(this.playerMatch);
     this.playerInfo.setText(result ? `${info} ${result}` : info);
+
+    const arena = this.playerMatch.arena || {};
+    const parts = [this.playerMatch.time, arena.Name, arena.City, arena.Country].filter((v) => v);
+    this.playerDetails.setText(parts.join(', '));
   }
 }
 
