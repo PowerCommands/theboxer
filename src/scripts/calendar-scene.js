@@ -151,6 +151,7 @@ export class CalendarScene extends Phaser.Scene {
             .setOrigin(0.5, 0)
         );
         this.rows.push(row);
+        rowIdx++;
         return;
       }
       row.push(
