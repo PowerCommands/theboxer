@@ -198,6 +198,16 @@ export async function simulateMatch(match, delayMs = 1000) {
     rankingBefore: winner === match.boxer1 ? b1RankBefore : b2RankBefore,
     rankingAfter: winner.ranking,
     titlesWon,
+    b1: {
+      prize: prize1,
+      rankingBefore: b1RankBefore,
+      rankingAfter: match.boxer1.ranking,
+    },
+    b2: {
+      prize: prize2,
+      rankingBefore: b2RankBefore,
+      rankingAfter: match.boxer2.ranking,
+    },
   };
   return match.result;
 }

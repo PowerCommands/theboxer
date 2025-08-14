@@ -244,6 +244,30 @@ export class CalendarScene extends Phaser.Scene {
   async simulate(match) {
     if (match.player) {
       await this.simulatePendingMatches();
+      await simulateMatch(match, 500);
+      const result = match.result || {};
+      const resultData = {
+        b1: {
+          name: match.boxer1.name,
+          prize: result.b1?.prize,
+          rankingBefore: result.b1?.rankingBefore,
+          rankingAfter: result.b1?.rankingAfter,
+        },
+        b2: {
+          name: match.boxer2.name,
+          prize: result.b2?.prize,
+          rankingBefore: result.b2?.rankingBefore,
+          rankingAfter: result.b2?.rankingAfter,
+        },
+        roundLog: result.rounds,
+        titlesWon: (result.titlesWon || []).map((code) => ({ code })),
+        matchIndex: this.playerIndex,
+        matchSummary: result,
+        returnScene: 'Ranking',
+      };
+      clearPendingMatch();
+      this.scene.start('GameResultScene', resultData);
+      return;
     }
     await simulateMatch(match, 500);
     this.render();
