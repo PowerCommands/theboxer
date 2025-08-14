@@ -339,7 +339,7 @@ export class MatchIntroScene extends Phaser.Scene {
     const c = this.add.container(0, 0);
 
     const cardWidth = 520;
-    const cardHeight = 350;
+    const cardHeight = 420;
 
     // Panelbild (preloadad som 'fight_card'). Faller tillbaka till grafik om saknas.
     let panel;
