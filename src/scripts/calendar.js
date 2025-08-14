@@ -2,6 +2,7 @@ import { BOXERS } from './boxers.js';
 import { recordResult } from './boxer-stats.js';
 import { addMatchLog } from './match-log.js';
 import { getCurrentDate } from './game-date.js';
+import { ArenaManager } from './arena-manager.js';
 
 let currentMatches = null;
 let lastParticipants = [];
@@ -91,10 +92,13 @@ export function generateMonthlyMatches(excluded = []) {
       // Fallback to any opponent to avoid deadlocks
       boxer2 = pickRandom(pool);
     }
+    const highestRank = Math.min(boxer1.ranking, boxer2.ranking);
+    const arena = ArenaManager.getRandomArena(highestRank);
     exclude.add(boxer1.name);
     exclude.add(boxer2.name);
     matches.push({
       date: randomDate(start, end),
+      arena,
       boxer1,
       boxer2,
       result: null,
@@ -122,6 +126,14 @@ export async function simulateMatch(match, delayMs = 1000) {
   const ko = Math.random() < 0.1;
   const round = ko ? Math.floor(Math.random() * 3) + 1 : 3;
   const method = ko ? 'KO' : 'Decision';
+  const timeStr = ko
+    ? (() => {
+        const secs = Math.floor(Math.random() * 180);
+        const m = Math.floor(secs / 60);
+        const s = String(secs % 60).padStart(2, '0');
+        return `${m}:${s}`;
+      })()
+    : '-';
   const rounds = [];
   for (let r = 1; r <= round; r++) {
     if (ko && r === round) {
@@ -142,18 +154,34 @@ export async function simulateMatch(match, delayMs = 1000) {
   const titlesWon = (winner.titles || []).filter(
     (t) => !winnerTitlesBefore.includes(t)
   );
+  const dateObj = new Date(match.date);
+  const year = dateObj.getFullYear();
   addMatchLog(match.boxer1.name, {
+    year,
+    date: match.date,
+    arena: match.arena,
+    rank: b1RankBefore,
     opponent: match.boxer2.name,
+    opponentRank: b2RankBefore,
     result: winner === match.boxer1 ? 'Win' : 'Loss',
     method,
+    round,
+    time: timeStr,
     prize: prize1,
     rankingBefore: b1RankBefore,
     rankingAfter: match.boxer1.ranking,
   });
   addMatchLog(match.boxer2.name, {
+    year,
+    date: match.date,
+    arena: match.arena,
+    rank: b2RankBefore,
     opponent: match.boxer1.name,
+    opponentRank: b1RankBefore,
     result: winner === match.boxer2 ? 'Win' : 'Loss',
     method,
+    round,
+    time: timeStr,
     prize: prize2,
     rankingBefore: b2RankBefore,
     rankingAfter: match.boxer2.ranking,
@@ -163,6 +191,8 @@ export async function simulateMatch(match, delayMs = 1000) {
     loser: loser.name,
     method,
     round,
+    time: timeStr,
+    arena: match.arena,
     rounds,
     prize: winner === match.boxer1 ? prize1 : prize2,
     rankingBefore: winner === match.boxer1 ? b1RankBefore : b2RankBefore,
