@@ -43,12 +43,38 @@ export class CalendarScene extends Phaser.Scene {
       setCurrentMatches(this.matches);
     }
 
+    this.playerIndex = this.matches.findIndex((m) => m.player);
+    this.playerMatch = this.matches[this.playerIndex];
+
     this.title = this.add
       .text(width / 2, 20, 'Upcoming Matches', {
         font: '32px Arial',
         color: '#ffffff',
       })
       .setOrigin(0.5, 0);
+
+    // Player match info and action buttons
+    const infoY = height * 0.82;
+    this.playerInfo = this.add
+      .text(width / 2, infoY, '', { font: '24px Arial', color: '#ffffff' })
+      .setOrigin(0.5, 0);
+    const btnY = height * 0.9;
+    this.simBtn = this.add
+      .text(width * 0.4, btnY, 'Simulate', {
+        font: '32px Arial',
+        color: '#00ff00',
+      })
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerup', () => this.simulate(this.playerMatch));
+    this.playBtn = this.add
+      .text(width * 0.6, btnY, 'Fight', {
+        font: '32px Arial',
+        color: '#00ff00',
+      })
+      .setOrigin(0.5, 0.5)
+      .setInteractive({ useHandCursor: true })
+      .on('pointerup', () => this.playMatch(this.playerMatch, this.playerIndex));
 
     this.render();
 
@@ -98,8 +124,10 @@ export class CalendarScene extends Phaser.Scene {
     );
     this.rows.push(headerRow);
 
+    let rowIdx = 0;
     this.matches.forEach((m, i) => {
-      const y = startY + (i + 1) * rowH;
+      if (m.player) return;
+      const y = startY + (rowIdx + 1) * rowH;
       const row = [];
       if (m.result) {
         const resultLine = `${m.date} ${m.boxer1.name} (${m.boxer1.ranking}) vs ${m.boxer2.name} (${m.boxer2.ranking}) ${this.formatResult(
@@ -169,7 +197,10 @@ export class CalendarScene extends Phaser.Scene {
         .on('pointerup', () => this.playMatch(m, i));
       row.push(playTxt);
       this.rows.push(row);
+      rowIdx++;
     });
+
+    this.renderPlayerInfo();
   }
 
   async simulatePendingMatches() {
@@ -219,6 +250,13 @@ export class CalendarScene extends Phaser.Scene {
       titlesOnTheLine,
     };
     this.scene.start('MatchIntroScene', matchData);
+  }
+
+  renderPlayerInfo() {
+    if (!this.playerInfo || !this.playerMatch) return;
+    const info = `${this.playerMatch.date} ${this.playerMatch.boxer1.name} (${this.playerMatch.boxer1.ranking}) vs ${this.playerMatch.boxer2.name} (${this.playerMatch.boxer2.ranking})`;
+    const result = this.formatResult(this.playerMatch);
+    this.playerInfo.setText(result ? `${info} ${result}` : info);
   }
 }
 
