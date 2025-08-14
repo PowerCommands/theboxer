@@ -339,7 +339,7 @@ export class MatchIntroScene extends Phaser.Scene {
     const c = this.add.container(0, 0);
 
     const cardWidth = 520;
-    const cardHeight = 310;
+    const cardHeight = 350;
 
     // Panelbild (preloadad som 'fight_card'). Faller tillbaka till grafik om saknas.
     let panel;
@@ -408,6 +408,20 @@ export class MatchIntroScene extends Phaser.Scene {
       align: 'center'
     }).setOrigin(0.5);
     c.add(tClass);
+
+    const titles = (boxer.titles || [])
+      .map((code) => `${code}🏆`)
+      .join(' ');
+    if (titles) {
+      const tTitles = this.add.text(0, 118, titles, {
+        fontFamily: 'Arial',
+        fontSize: '20px',
+        color: '#FFD166',
+        align: 'center',
+        wordWrap: { width: 480 }
+      }).setOrigin(0.5);
+      c.add(tTitles);
+    }
 
     // Spegla lite om högerkort för variation (valfritt)
     // Tidigare skalades högerkortets innehåll om vilket gjorde kortet
