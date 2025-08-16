@@ -29,7 +29,7 @@
   </style>
 
   <!-- Phaser 3 -->
-  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>  
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>    
   <script src="https://unpkg.com/@esotericsoftware/spine-phaser-v3@4.2.*/dist/iife/spine-phaser-v3.js"></script>
 
 </head>
@@ -47,7 +47,9 @@
       window.visualViewport && window.visualViewport.addEventListener('resize', apply);
     })();
   </script>
-  
+  <script>
+  console.log("window.spinephaser just loaded:", window.spinephaser);
+</script>
   <script type="module" src="scripts/main.js"></script>
 </body>
 </html>
