@@ -6,35 +6,36 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <link rel="icon" href="./favicon.ico?v=1" sizes="any" type="image/x-icon">
-  
+
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>The Boxer</title>
   <style>
     html, body { margin: 0; }
-  
     :root { --app-h: 100dvh; }
     @supports not (height: 100dvh) { :root { --app-h: 100vh; } }
 
     body {
-      overflow: hidden; 
-      background: url('assets/arena/backdrop-dark.png') no-repeat center center fixed;
+      overflow: hidden;
       background-size: cover;
     }
-    
+
     #game-container {
       width: 100vw;
       height: var(--app-h);
       touch-action: none; 
     }
-    
+
     canvas { display: block; }
   </style>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-webgl@4.1.19/dist/iife/spine-webgl.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@esotericsoftware/spine-phaser@4.1.19/dist/iife/SpinePlugin.min.js"></script>
+
+  <!-- Phaser 3 -->
+  <script src="https://cdn.jsdelivr.net/npm/phaser@3/dist/phaser.min.js"></script>  
+  <script src="https://unpkg.com/@esotericsoftware/spine-phaser-v3@4.2.*/dist/iife/spine-phaser-v3.js"></script>
+
 </head>
 <body>
-  <div id="game-container"></div>  
+  <div id="game-container"></div>
+  
   <script>
     (function () {
       const apply = () => {
@@ -46,7 +47,7 @@
       window.visualViewport && window.visualViewport.addEventListener('resize', apply);
     })();
   </script>
-
+  
   <script type="module" src="scripts/main.js"></script>
 </body>
 </html>
