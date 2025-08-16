@@ -13,7 +13,12 @@ new window.Phaser.Game({
   },
   plugins: {
     scene: [
-      { key: 'SpinePlugin', plugin: window.SpinePlugin, sceneKey: 'spine' }
+      // Register the Spine plugin so its loader and game object factories are available
+      // in every scene. The "mapping" property exposes the plugin on the Scene instance
+      // as `this.spine` instead of using the invalid "sceneKey" field, which caused
+      // Phaser to report "Missing plugin for key: SpinePlugin" and left loader methods
+      // like `this.load.spineBinary` undefined.
+      { key: 'SpinePlugin', plugin: window.SpinePlugin, mapping: 'spine' }
     ]
   },
   scene: [BootScene]
