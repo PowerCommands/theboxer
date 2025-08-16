@@ -11,5 +11,10 @@ new window.Phaser.Game({
     mode: window.Phaser.Scale.FIT,
     autoCenter: window.Phaser.Scale.CENTER_BOTH
   },
+  plugins: {
+    scene: [
+      { key: 'SpinePlugin', plugin: window.SpinePlugin, sceneKey: 'spine' }
+    ]
+  },
   scene: [BootScene]
 });
