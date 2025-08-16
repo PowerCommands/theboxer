@@ -18,8 +18,8 @@ new window.Phaser.Game({
       // as `this.spine` instead of using the invalid "sceneKey" field, which caused
       // Phaser to report "Missing plugin for key: SpinePlugin" and left loader methods
       // like `this.load.spineBinary` undefined.
-      // The global `spine-phaser-v3` script exposes the plugin on `window.spinephaser`.
-      { key: 'SpinePlugin', plugin: window.spinephaser.SpinePlugin, mapping: 'spine' }
+      // The global `spine-phaser-v3` script attaches the plugin constructor to `window.SpinePlugin`.
+      { key: 'SpinePlugin', plugin: window.SpinePlugin, mapping: 'spine' }
     ]
   },
   scene: [BootScene]
